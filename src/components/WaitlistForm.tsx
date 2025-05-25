@@ -11,8 +11,44 @@ const WaitlistForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
+  // Email validation function
+  const isValidEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  // WhatsApp number validation function
+  const isValidWhatsApp = (number: string) => {
+    if (!number) return true; // Optional field
+    // Remove all non-digits
+    const cleanNumber = number.replace(/\D/g, '');
+    // Check if it's between 10-15 digits (international format)
+    return cleanNumber.length >= 10 && cleanNumber.length <= 15;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate email
+    if (!isValidEmail(email)) {
+      toast({
+        title: "Invalid Email 📧",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate WhatsApp number if provided
+    if (whatsapp && !isValidWhatsApp(whatsapp)) {
+      toast({
+        title: "Invalid WhatsApp Number 📱",
+        description: "Please enter a valid WhatsApp number (10-15 digits).",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -20,8 +56,8 @@ const WaitlistForm = () => {
         .from('waitlist')
         .insert([
           {
-            email: email,
-            whatsapp_number: whatsapp || null,
+            email: email.trim().toLowerCase(),
+            whatsapp_number: whatsapp ? whatsapp.replace(/\D/g, '') : null,
           }
         ]);
 
