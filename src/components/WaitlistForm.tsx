@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const WaitlistForm = () => {
   const [email, setEmail] = useState('');
@@ -14,19 +15,48 @@ const WaitlistForm = () => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const { error } = await supabase
+        .from('waitlist')
+        .insert([
+          {
+            email: email,
+            whatsapp_number: whatsapp || null,
+          }
+        ]);
 
-    console.log('Waitlist submission:', { email, whatsapp, created_at: new Date().toISOString() });
-    
-    toast({
-      title: "Welcome to PrepYatra! 🎉",
-      description: "You're on the waitlist! We'll notify you when we launch.",
-    });
+      if (error) {
+        throw error;
+      }
 
-    setEmail('');
-    setWhatsapp('');
-    setIsLoading(false);
+      console.log('Waitlist submission successful:', { email, whatsapp, created_at: new Date().toISOString() });
+      
+      toast({
+        title: "Welcome to PrepYatra! 🎉",
+        description: "You're on the waitlist! We'll notify you when we launch.",
+      });
+
+      setEmail('');
+      setWhatsapp('');
+    } catch (error: any) {
+      console.error('Error submitting to waitlist:', error);
+      
+      if (error.code === '23505') {
+        toast({
+          title: "Already registered! 🎯",
+          description: "This email is already on our waitlist.",
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Something went wrong 😞",
+          description: "Please try again later.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
