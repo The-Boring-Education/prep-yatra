@@ -1,13 +1,19 @@
 
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const scrollToWaitlist = () => {
     const waitlistSection = document.getElementById('waitlist');
     waitlistSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleGetStarted = () => {
+    navigate('/auth');
   };
 
   return (
@@ -23,12 +29,19 @@ const Navigation = () => {
             </div>
           </div>
           
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center space-x-4">
             <Button 
               onClick={scrollToWaitlist}
-              className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-6 transform transition-transform hover:scale-105"
+              variant="ghost"
+              className="text-gray-300 hover:text-primary font-medium"
             >
               Join Waitlist
+            </Button>
+            <Button 
+              onClick={handleGetStarted}
+              className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-6 transform transition-transform hover:scale-105"
+            >
+              Get Started
             </Button>
           </div>
 
@@ -46,12 +59,19 @@ const Navigation = () => {
 
         {isMenuOpen && (
           <div className="md:hidden animate-fade-in">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <div className="px-2 pt-2 pb-3 space-y-2 sm:px-3">
               <Button 
                 onClick={scrollToWaitlist}
-                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold transform transition-transform hover:scale-105"
+                variant="ghost"
+                className="w-full text-gray-300 hover:text-primary font-medium justify-start"
               >
                 Join Waitlist
+              </Button>
+              <Button 
+                onClick={handleGetStarted}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 font-semibold transform transition-transform hover:scale-105"
+              >
+                Get Started
               </Button>
             </div>
           </div>

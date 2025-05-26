@@ -1,10 +1,16 @@
-
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const Hero = () => {
+  const navigate = useNavigate();
+
   const scrollToWaitlist = () => {
     const waitlistSection = document.getElementById('waitlist');
     waitlistSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleGetStarted = () => {
+    navigate('/auth');
   };
 
   return (
@@ -30,13 +36,21 @@ const Hero = () => {
             <span className="text-primary font-semibold">Your journey to success starts here!</span>
           </p>
           
-          <div className="animate-scale-in mb-12">
+          <div className="animate-scale-in mb-12 flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
-              onClick={scrollToWaitlist}
+              onClick={handleGetStarted}
               size="lg"
               className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-4 font-semibold transform transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-primary/50"
             >
               🚀 Start Your Journey Free
+            </Button>
+            <Button 
+              onClick={scrollToWaitlist}
+              size="lg"
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground text-lg px-8 py-4 font-semibold transform transition-all duration-300 hover:scale-110"
+            >
+              Join Waitlist
             </Button>
           </div>
         </div>

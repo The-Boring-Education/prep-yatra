@@ -9,6 +9,36 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          created_at: string | null
+          experience_level: string | null
+          id: string
+          linkedin_url: string | null
+          onboarding_completed: boolean | null
+          updated_at: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          experience_level?: string | null
+          id: string
+          linkedin_url?: string | null
+          onboarding_completed?: boolean | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          experience_level?: string | null
+          id?: string
+          linkedin_url?: string | null
+          onboarding_completed?: boolean | null
+          updated_at?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
       waitlist: {
         Row: {
           created_at: string
