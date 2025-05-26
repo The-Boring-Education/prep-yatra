@@ -4,13 +4,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select"
-import {
     Dialog,
     DialogContent,
     DialogDescription,
@@ -38,12 +31,13 @@ const AddRecruiterModal = ({
     const [formData, setFormData] = useState<CreateRecruiterContact>({
         name: "",
         company: "",
-        position: "",
         email: "",
         phone: "",
-        linkedin_url: "",
-        notes: "",
-        status: "active"
+        position: "",
+        status: "Screening",
+        follow_up_date: "",
+        interview_date: "",
+        notes: ""
     })
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -63,7 +57,7 @@ const AddRecruiterModal = ({
                 return
             }
 
-            const { error } = await supabase.from("recruiter_contacts").insert([
+            const { error } = await supabase.from("recruitment").insert([
                 {
                     ...formData,
                     user_id: user.id
@@ -81,12 +75,11 @@ const AddRecruiterModal = ({
             setFormData({
                 name: "",
                 company: "",
-                position: "",
                 email: "",
                 phone: "",
-                linkedin_url: "",
+                position: "",
                 notes: "",
-                status: "active"
+                status: "Screening"
             })
 
             onContactAdded()
@@ -203,50 +196,43 @@ const AddRecruiterModal = ({
                             />
                         </div>
                         <div>
-                            <Label htmlFor='status' className='text-white'>
-                                Status
+                            <Label
+                                htmlFor='follow_up_date'
+                                className='text-white'>
+                                Follow-up Date
                             </Label>
-                            <Select
-                                value={formData.status}
-                                onValueChange={(value) =>
-                                    handleInputChange("status", value)
-                                }>
-                                <SelectTrigger className='bg-gray-800 border-gray-600 text-white'>
-                                    <SelectValue />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value='active'>
-                                        Active
-                                    </SelectItem>
-                                    <SelectItem value='follow_up'>
-                                        Follow Up
-                                    </SelectItem>
-                                    <SelectItem value='interview_scheduled'>
-                                        Interview Scheduled
-                                    </SelectItem>
-                                    <SelectItem value='closed'>
-                                        Closed
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <Input
+                                id='follow_up_date'
+                                type='date'
+                                value={formData.follow_up_date}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        "follow_up_date",
+                                        e.target.value
+                                    )
+                                }
+                                className='bg-gray-800 border-gray-600 text-white'
+                            />
                         </div>
-                    </div>
-                    <div>
-                        <Label htmlFor='linkedin_url' className='text-white'>
-                            LinkedIn Profile
-                        </Label>
-                        <Input
-                            id='linkedin_url'
-                            value={formData.linkedin_url}
-                            onChange={(e) =>
-                                handleInputChange(
-                                    "linkedin_url",
-                                    e.target.value
-                                )
-                            }
-                            className='bg-gray-800 border-gray-600 text-white'
-                            placeholder='e.g. https://linkedin.com/in/sarah-johnson'
-                        />
+                        <div>
+                            <Label
+                                htmlFor='interview_date'
+                                className='text-white'>
+                                Interview Date
+                            </Label>
+                            <Input
+                                id='interview_date'
+                                type='date'
+                                value={formData.interview_date}
+                                onChange={(e) =>
+                                    handleInputChange(
+                                        "interview_date",
+                                        e.target.value
+                                    )
+                                }
+                                className='bg-gray-800 border-gray-600 text-white'
+                            />
+                        </div>
                     </div>
                     <div>
                         <Label htmlFor='notes' className='text-white'>
