@@ -39,6 +39,54 @@ export type Database = {
         }
         Relationships: []
       }
+      recruiter_contacts: {
+        Row: {
+          company: string
+          created_at: string
+          email: string
+          id: string
+          last_contact: string | null
+          linkedin_url: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          position: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company: string
+          created_at?: string
+          email: string
+          id?: string
+          last_contact?: string | null
+          linkedin_url?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          position: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          email?: string
+          id?: string
+          last_contact?: string | null
+          linkedin_url?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          position?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       waitlist: {
         Row: {
           created_at: string
