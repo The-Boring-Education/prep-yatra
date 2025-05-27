@@ -20,6 +20,8 @@ import {
 import { supabase } from "@/integrations/supabase/client"
 import { RecruiterContact } from "@/types/recruiters"
 import { useToast } from "@/hooks/use-toast"
+import DatePicker from "react-datepicker"
+import "react-datepicker/dist/react-datepicker.css"
 import {
     AlertDialog,
     AlertDialogAction,
@@ -121,29 +123,30 @@ const RecruiterContactsTable = ({
         }
     }
 
-    const handleFollowUpDateChange = async (
+    const handleDateChange = async (
         contactId: string,
-        newDate: string
+        field: "follow_up_date" | "last_interview_date",
+        newDate: Date | null
     ) => {
         try {
             const { error } = await supabase
                 .from("recruiters")
-                .update({ follow_up_date: newDate })
+                .update({ [field]: newDate?.toISOString() || null })
                 .eq("id", contactId)
 
             if (error) throw error
 
             toast({
                 title: "Success",
-                description: "Follow-up date updated successfully"
+                description: "Date updated successfully"
             })
 
             onContactsChange()
         } catch (error) {
-            console.error("Error updating follow-up date:", error)
+            console.error("Error updating date:", error)
             toast({
                 title: "Error",
-                description: "Failed to update follow-up date",
+                description: "Failed to update date",
                 variant: "destructive"
             })
         }
@@ -227,6 +230,9 @@ const RecruiterContactsTable = ({
                                     Follow Up
                                 </TableHead>
                                 <TableHead className='text-primary font-semibold'>
+                                    Last Interview
+                                </TableHead>
+                                <TableHead className='text-primary font-semibold'>
                                     Actions
                                 </TableHead>
                             </TableRow>
@@ -288,21 +294,50 @@ const RecruiterContactsTable = ({
                                         </Select>
                                     </TableCell>
                                     <TableCell>
-                                        <div className='flex items-center gap-2'>
-                                            <input
-                                                type='date'
-                                                value={
-                                                    contact.follow_up_date || ""
-                                                }
-                                                onChange={(e) =>
-                                                    handleFollowUpDateChange(
-                                                        contact.id,
-                                                        e.target.value
-                                                    )
-                                                }
-                                                className='bg-transparent border border-primary/20 rounded-md px-2 py-1 text-white'
-                                            />
-                                        </div>
+                                        <DatePicker
+                                            selected={
+                                                contact.follow_up_date
+                                                    ? new Date(
+                                                          contact.follow_up_date
+                                                      )
+                                                    : null
+                                            }
+                                            onChange={(date: Date | null) =>
+                                                handleDateChange(
+                                                    contact.id,
+                                                    "follow_up_date",
+                                                    date
+                                                )
+                                            }
+                                            className='bg-transparent border border-primary/20 rounded-md px-2 py-1 text-white w-[150px]'
+                                            dateFormat='MMM d, yyyy'
+                                            placeholderText='Select date'
+                                            isClearable
+                                            portalId='recruiter-datepicker-portal'
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <DatePicker
+                                            selected={
+                                                contact.last_interview_date
+                                                    ? new Date(
+                                                          contact.last_interview_date
+                                                      )
+                                                    : null
+                                            }
+                                            onChange={(date: Date | null) =>
+                                                handleDateChange(
+                                                    contact.id,
+                                                    "last_interview_date",
+                                                    date
+                                                )
+                                            }
+                                            className='bg-transparent border border-primary/20 rounded-md px-2 py-1 text-white w-[150px]'
+                                            dateFormat='MMM d, yyyy'
+                                            placeholderText='Select date'
+                                            isClearable
+                                            portalId='recruiter-datepicker-portal'
+                                        />
                                     </TableCell>
                                     <TableCell>
                                         <div className='flex gap-2'>
@@ -359,10 +394,10 @@ const RecruiterContactsTable = ({
                                                         variant='ghost'
                                                         className='h-8 w-8 p-0 hover:bg-red-500/20'
                                                         title='Delete Contact'>
-                                                        <Trash2 className='h-4 w-4 text-red-400' />
+                                                        <Trash2 className='h-4 w-4 text-red-500' />
                                                     </Button>
                                                 </AlertDialogTrigger>
-                                                <AlertDialogContent className='glass-dark border-primary/20'>
+                                                <AlertDialogContent className='bg-gray-800 border-primary/20'>
                                                     <AlertDialogHeader>
                                                         <AlertDialogTitle className='text-white'>
                                                             Delete Contact
