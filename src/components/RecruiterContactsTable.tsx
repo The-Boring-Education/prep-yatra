@@ -218,9 +218,6 @@ const RecruiterContactsTable = ({
                                     Name
                                 </TableHead>
                                 <TableHead className='text-primary font-semibold'>
-                                    Company
-                                </TableHead>
-                                <TableHead className='text-primary font-semibold'>
                                     Contact
                                 </TableHead>
                                 <TableHead className='text-primary font-semibold'>
@@ -231,6 +228,9 @@ const RecruiterContactsTable = ({
                                 </TableHead>
                                 <TableHead className='text-primary font-semibold'>
                                     Last Interview
+                                </TableHead>
+                                <TableHead className='text-primary font-semibold'>
+                                    Comments
                                 </TableHead>
                                 <TableHead className='text-primary font-semibold'>
                                     Actions
@@ -244,9 +244,6 @@ const RecruiterContactsTable = ({
                                     className='border-primary/10 hover:bg-primary/5 transition-colors'>
                                     <TableCell className='text-white font-medium'>
                                         {contact.name}
-                                    </TableCell>
-                                    <TableCell className='text-gray-300'>
-                                        {contact.company || "-"}
                                     </TableCell>
                                     <TableCell className='text-gray-300'>
                                         <div className='flex flex-col gap-1'>
@@ -338,6 +335,11 @@ const RecruiterContactsTable = ({
                                             isClearable
                                             portalId='recruiter-datepicker-portal'
                                         />
+                                    </TableCell>
+                                    <TableCell className='text-gray-300 max-w-xs'>
+                                        <div className='line-clamp-2 whitespace-pre-line break-words'>
+                                            {contact.comments || "-"}
+                                        </div>
                                     </TableCell>
                                     <TableCell>
                                         <div className='flex gap-2'>
