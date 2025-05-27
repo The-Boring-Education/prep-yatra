@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import {
@@ -9,7 +10,7 @@ import {
     TableRow
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Phone, Linkedin, ExternalLink, Trash2 } from "lucide-react"
+import { Mail, Phone, ExternalLink, Trash2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { RecruiterContact } from "@/types/recruiters"
 import { useToast } from "@/hooks/use-toast"
@@ -36,32 +37,27 @@ const RecruiterContactsTable = ({
 }: RecruiterContactsTableProps) => {
     const { toast } = useToast()
 
-    const getStatusColor = (status: string) => {
+    const getStatusColor = (status?: string) => {
         switch (status) {
-            case "active":
-                return "bg-green-500/20 text-green-400 border-green-500/30"
-            case "follow_up":
-                return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-            case "interview_scheduled":
+            case "Screening in Process":
                 return "bg-blue-500/20 text-blue-400 border-blue-500/30"
-            case "closed":
-                return "bg-gray-500/20 text-gray-400 border-gray-500/30"
+            case "Interviewing":
+                return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+            case "Final Round Offer":
+                return "bg-purple-500/20 text-purple-400 border-purple-500/30"
+            case "Offer Letter":
+                return "bg-green-500/20 text-green-400 border-green-500/30"
+            case "Rejected":
+                return "bg-red-500/20 text-red-400 border-red-500/30"
             default:
                 return "bg-gray-500/20 text-gray-400 border-gray-500/30"
         }
     }
 
-    const formatStatus = (status: string) => {
-        return status
-            .split("_")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ")
-    }
-
     const handleDelete = async (contactId: string) => {
         try {
             const { error } = await supabase
-                .from("recruitment")
+                .from("recruiters")
                 .delete()
                 .eq("id", contactId)
 
@@ -83,16 +79,22 @@ const RecruiterContactsTable = ({
         }
     }
 
-    const openEmail = (email: string) => {
-        window.open(`mailto:${email}`, "_blank")
+    const openEmail = (email?: string) => {
+        if (email) {
+            window.open(`mailto:${email}`, "_blank")
+        }
     }
 
-    const openPhone = (phone: string) => {
-        window.open(`tel:${phone}`, "_blank")
+    const openPhone = (phone?: string) => {
+        if (phone) {
+            window.open(`tel:${phone}`, "_blank")
+        }
     }
 
-    const openLinkedIn = (url: string) => {
-        window.open(url, "_blank")
+    const openLink = (link?: string) => {
+        if (link) {
+            window.open(link, "_blank")
+        }
     }
 
     if (contacts.length === 0) {
@@ -134,13 +136,13 @@ const RecruiterContactsTable = ({
                                 Company
                             </TableHead>
                             <TableHead className='text-primary font-semibold'>
-                                Position
-                            </TableHead>
-                            <TableHead className='text-primary font-semibold'>
                                 Contact
                             </TableHead>
                             <TableHead className='text-primary font-semibold'>
                                 Status
+                            </TableHead>
+                            <TableHead className='text-primary font-semibold'>
+                                Follow Up
                             </TableHead>
                             <TableHead className='text-primary font-semibold'>
                                 Actions
@@ -156,16 +158,15 @@ const RecruiterContactsTable = ({
                                     {contact.name}
                                 </TableCell>
                                 <TableCell className='text-gray-300'>
-                                    {contact.company}
-                                </TableCell>
-                                <TableCell className='text-gray-300'>
-                                    {contact.phone}
+                                    {contact.company || "-"}
                                 </TableCell>
                                 <TableCell className='text-gray-300'>
                                     <div className='flex flex-col gap-1'>
-                                        <div className='text-sm'>
-                                            {contact.email}
-                                        </div>
+                                        {contact.email && (
+                                            <div className='text-sm'>
+                                                {contact.email}
+                                            </div>
+                                        )}
                                         {contact.phone && (
                                             <div className='text-sm text-gray-400'>
                                                 {contact.phone}
@@ -174,35 +175,60 @@ const RecruiterContactsTable = ({
                                     </div>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge
-                                        className={getStatusColor(
-                                            contact.status
-                                        )}>
-                                        {formatStatus(contact.status)}
-                                    </Badge>
+                                    {contact.status ? (
+                                        <Badge
+                                            className={getStatusColor(
+                                                contact.status
+                                            )}>
+                                            {contact.status}
+                                        </Badge>
+                                    ) : (
+                                        <span className='text-gray-500'>-</span>
+                                    )}
+                                </TableCell>
+                                <TableCell className='text-gray-300'>
+                                    {contact.follow_up_date
+                                        ? new Date(
+                                              contact.follow_up_date
+                                          ).toLocaleDateString()
+                                        : "-"}
                                 </TableCell>
                                 <TableCell>
                                     <div className='flex gap-2'>
-                                        <Button
-                                            size='sm'
-                                            variant='ghost'
-                                            onClick={() =>
-                                                openEmail(contact.email)
-                                            }
-                                            className='h-8 w-8 p-0 hover:bg-primary/20'
-                                            title='Send Email'>
-                                            <Mail className='h-4 w-4 text-primary' />
-                                        </Button>
+                                        {contact.email && (
+                                            <Button
+                                                size='sm'
+                                                variant='ghost'
+                                                onClick={() =>
+                                                    openEmail(contact.email)
+                                                }
+                                                className='h-8 w-8 p-0 hover:bg-primary/20'
+                                                title='Send Email'>
+                                                <Mail className='h-4 w-4 text-primary' />
+                                            </Button>
+                                        )}
                                         {contact.phone && (
                                             <Button
                                                 size='sm'
                                                 variant='ghost'
                                                 onClick={() =>
-                                                    openPhone(contact.phone!)
+                                                    openPhone(contact.phone)
                                                 }
                                                 className='h-8 w-8 p-0 hover:bg-primary/20'
                                                 title='Call'>
                                                 <Phone className='h-4 w-4 text-primary' />
+                                            </Button>
+                                        )}
+                                        {contact.link && (
+                                            <Button
+                                                size='sm'
+                                                variant='ghost'
+                                                onClick={() =>
+                                                    openLink(contact.link)
+                                                }
+                                                className='h-8 w-8 p-0 hover:bg-primary/20'
+                                                title='Open Link'>
+                                                <ExternalLink className='h-4 w-4 text-primary' />
                                             </Button>
                                         )}
                                         <AlertDialog>

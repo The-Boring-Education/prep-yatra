@@ -56,7 +56,7 @@ const Dashboard = () => {
     const fetchRecruiterContacts = async (userId: string) => {
         try {
             const { data, error } = await supabase
-                .from("recruitment")
+                .from("recruiters")
                 .select("*")
                 .eq("user_id", userId)
                 .order("created_at", { ascending: false })

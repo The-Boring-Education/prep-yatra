@@ -1,3 +1,4 @@
+
 export interface RecruiterContact {
     id: string
     user_id: string
@@ -5,32 +6,22 @@ export interface RecruiterContact {
     company?: string
     email?: string
     phone?: string
-    notes?: string
-    status:
-        | "Screening"
-        | "Interviewing"
-        | "Last Round Pending"
-        | "Offer Letter"
-        | "Rejected"
+    status?: "Screening in Process" | "Interviewing" | "Final Round Offer" | "Offer Letter" | "Rejected"
     follow_up_date?: string
-    interview_date?: string
+    last_interview_date?: string
+    link?: string
+    comments?: string
     created_at: string
-    updated_at: string
 }
 
 export interface CreateRecruiterContact {
     name: string
-    company: string
-    email: string
+    company?: string
+    email?: string
     phone?: string
-    position: string
-    status:
-        | "Screening"
-        | "Interviewing"
-        | "Last Round Pending"
-        | "Offer Letter"
-        | "Rejected"
+    status?: "Screening in Process" | "Interviewing" | "Final Round Offer" | "Offer Letter" | "Rejected"
     follow_up_date?: string
-    interview_date?: string
-    notes?: string
+    last_interview_date?: string
+    link?: string
+    comments?: string
 }
