@@ -14,7 +14,10 @@ export const recruitersService = {
             .single()
 
         if (error) throw error
-        return recruiter
+        return {
+            ...recruiter,
+            status: recruiter.status as RecruiterContact["status"]
+        }
     },
 
     async update(id: string, data: Partial<CreateRecruiterContact>): Promise<RecruiterContact> {
@@ -26,7 +29,10 @@ export const recruitersService = {
             .single()
 
         if (error) throw error
-        return recruiter
+        return {
+            ...recruiter,
+            status: recruiter.status as RecruiterContact["status"]
+        }
     },
 
     async delete(id: string): Promise<void> {
@@ -46,7 +52,10 @@ export const recruitersService = {
             .single()
 
         if (error) throw error
-        return recruiter
+        return {
+            ...recruiter,
+            status: recruiter.status as RecruiterContact["status"]
+        }
     },
 
     async getAll(): Promise<RecruiterContact[]> {
@@ -60,7 +69,10 @@ export const recruitersService = {
             .order("created_at", { ascending: false })
 
         if (error) throw error
-        return recruiters || []
+        return (recruiters || []).map(item => ({
+            ...item,
+            status: item.status as RecruiterContact["status"]
+        }))
     },
 
     async getByStatus(status: RecruiterContact["status"]): Promise<RecruiterContact[]> {
@@ -75,6 +87,9 @@ export const recruitersService = {
             .order("created_at", { ascending: false })
 
         if (error) throw error
-        return recruiters || []
+        return (recruiters || []).map(item => ({
+            ...item,
+            status: item.status as RecruiterContact["status"]
+        }))
     }
 }
