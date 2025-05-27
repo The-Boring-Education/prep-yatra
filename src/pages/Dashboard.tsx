@@ -13,7 +13,7 @@ import RecruiterContactsTable from "@/components/RecruiterContactsTable"
 const Dashboard = () => {
     const navigate = useNavigate()
     const [user, setUser] = useState<User | null>(null)
-    const [profile, setProfile] = useState<any>(null)
+    const [profile, setProfile] = useState(null)
     const [loading, setLoading] = useState(true)
     const [recruiterContacts, setRecruiterContacts] = useState<
         RecruiterContact[]
@@ -62,13 +62,13 @@ const Dashboard = () => {
                 .order("created_at", { ascending: false })
 
             if (error) throw error
-            
+
             // Type cast the data to ensure status field matches our union type
-            const typedData: RecruiterContact[] = (data || []).map(item => ({
+            const typedData: RecruiterContact[] = (data || []).map((item) => ({
                 ...item,
                 status: item.status as RecruiterContact["status"]
             }))
-            
+
             setRecruiterContacts(typedData)
         } catch (error) {
             console.error("Error fetching recruiter contacts:", error)

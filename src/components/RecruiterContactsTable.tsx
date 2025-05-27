@@ -1,5 +1,4 @@
-
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
     Table,
@@ -10,7 +9,14 @@ import {
     TableRow
 } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Mail, Phone, ExternalLink, Trash2 } from "lucide-react"
+import {
+    Mail,
+    Phone,
+    ExternalLink,
+    Trash2,
+    Edit2,
+    Calendar
+} from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { RecruiterContact } from "@/types/recruiters"
 import { useToast } from "@/hooks/use-toast"
@@ -25,6 +31,14 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger
 } from "@/components/ui/alert-dialog"
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select"
+import AddRecruiterModal from "./AddRecruiterModal"
 
 interface RecruiterContactsTableProps {
     contacts: RecruiterContact[]
@@ -36,6 +50,9 @@ const RecruiterContactsTable = ({
     onContactsChange
 }: RecruiterContactsTableProps) => {
     const { toast } = useToast()
+    const [editingContact, setEditingContact] =
+        useState<RecruiterContact | null>(null)
+    const [isModalOpen, setIsModalOpen] = useState(false)
 
     const getStatusColor = (status?: string) => {
         switch (status) {
@@ -79,6 +96,69 @@ const RecruiterContactsTable = ({
         }
     }
 
+    const handleStatusChange = async (contactId: string, newStatus: string) => {
+        try {
+            const { error } = await supabase
+                .from("recruiters")
+                .update({ status: newStatus })
+                .eq("id", contactId)
+
+            if (error) throw error
+
+            toast({
+                title: "Success",
+                description: "Status updated successfully"
+            })
+
+            onContactsChange()
+        } catch (error) {
+            console.error("Error updating status:", error)
+            toast({
+                title: "Error",
+                description: "Failed to update status",
+                variant: "destructive"
+            })
+        }
+    }
+
+    const handleFollowUpDateChange = async (
+        contactId: string,
+        newDate: string
+    ) => {
+        try {
+            const { error } = await supabase
+                .from("recruiters")
+                .update({ follow_up_date: newDate })
+                .eq("id", contactId)
+
+            if (error) throw error
+
+            toast({
+                title: "Success",
+                description: "Follow-up date updated successfully"
+            })
+
+            onContactsChange()
+        } catch (error) {
+            console.error("Error updating follow-up date:", error)
+            toast({
+                title: "Error",
+                description: "Failed to update follow-up date",
+                variant: "destructive"
+            })
+        }
+    }
+
+    const handleEdit = (contact: RecruiterContact) => {
+        setEditingContact(contact)
+        setIsModalOpen(true)
+    }
+
+    const handleModalClose = () => {
+        setEditingContact(null)
+        setIsModalOpen(false)
+    }
+
     const openEmail = (email?: string) => {
         if (email) {
             window.open(`mailto:${email}`, "_blank")
@@ -113,170 +193,219 @@ const RecruiterContactsTable = ({
     }
 
     return (
-        <div className='glass-dark rounded-2xl p-6'>
-            <div className='flex justify-between items-center mb-6'>
-                <h3 className='text-xl font-bold text-white'>
-                    Your Recruiter Network
-                </h3>
-                <Badge
-                    variant='secondary'
-                    className='bg-primary/20 text-primary'>
-                    {contacts.length} Contact{contacts.length !== 1 ? "s" : ""}
-                </Badge>
-            </div>
+        <>
+            <div className='glass-dark rounded-2xl p-6'>
+                <div className='flex justify-between items-center mb-6'>
+                    <h3 className='text-xl font-bold text-white'>
+                        Your Recruiter Network
+                    </h3>
+                    <Badge
+                        variant='secondary'
+                        className='bg-primary/20 text-primary'>
+                        {contacts.length} Contact
+                        {contacts.length !== 1 ? "s" : ""}
+                    </Badge>
+                </div>
 
-            <div className='overflow-x-auto'>
-                <Table>
-                    <TableHeader>
-                        <TableRow className='border-primary/20 hover:bg-transparent'>
-                            <TableHead className='text-primary font-semibold'>
-                                Name
-                            </TableHead>
-                            <TableHead className='text-primary font-semibold'>
-                                Company
-                            </TableHead>
-                            <TableHead className='text-primary font-semibold'>
-                                Contact
-                            </TableHead>
-                            <TableHead className='text-primary font-semibold'>
-                                Status
-                            </TableHead>
-                            <TableHead className='text-primary font-semibold'>
-                                Follow Up
-                            </TableHead>
-                            <TableHead className='text-primary font-semibold'>
-                                Actions
-                            </TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {contacts.map((contact) => (
-                            <TableRow
-                                key={contact.id}
-                                className='border-primary/10 hover:bg-primary/5 transition-colors'>
-                                <TableCell className='text-white font-medium'>
-                                    {contact.name}
-                                </TableCell>
-                                <TableCell className='text-gray-300'>
-                                    {contact.company || "-"}
-                                </TableCell>
-                                <TableCell className='text-gray-300'>
-                                    <div className='flex flex-col gap-1'>
-                                        {contact.email && (
-                                            <div className='text-sm'>
-                                                {contact.email}
-                                            </div>
-                                        )}
-                                        {contact.phone && (
-                                            <div className='text-sm text-gray-400'>
-                                                {contact.phone}
-                                            </div>
-                                        )}
-                                    </div>
-                                </TableCell>
-                                <TableCell>
-                                    {contact.status ? (
-                                        <Badge
-                                            className={getStatusColor(
-                                                contact.status
-                                            )}>
-                                            {contact.status}
-                                        </Badge>
-                                    ) : (
-                                        <span className='text-gray-500'>-</span>
-                                    )}
-                                </TableCell>
-                                <TableCell className='text-gray-300'>
-                                    {contact.follow_up_date
-                                        ? new Date(
-                                              contact.follow_up_date
-                                          ).toLocaleDateString()
-                                        : "-"}
-                                </TableCell>
-                                <TableCell>
-                                    <div className='flex gap-2'>
-                                        {contact.email && (
-                                            <Button
-                                                size='sm'
-                                                variant='ghost'
-                                                onClick={() =>
-                                                    openEmail(contact.email)
+                <div className='overflow-x-auto'>
+                    <Table>
+                        <TableHeader>
+                            <TableRow className='border-primary/20 hover:bg-transparent'>
+                                <TableHead className='text-primary font-semibold'>
+                                    Name
+                                </TableHead>
+                                <TableHead className='text-primary font-semibold'>
+                                    Company
+                                </TableHead>
+                                <TableHead className='text-primary font-semibold'>
+                                    Contact
+                                </TableHead>
+                                <TableHead className='text-primary font-semibold'>
+                                    Status
+                                </TableHead>
+                                <TableHead className='text-primary font-semibold'>
+                                    Follow Up
+                                </TableHead>
+                                <TableHead className='text-primary font-semibold'>
+                                    Actions
+                                </TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {contacts.map((contact) => (
+                                <TableRow
+                                    key={contact.id}
+                                    className='border-primary/10 hover:bg-primary/5 transition-colors'>
+                                    <TableCell className='text-white font-medium'>
+                                        {contact.name}
+                                    </TableCell>
+                                    <TableCell className='text-gray-300'>
+                                        {contact.company || "-"}
+                                    </TableCell>
+                                    <TableCell className='text-gray-300'>
+                                        <div className='flex flex-col gap-1'>
+                                            {contact.email && (
+                                                <div className='text-sm'>
+                                                    {contact.email}
+                                                </div>
+                                            )}
+                                            {contact.phone && (
+                                                <div className='text-sm text-gray-400'>
+                                                    {contact.phone}
+                                                </div>
+                                            )}
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <Select
+                                            value={contact.status || ""}
+                                            onValueChange={(value) =>
+                                                handleStatusChange(
+                                                    contact.id,
+                                                    value
+                                                )
+                                            }>
+                                            <SelectTrigger className='w-[180px] bg-transparent border-primary/20 text-white'>
+                                                <SelectValue placeholder='Select status' />
+                                            </SelectTrigger>
+                                            <SelectContent className='bg-gray-800 border-primary/20'>
+                                                <SelectItem value='Screening in Process'>
+                                                    Screening in Process
+                                                </SelectItem>
+                                                <SelectItem value='Interviewing'>
+                                                    Interviewing
+                                                </SelectItem>
+                                                <SelectItem value='Final Round Offer'>
+                                                    Final Round Offer
+                                                </SelectItem>
+                                                <SelectItem value='Offer Letter'>
+                                                    Offer Letter
+                                                </SelectItem>
+                                                <SelectItem value='Rejected'>
+                                                    Rejected
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className='flex items-center gap-2'>
+                                            <input
+                                                type='date'
+                                                value={
+                                                    contact.follow_up_date || ""
                                                 }
-                                                className='h-8 w-8 p-0 hover:bg-primary/20'
-                                                title='Send Email'>
-                                                <Mail className='h-4 w-4 text-primary' />
-                                            </Button>
-                                        )}
-                                        {contact.phone && (
-                                            <Button
-                                                size='sm'
-                                                variant='ghost'
-                                                onClick={() =>
-                                                    openPhone(contact.phone)
+                                                onChange={(e) =>
+                                                    handleFollowUpDateChange(
+                                                        contact.id,
+                                                        e.target.value
+                                                    )
                                                 }
-                                                className='h-8 w-8 p-0 hover:bg-primary/20'
-                                                title='Call'>
-                                                <Phone className='h-4 w-4 text-primary' />
-                                            </Button>
-                                        )}
-                                        {contact.link && (
-                                            <Button
-                                                size='sm'
-                                                variant='ghost'
-                                                onClick={() =>
-                                                    openLink(contact.link)
-                                                }
-                                                className='h-8 w-8 p-0 hover:bg-primary/20'
-                                                title='Open Link'>
-                                                <ExternalLink className='h-4 w-4 text-primary' />
-                                            </Button>
-                                        )}
-                                        <AlertDialog>
-                                            <AlertDialogTrigger asChild>
+                                                className='bg-transparent border border-primary/20 rounded-md px-2 py-1 text-white'
+                                            />
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className='flex gap-2'>
+                                            {contact.email && (
                                                 <Button
                                                     size='sm'
                                                     variant='ghost'
-                                                    className='h-8 w-8 p-0 hover:bg-red-500/20'
-                                                    title='Delete Contact'>
-                                                    <Trash2 className='h-4 w-4 text-red-400' />
+                                                    onClick={() =>
+                                                        openEmail(contact.email)
+                                                    }
+                                                    className='h-8 w-8 p-0 hover:bg-primary/20'
+                                                    title='Send Email'>
+                                                    <Mail className='h-4 w-4 text-primary' />
                                                 </Button>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent className='glass-dark border-primary/20'>
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle className='text-white'>
-                                                        Delete Contact
-                                                    </AlertDialogTitle>
-                                                    <AlertDialogDescription className='text-gray-300'>
-                                                        Are you sure you want to
-                                                        delete {contact.name}?
-                                                        This action cannot be
-                                                        undone.
-                                                    </AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel className='border-gray-600 text-gray-300'>
-                                                        Cancel
-                                                    </AlertDialogCancel>
-                                                    <AlertDialogAction
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                contact.id
-                                                            )
-                                                        }
-                                                        className='bg-red-500 hover:bg-red-600'>
-                                                        Delete
-                                                    </AlertDialogAction>
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
-                                    </div>
-                                </TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
+                                            )}
+                                            {contact.phone && (
+                                                <Button
+                                                    size='sm'
+                                                    variant='ghost'
+                                                    onClick={() =>
+                                                        openPhone(contact.phone)
+                                                    }
+                                                    className='h-8 w-8 p-0 hover:bg-primary/20'
+                                                    title='Call'>
+                                                    <Phone className='h-4 w-4 text-primary' />
+                                                </Button>
+                                            )}
+                                            {contact.link && (
+                                                <Button
+                                                    size='sm'
+                                                    variant='ghost'
+                                                    onClick={() =>
+                                                        openLink(contact.link)
+                                                    }
+                                                    className='h-8 w-8 p-0 hover:bg-primary/20'
+                                                    title='Open Link'>
+                                                    <ExternalLink className='h-4 w-4 text-primary' />
+                                                </Button>
+                                            )}
+                                            <Button
+                                                size='sm'
+                                                variant='ghost'
+                                                onClick={() =>
+                                                    handleEdit(contact)
+                                                }
+                                                className='h-8 w-8 p-0 hover:bg-primary/20'
+                                                title='Edit Contact'>
+                                                <Edit2 className='h-4 w-4 text-primary' />
+                                            </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button
+                                                        size='sm'
+                                                        variant='ghost'
+                                                        className='h-8 w-8 p-0 hover:bg-red-500/20'
+                                                        title='Delete Contact'>
+                                                        <Trash2 className='h-4 w-4 text-red-400' />
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent className='glass-dark border-primary/20'>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle className='text-white'>
+                                                            Delete Contact
+                                                        </AlertDialogTitle>
+                                                        <AlertDialogDescription className='text-gray-300'>
+                                                            Are you sure you
+                                                            want to delete this
+                                                            contact? This action
+                                                            cannot be undone.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel className='bg-gray-800 text-white border-gray-600'>
+                                                            Cancel
+                                                        </AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() =>
+                                                                handleDelete(
+                                                                    contact.id
+                                                                )
+                                                            }
+                                                            className='bg-red-500 text-white hover:bg-red-600'>
+                                                            Delete
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </div>
             </div>
-        </div>
+
+            <AddRecruiterModal
+                isOpen={isModalOpen}
+                onClose={handleModalClose}
+                onContactAdded={onContactsChange}
+                editContact={editingContact}
+            />
+        </>
     )
 }
 

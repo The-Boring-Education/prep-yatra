@@ -1,5 +1,4 @@
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -9,7 +8,7 @@ import {
     SelectContent,
     SelectItem,
     SelectTrigger,
-    SelectValue,
+    SelectValue
 } from "@/components/ui/select"
 import {
     Dialog,
@@ -20,19 +19,21 @@ import {
     DialogTitle
 } from "@/components/ui/dialog"
 import { supabase } from "@/integrations/supabase/client"
-import { CreateRecruiterContact } from "@/types/recruiters"
+import { CreateRecruiterContact, RecruiterContact } from "@/types/recruiters"
 import { useToast } from "@/hooks/use-toast"
 
 interface AddRecruiterModalProps {
     isOpen: boolean
     onClose: () => void
     onContactAdded: () => void
+    editContact?: RecruiterContact
 }
 
 const AddRecruiterModal = ({
     isOpen,
     onClose,
-    onContactAdded
+    onContactAdded,
+    editContact
 }: AddRecruiterModalProps) => {
     const { toast } = useToast()
     const [loading, setLoading] = useState(false)
@@ -48,38 +49,21 @@ const AddRecruiterModal = ({
         comments: ""
     })
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
-
-        try {
-            const {
-                data: { user }
-            } = await supabase.auth.getUser()
-            if (!user) {
-                toast({
-                    title: "Error",
-                    description: "You must be logged in to add contacts",
-                    variant: "destructive"
-                })
-                return
-            }
-
-            const { error } = await supabase.from("recruiters").insert([
-                {
-                    ...formData,
-                    user_id: user.id
-                }
-            ])
-
-            if (error) throw error
-
-            toast({
-                title: "Success",
-                description: "Recruiter contact added successfully!"
+    useEffect(() => {
+        if (editContact) {
+            setFormData({
+                name: editContact.name || "",
+                company: editContact.company || "",
+                email: editContact.email || "",
+                phone: editContact.phone || "",
+                status: editContact.status || "Screening in Process",
+                follow_up_date: editContact.follow_up_date || "",
+                last_interview_date: editContact.last_interview_date || "",
+                link: editContact.link || "",
+                comments: editContact.comments || ""
             })
-
-            // Reset form
+        } else {
+            // Reset form when opening for new contact
             setFormData({
                 name: "",
                 company: "",
@@ -91,14 +75,68 @@ const AddRecruiterModal = ({
                 link: "",
                 comments: ""
             })
+        }
+    }, [editContact, isOpen])
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+        setLoading(true)
+
+        try {
+            const {
+                data: { user }
+            } = await supabase.auth.getUser()
+            if (!user) {
+                toast({
+                    title: "Error",
+                    description: "You must be logged in to manage contacts",
+                    variant: "destructive"
+                })
+                return
+            }
+
+            if (editContact) {
+                // Update existing contact
+                const { error } = await supabase
+                    .from("recruiters")
+                    .update({
+                        ...formData,
+                        user_id: user.id
+                    })
+                    .eq("id", editContact.id)
+
+                if (error) throw error
+
+                toast({
+                    title: "Success",
+                    description: "Recruiter contact updated successfully!"
+                })
+            } else {
+                // Create new contact
+                const { error } = await supabase.from("recruiters").insert([
+                    {
+                        ...formData,
+                        user_id: user.id
+                    }
+                ])
+
+                if (error) throw error
+
+                toast({
+                    title: "Success",
+                    description: "Recruiter contact added successfully!"
+                })
+            }
 
             onContactAdded()
             onClose()
         } catch (error) {
-            console.error("Error adding contact:", error)
+            console.error("Error managing contact:", error)
             toast({
                 title: "Error",
-                description: "Failed to add recruiter contact",
+                description: `Failed to ${
+                    editContact ? "update" : "add"
+                } recruiter contact`,
                 variant: "destructive"
             })
         } finally {
@@ -118,11 +156,14 @@ const AddRecruiterModal = ({
             <DialogContent className='sm:max-w-[600px] glass-dark border-primary/20'>
                 <DialogHeader>
                     <DialogTitle className='text-white'>
-                        Add New Recruiter Contact
+                        {editContact
+                            ? "Edit Recruiter Contact"
+                            : "Add New Recruiter Contact"}
                     </DialogTitle>
                     <DialogDescription className='text-gray-300'>
-                        Add a new recruiter to your network and keep track of
-                        your interactions.
+                        {editContact
+                            ? "Update the recruiter's information and track your interactions."
+                            : "Add a new recruiter to your network and keep track of your interactions."}
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className='space-y-4'>
@@ -296,7 +337,7 @@ const AddRecruiterModal = ({
                             type='submit'
                             disabled={loading}
                             className='bg-primary text-primary-foreground'>
-                            {loading ? "Adding..." : "Add Contact"}
+                            {loading ? "Managing..." : "Manage Contact"}
                         </Button>
                     </DialogFooter>
                 </form>
