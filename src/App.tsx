@@ -9,6 +9,7 @@ import Auth from "./pages/Auth"
 import Onboarding from "./pages/Onboarding"
 import Dashboard from "./pages/Dashboard"
 import NotFound from "./pages/NotFound"
+import Footer from "./components/Footer"
 
 const queryClient = new QueryClient()
 
@@ -27,6 +28,7 @@ const App: React.FC = () => {
                         <Route path='*' element={<NotFound />} />
                     </Routes>
                 </BrowserRouter>
+                <Footer />
             </TooltipProvider>
         </QueryClientProvider>
     )

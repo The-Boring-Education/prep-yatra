@@ -9,6 +9,7 @@ import { User } from "@supabase/supabase-js"
 import { RecruiterContact } from "@/types/recruiters"
 import AddRecruiterModal from "@/components/AddRecruiterModal"
 import RecruiterContactsTable from "@/components/RecruiterContactsTable"
+import Navbar from "@/components/Navbar"
 
 const Dashboard = () => {
     const navigate = useNavigate()
@@ -108,8 +109,12 @@ const Dashboard = () => {
     }
 
     return (
-        <div className='min-h-screen px-4 py-8'>
-            <div className='container mx-auto'>
+        <div className='min-h-screen px-0 py-0'>
+            <Navbar
+                username={profile?.username || user?.email || "User"}
+                onSignOut={handleSignOut}
+            />
+            <div className='container mx-auto px-4 py-8'>
                 <div className='flex justify-between items-center mb-8'>
                     <div>
                         <h1 className='text-3xl font-bold text-white mb-2'>
@@ -119,12 +124,6 @@ const Dashboard = () => {
                             Ready to turn your hustle into hires?
                         </p>
                     </div>
-                    <Button
-                        onClick={handleSignOut}
-                        variant='outline'
-                        className='border-gray-300 text-gray-900 hover:bg-gray-100'>
-                        Sign Out
-                    </Button>
                 </div>
 
                 <div className='grid md:grid-cols-3 gap-6 mb-8'>
