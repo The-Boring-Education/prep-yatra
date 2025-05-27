@@ -238,7 +238,7 @@ const AddRecruiterModal = ({
                                 <SelectTrigger className='bg-gray-800 border-gray-600 text-white'>
                                     <SelectValue placeholder='Select status' />
                                 </SelectTrigger>
-                                <SelectContent className='bg-gray-800 border-gray-600'>
+                                <SelectContent className='bg-gray-800 border-gray-600 text-white'>
                                     <SelectItem value='Screening in Process'>
                                         Screening in Process
                                     </SelectItem>
@@ -330,7 +330,7 @@ const AddRecruiterModal = ({
                             type='button'
                             variant='outline'
                             onClick={onClose}
-                            className='border-gray-600 text-gray-300'>
+                            className='border-gray-300 text-gray-900 hover:bg-gray-100'>
                             Cancel
                         </Button>
                         <Button

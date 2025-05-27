@@ -261,30 +261,38 @@ const RecruiterContactsTable = ({
                                     </TableCell>
                                     <TableCell>
                                         <Select
-                                            value={contact.status || ""}
+                                            value={contact.status}
                                             onValueChange={(value) =>
                                                 handleStatusChange(
                                                     contact.id,
                                                     value
                                                 )
                                             }>
-                                            <SelectTrigger className='w-[180px] bg-transparent border-primary/20 text-white'>
-                                                <SelectValue placeholder='Select status' />
-                                            </SelectTrigger>
-                                            <SelectContent className='bg-gray-800 border-primary/20'>
-                                                <SelectItem value='Screening in Process'>
+                                            <SelectTrigger className='w-[180px] bg-gray-800 border-primary/20 text-white' />
+                                            <SelectContent className='bg-gray-800 border-primary/20 text-white'>
+                                                <SelectItem
+                                                    value='Screening in Process'
+                                                    className='data-[state=checked]:bg-yellow-400 data-[state=checked]:text-gray-900'>
                                                     Screening in Process
                                                 </SelectItem>
-                                                <SelectItem value='Interviewing'>
+                                                <SelectItem
+                                                    value='Interviewing'
+                                                    className='data-[state=checked]:bg-yellow-400 data-[state=checked]:text-gray-900 '>
                                                     Interviewing
                                                 </SelectItem>
-                                                <SelectItem value='Final Round Offer'>
+                                                <SelectItem
+                                                    value='Final Round Offer'
+                                                    className='data-[state=checked]:bg-yellow-400 data-[state=checked]:text-gray-900 '>
                                                     Final Round Offer
                                                 </SelectItem>
-                                                <SelectItem value='Offer Letter'>
+                                                <SelectItem
+                                                    value='Offer Letter'
+                                                    className='data-[state=checked]:bg-yellow-400 data-[state=checked]:text-gray-900 '>
                                                     Offer Letter
                                                 </SelectItem>
-                                                <SelectItem value='Rejected'>
+                                                <SelectItem
+                                                    value='Rejected'
+                                                    className='data-[state=checked]:bg-yellow-400 data-[state=checked]:text-gray-900 '>
                                                     Rejected
                                                 </SelectItem>
                                             </SelectContent>
