@@ -256,8 +256,8 @@ const Dashboard = () => {
                         <p className='text-gray-300 mb-4'>
                             Track your preparation progress
                         </p>
-                        <Button className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
-                            Add Log
+                        <Button className='w-full bg-primary/60 text-primary-foreground hover:bg-primary/90'>
+                            Coming Soon
                         </Button>
                     </div>
                 </div>
