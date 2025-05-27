@@ -49,6 +49,8 @@ const AddRecruiterModal = ({
         comments: ""
     })
 
+    console.log("HERE", formData.status)
+
     useEffect(() => {
         if (editContact) {
             setFormData({
@@ -148,6 +150,7 @@ const AddRecruiterModal = ({
         field: keyof CreateRecruiterContact,
         value: string
     ) => {
+        console.log("HERE", 1, field, value)
         setFormData((prev) => ({ ...prev, [field]: value }))
     }
 
@@ -232,9 +235,10 @@ const AddRecruiterModal = ({
                             </Label>
                             <Select
                                 value={formData.status}
-                                onValueChange={(value) =>
+                                onValueChange={(value) => {
+                                    console.log("HERE", 2, value)
                                     handleInputChange("status", value)
-                                }>
+                                }}>
                                 <SelectTrigger className='bg-gray-800 border-gray-600 text-white'>
                                     <SelectValue placeholder='Select status' />
                                 </SelectTrigger>
