@@ -176,7 +176,7 @@ const AddRecruiterModal = ({
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className='space-y-4'>
                     <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                        <div>
+                        <div className='flex gap-2 flex-col'>
                             <Label htmlFor='name' className='text-white'>
                                 Name *
                             </Label>
@@ -191,7 +191,7 @@ const AddRecruiterModal = ({
                                 placeholder='e.g. Sarah Johnson'
                             />
                         </div>
-                        <div>
+                        <div className='flex gap-2 flex-col'>
                             <Label htmlFor='email' className='text-white'>
                                 Email
                             </Label>
@@ -206,7 +206,7 @@ const AddRecruiterModal = ({
                                 placeholder='e.g. sarah@google.com'
                             />
                         </div>
-                        <div>
+                        <div className='flex gap-2 flex-col'>
                             <Label htmlFor='phone' className='text-white'>
                                 Phone
                             </Label>
@@ -220,7 +220,7 @@ const AddRecruiterModal = ({
                                 placeholder='e.g. +1 (555) 123-4567'
                             />
                         </div>
-                        <div>
+                        <div className='flex gap-2 flex-col'>
                             <Label htmlFor='company' className='text-white'>
                                 Company
                             </Label>
@@ -262,7 +262,7 @@ const AddRecruiterModal = ({
                                 <option value='Rejected'>Rejected</option>
                             </select>
                         </div>
-                        <div>
+                        <div className='flex gap-2 flex-col'>
                             <Label htmlFor='link' className='text-white'>
                                 Link
                             </Label>
@@ -276,7 +276,7 @@ const AddRecruiterModal = ({
                                 placeholder='e.g. LinkedIn profile URL'
                             />
                         </div>
-                        <div>
+                        <div className='flex gap-2 flex-col'>
                             <Label
                                 htmlFor='follow_up_date'
                                 className='text-white'>
@@ -295,7 +295,7 @@ const AddRecruiterModal = ({
                                 className='bg-gray-800 border-gray-600 text-white'
                             />
                         </div>
-                        <div>
+                        <div className='flex gap-2 flex-col'>
                             <Label
                                 htmlFor='last_interview_date'
                                 className='text-white'>

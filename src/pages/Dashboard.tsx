@@ -122,7 +122,7 @@ const Dashboard = () => {
                     <Button
                         onClick={handleSignOut}
                         variant='outline'
-                        className='border-gray-600 text-gray-300 hover:bg-gray-800'>
+                        className='border-gray-300 text-gray-900 hover:bg-gray-100'>
                         Sign Out
                     </Button>
                 </div>
