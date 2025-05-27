@@ -260,43 +260,34 @@ const RecruiterContactsTable = ({
                                         </div>
                                     </TableCell>
                                     <TableCell>
-                                        <Select
-                                            value={contact.status}
-                                            onValueChange={(value) =>
+                                        <select
+                                            className='w-[180px] bg-gray-800 border border-primary/20 text-white rounded-md px-2 py-1'
+                                            value={contact.status || ""}
+                                            onChange={(e) =>
                                                 handleStatusChange(
                                                     contact.id,
-                                                    value
+                                                    e.target.value
                                                 )
                                             }>
-                                            <SelectTrigger className='w-[180px] bg-gray-800 border-primary/20 text-white' />
-                                            <SelectContent className='bg-gray-800 border-primary/20 text-white'>
-                                                <SelectItem
-                                                    value='Screening in Process'
-                                                    className='data-[state=checked]:bg-yellow-400 data-[state=checked]:text-gray-900'>
-                                                    Screening in Process
-                                                </SelectItem>
-                                                <SelectItem
-                                                    value='Interviewing'
-                                                    className='data-[state=checked]:bg-yellow-400 data-[state=checked]:text-gray-900 '>
-                                                    Interviewing
-                                                </SelectItem>
-                                                <SelectItem
-                                                    value='Final Round Offer'
-                                                    className='data-[state=checked]:bg-yellow-400 data-[state=checked]:text-gray-900 '>
-                                                    Final Round Offer
-                                                </SelectItem>
-                                                <SelectItem
-                                                    value='Offer Letter'
-                                                    className='data-[state=checked]:bg-yellow-400 data-[state=checked]:text-gray-900 '>
-                                                    Offer Letter
-                                                </SelectItem>
-                                                <SelectItem
-                                                    value='Rejected'
-                                                    className='data-[state=checked]:bg-yellow-400 data-[state=checked]:text-gray-900 '>
-                                                    Rejected
-                                                </SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                            <option value='' disabled>
+                                                Select status
+                                            </option>
+                                            <option value='Screening in Process'>
+                                                Screening in Process
+                                            </option>
+                                            <option value='Interviewing'>
+                                                Interviewing
+                                            </option>
+                                            <option value='Final Round Offer'>
+                                                Final Round Offer
+                                            </option>
+                                            <option value='Offer Letter'>
+                                                Offer Letter
+                                            </option>
+                                            <option value='Rejected'>
+                                                Rejected
+                                            </option>
+                                        </select>
                                     </TableCell>
                                     <TableCell>
                                         <DatePicker

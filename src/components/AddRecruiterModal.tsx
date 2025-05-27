@@ -59,8 +59,8 @@ const AddRecruiterModal = ({
                 email: editContact.email || "",
                 phone: editContact.phone || "",
                 status: editContact.status || "Screening in Process",
-                follow_up_date: editContact.follow_up_date || "",
-                last_interview_date: editContact.last_interview_date || "",
+                follow_up_date: editContact.follow_up_date,
+                last_interview_date: editContact.last_interview_date,
                 link: editContact.link || "",
                 comments: editContact.comments || ""
             })
@@ -96,6 +96,11 @@ const AddRecruiterModal = ({
                 })
                 return
             }
+
+            // formData validation
+            if (!formData.follow_up_date) formData.follow_up_date = null
+            if (!formData.last_interview_date)
+                formData.last_interview_date = null
 
             if (editContact) {
                 // Update existing contact
@@ -229,37 +234,33 @@ const AddRecruiterModal = ({
                                 placeholder='e.g. Google'
                             />
                         </div>
-                        <div>
+                        <div className='flex gap-2 flex-col'>
                             <Label htmlFor='status' className='text-white'>
                                 Status
                             </Label>
-                            <Select
-                                value={formData.status}
-                                onValueChange={(value) => {
-                                    console.log("HERE", 2, value)
-                                    handleInputChange("status", value)
-                                }}>
-                                <SelectTrigger className='bg-gray-800 border-gray-600 text-white'>
-                                    <SelectValue placeholder='Select status' />
-                                </SelectTrigger>
-                                <SelectContent className='bg-gray-800 border-gray-600 text-white'>
-                                    <SelectItem value='Screening in Process'>
-                                        Screening in Process
-                                    </SelectItem>
-                                    <SelectItem value='Interviewing'>
-                                        Interviewing
-                                    </SelectItem>
-                                    <SelectItem value='Final Round Offer'>
-                                        Final Round Offer
-                                    </SelectItem>
-                                    <SelectItem value='Offer Letter'>
-                                        Offer Letter
-                                    </SelectItem>
-                                    <SelectItem value='Rejected'>
-                                        Rejected
-                                    </SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <select
+                                className='w-full h-full bg-gray-800 border border-primary/20 text-white rounded-md px-2 py-1'
+                                value={formData.status || ""}
+                                onChange={(e) =>
+                                    handleInputChange("status", e.target.value)
+                                }>
+                                <option value='' disabled>
+                                    Select status
+                                </option>
+                                <option value='Screening in Process'>
+                                    Screening in Process
+                                </option>
+                                <option value='Interviewing'>
+                                    Interviewing
+                                </option>
+                                <option value='Final Round Offer'>
+                                    Final Round Offer
+                                </option>
+                                <option value='Offer Letter'>
+                                    Offer Letter
+                                </option>
+                                <option value='Rejected'>Rejected</option>
+                            </select>
                         </div>
                         <div>
                             <Label htmlFor='link' className='text-white'>
