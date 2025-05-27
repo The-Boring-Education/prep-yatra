@@ -62,7 +62,14 @@ const Dashboard = () => {
                 .order("created_at", { ascending: false })
 
             if (error) throw error
-            setRecruiterContacts(data || [])
+            
+            // Type cast the data to ensure status field matches our union type
+            const typedData: RecruiterContact[] = (data || []).map(item => ({
+                ...item,
+                status: item.status as RecruiterContact["status"]
+            }))
+            
+            setRecruiterContacts(typedData)
         } catch (error) {
             console.error("Error fetching recruiter contacts:", error)
         }
