@@ -13,7 +13,8 @@ import Navbar from "@/components/Navbar"
 import { getPrepLogs } from "../services/prep-logs"
 import { PrepLog } from "../types/prep-logs"
 import moment from "moment"
-import AddPrepLogModal from "../components/AddPrepLogModal"
+import PrepLogModal from "../components/AddPrepLogModal"
+import PrepLogsTable from "../components/PrepLogsTable"
 
 const Dashboard = () => {
     const navigate = useNavigate()
@@ -28,7 +29,8 @@ const Dashboard = () => {
     const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
     const [prepLogsCount, setPrepLogsCount] = useState(0)
     const [currentStreak, setCurrentStreak] = useState(0)
-    const [isAddPrepLogModalOpen, setIsAddPrepLogModalOpen] = useState(false)
+    const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
+    const [editingPrepLog, setEditingPrepLog] = useState<PrepLog | null>(null)
 
     useEffect(() => {
         const checkAuthAndProfile = async () => {
@@ -111,9 +113,6 @@ const Dashboard = () => {
                 moment(b.log_date).valueOf() - moment(a.log_date).valueOf()
         )
 
-        let streak = 0
-        let currentDate = moment().startOf("day") // Start checking from the beginning of today
-
         // Check if the most recent log was today or yesterday
         const latestLogDate = moment(sortedLogs[0].log_date).startOf("day")
         const today = moment().startOf("day")
@@ -125,7 +124,7 @@ const Dashboard = () => {
         }
 
         // Iterate through sorted logs to find consecutive days
-        let checkingDate = moment().startOf("day") // Start checking from today
+        const checkingDate = moment().startOf("day") // Start checking from today
         let currentStreakCount = 0
         const loggedDates = new Set(
             sortedLogs.map((log) =>
@@ -182,10 +181,22 @@ const Dashboard = () => {
         }
     }
 
-    const handlePrepLogAdded = () => {
+    const handlePrepLogSaved = () => {
         if (user) {
             fetchPrepLogs(user.id)
+            setIsPrepLogModalOpen(false)
+            setEditingPrepLog(null)
         }
+    }
+
+    const handleOpenPrepLogModalForEdit = (log: PrepLog) => {
+        setEditingPrepLog(log)
+        setIsPrepLogModalOpen(true)
+    }
+
+    const handleOpenPrepLogModalForAdd = () => {
+        setEditingPrepLog(null)
+        setIsPrepLogModalOpen(true)
     }
 
     const getInitials = (name: string) => {
@@ -349,47 +360,30 @@ const Dashboard = () => {
                         </div>
                     </div>
 
-                    {/* Prep Logs Section */}
+                    {/* Prep Logs Metrics Section - Keep for display */}
                     <div className='glass-dark rounded-2xl p-6'>
                         <h3 className='text-xl font-bold text-white mb-4 flex items-center gap-2'>
                             <BookOpen className='h-5 w-5 text-primary' /> Prep
-                            Logs
+                            Logs Summary
                         </h3>
-                        <div className='space-y-4'>
-                            <div className='flex justify-around text-center'>
-                                <div>
-                                    <div className='text-3xl font-bold text-primary mb-1'>
-                                        {prepLogsCount}
-                                    </div>
-                                    <p className='text-gray-300 text-sm'>
-                                        Days Logged
-                                    </p>
+                        <div className='flex justify-around text-center space-x-4'>
+                            <div>
+                                <div className='text-3xl font-bold text-primary mb-1'>
+                                    {prepLogsCount}
                                 </div>
-                                {/* Streak Display */}
-                                <div>
-                                    <div className='text-3xl font-bold text-primary mb-1'>
-                                        {currentStreak}
-                                    </div>
-                                    <p className='text-gray-300 text-sm'>
-                                        Day Streak
-                                    </p>
-                                </div>
+                                <p className='text-gray-300 text-sm'>
+                                    Days Logged
+                                </p>
                             </div>
-
-                            <Button
-                                onClick={() => setIsAddPrepLogModalOpen(true)}
-                                className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
-                                Add Prep Log
-                            </Button>
-
-                            {/* Optional: Button to View All Logs if needed later */}
-                            {/*
-                            <Button
-                                onClick={() => navigate('/prep-logs')}
-                                className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
-                                View All Logs
-                            </Button>
-                             */}
+                            {/* Streak Display */}
+                            <div>
+                                <div className='text-3xl font-bold text-primary mb-1'>
+                                    {currentStreak}
+                                </div>
+                                <p className='text-gray-300 text-sm'>
+                                    Day Streak
+                                </p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -404,6 +398,18 @@ const Dashboard = () => {
                         onContactsChange={handleContactAdded}
                     />
                 </div>
+
+                {/* Prep Logs Table */}
+                {user && (
+                    <div className='glass-dark rounded-2xl p-6'>
+                        <PrepLogsTable
+                            logs={prepLogs}
+                            userId={user.id}
+                            onLogAddedOrUpdated={handlePrepLogSaved}
+                            onLogDeleted={handlePrepLogSaved}
+                        />
+                    </div>
+                )}
             </div>
 
             {/* Modals */}
@@ -414,11 +420,15 @@ const Dashboard = () => {
             />
 
             {user && (
-                <AddPrepLogModal
-                    isOpen={isAddPrepLogModalOpen}
-                    onClose={() => setIsAddPrepLogModalOpen(false)}
+                <PrepLogModal
+                    isOpen={isPrepLogModalOpen}
+                    onClose={() => {
+                        setIsPrepLogModalOpen(false)
+                        setEditingPrepLog(null)
+                    }}
                     userId={user.id}
-                    onLogAdded={handlePrepLogAdded}
+                    onLogSaved={handlePrepLogSaved}
+                    editingLog={editingPrepLog}
                 />
             )}
         </div>

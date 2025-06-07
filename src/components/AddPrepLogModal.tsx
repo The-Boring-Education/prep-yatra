@@ -5,47 +5,62 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogTrigger
+    DialogTrigger,
+    DialogFooter
 } from "../components/ui/dialog"
 import { Input } from "../components/ui/input"
 import { Textarea } from "../components/ui/textarea"
 import { Label } from "../components/ui/label"
 import DatePicker from "react-datepicker"
 import "react-datepicker/dist/react-datepicker.css"
-import { addPrepLog } from "../services/prep-logs"
-import { CreatePrepLogDto } from "../types/prep-logs"
+import { addPrepLog, updatePrepLog } from "../services/prep-logs"
+import { CreatePrepLogDto, PrepLog, UpdatePrepLogDto } from "../types/prep-logs"
 import { useToast } from "../hooks/use-toast"
 
-interface AddPrepLogModalProps {
+interface PrepLogModalProps {
     isOpen: boolean
     onClose: () => void
-    userId: string // Need user ID to associate the log
-    onLogAdded: () => void // Callback to refresh logs on the dashboard
+    userId: string // Needed to associate new logs
+    onLogSaved: () => void // Callback to refresh logs after saving (add or update)
+    editingLog?: PrepLog | null // Optional: log to edit
 }
 
-const AddPrepLogModal: React.FC<AddPrepLogModalProps> = ({
+const PrepLogModal: React.FC<PrepLogModalProps> = ({
     isOpen,
     onClose,
     userId,
-    onLogAdded
+    onLogSaved,
+    editingLog
 }) => {
     const { toast } = useToast()
-    const [logDate, setLogDate] = useState<Date | null>(new Date())
-    const [logs, setLogs] = useState<string[]>([""]) // Array of log points
-    const [hoursInMinutes, setHoursInMinutes] = useState<number>(0)
+    const [logDate, setLogDate] = useState<Date | null>(
+        editingLog ? new Date(editingLog.log_date) : new Date()
+    )
+    const [logs, setLogs] = useState<string[]>(
+        editingLog ? editingLog.logs : [""]
+    )
+    const [hoursInMinutes, setHoursInMinutes] = useState<number>(
+        editingLog ? editingLog.hours_in_minutes : 0
+    )
     const [errors, setErrors] = useState<{ logs?: string; hours?: string }>({})
     const [isSaving, setIsSaving] = useState(false)
 
-    // Reset form when modal opens
+    // Reset form when modal opens or editingLog changes
     useEffect(() => {
         if (isOpen) {
-            setLogDate(new Date())
-            setLogs([""])
-            setHoursInMinutes(0)
-            setErrors({})
+            if (editingLog) {
+                setLogDate(new Date(editingLog.log_date))
+                setLogs(editingLog.logs)
+                setHoursInMinutes(editingLog.hours_in_minutes)
+            } else {
+                setLogDate(new Date())
+                setLogs([""])
+                setHoursInMinutes(0)
+            }
+            setErrors({}) // Clear errors on modal open/editLog change
             setIsSaving(false)
         }
-    }, [isOpen])
+    }, [isOpen, editingLog])
 
     const handleLogChange = (index: number, value: string) => {
         const newLogs = [...logs]
@@ -81,25 +96,40 @@ const AddPrepLogModal: React.FC<AddPrepLogModalProps> = ({
 
         setIsSaving(true)
 
-        const logData: CreatePrepLogDto = {
+        const logData = {
             log_date: logDate?.toISOString().split("T")[0] || "", // Format as YYYY-MM-DD
             logs: logs.filter((log) => log.trim() !== ""), // Filter out empty logs
             hours_in_minutes: hoursInMinutes
         }
 
-        const newLog = await addPrepLog(userId, logData)
+        let success = false
+        if (editingLog) {
+            const updateData: UpdatePrepLogDto = {
+                log_date: logData.log_date,
+                logs: logData.logs,
+                hours_in_minutes: logData.hours_in_minutes
+            }
+            const updatedLog = await updatePrepLog(editingLog.id, updateData)
+            success = !!updatedLog // Check if updatedLog is not null
+        } else {
+            const newLog = await addPrepLog(userId, logData as CreatePrepLogDto) // Cast for type safety
+            success = !!newLog // Check if newLog is not null
+        }
 
-        if (newLog) {
+        if (success) {
             toast({
                 title: "Success",
-                description: "Prep log added successfully."
+                description: `Prep log ${
+                    editingLog ? "updated" : "added"
+                } successfully.`
             })
-            onLogAdded() // Notify parent to refresh
-            onClose() // Close modal
+            onLogSaved() // Notify parent to refresh
         } else {
             toast({
                 title: "Error",
-                description: "Failed to add prep log.",
+                description: `Failed to ${
+                    editingLog ? "update" : "add"
+                } prep log.`,
                 variant: "destructive"
             })
         }
@@ -110,7 +140,9 @@ const AddPrepLogModal: React.FC<AddPrepLogModalProps> = ({
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className='sm:max-w-[425px]'>
                 <DialogHeader>
-                    <DialogTitle>Add Prep Log</DialogTitle>
+                    <DialogTitle>
+                        {editingLog ? "Edit" : "Add"} Prep Log
+                    </DialogTitle>
                 </DialogHeader>
                 <div className='grid gap-4 py-4'>
                     <div className='grid grid-cols-4 items-center gap-4'>
@@ -168,6 +200,7 @@ const AddPrepLogModal: React.FC<AddPrepLogModalProps> = ({
                                     />
                                     {logs.length > 1 && (
                                         <Button
+                                            type='button'
                                             variant='destructive'
                                             size='sm'
                                             onClick={() =>
@@ -193,14 +226,20 @@ const AddPrepLogModal: React.FC<AddPrepLogModalProps> = ({
                         )}
                     </div>
                 </div>
-                <div className='flex justify-end'>
+                <DialogFooter>
                     <Button onClick={handleSave} disabled={isSaving}>
-                        {isSaving ? "Saving..." : "Save Log"}
+                        {isSaving
+                            ? editingLog
+                                ? "Updating..."
+                                : "Saving..."
+                            : editingLog
+                            ? "Save Changes"
+                            : "Save Log"}
                     </Button>
-                </div>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
     )
 }
 
-export default AddPrepLogModal
+export default PrepLogModal
