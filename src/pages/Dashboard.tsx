@@ -13,6 +13,7 @@ import Navbar from "@/components/Navbar"
 import { getPrepLogs } from "../services/prep-logs"
 import { PrepLog } from "../types/prep-logs"
 import moment from "moment"
+import AddPrepLogModal from "../components/AddPrepLogModal"
 
 const Dashboard = () => {
     const navigate = useNavigate()
@@ -22,10 +23,12 @@ const Dashboard = () => {
     const [recruiterContacts, setRecruiterContacts] = useState<
         RecruiterContact[]
     >([])
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+    const [isAddRecruiterModalOpen, setIsAddRecruiterModalOpen] =
+        useState(false)
     const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
     const [prepLogsCount, setPrepLogsCount] = useState(0)
     const [currentStreak, setCurrentStreak] = useState(0)
+    const [isAddPrepLogModalOpen, setIsAddPrepLogModalOpen] = useState(false)
 
     useEffect(() => {
         const checkAuthAndProfile = async () => {
@@ -89,7 +92,7 @@ const Dashboard = () => {
             if (logs) {
                 setPrepLogs(logs)
                 setPrepLogsCount(logs.length)
-                calculateStreak(logs)
+                calculateStreak(logs) // Calculate streak after fetching logs
             }
         } catch (error) {
             console.error("Error fetching prep logs:", error)
@@ -176,6 +179,12 @@ const Dashboard = () => {
     const handleContactAdded = () => {
         if (user) {
             fetchRecruiterContacts(user.id)
+        }
+    }
+
+    const handlePrepLogAdded = () => {
+        if (user) {
+            fetchPrepLogs(user.id)
         }
     }
 
@@ -322,7 +331,7 @@ const Dashboard = () => {
                             </div>
 
                             <Button
-                                onClick={() => setIsAddModalOpen(true)}
+                                onClick={() => setIsAddRecruiterModalOpen(true)}
                                 className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
                                 Add New Contact
                             </Button>
@@ -368,10 +377,19 @@ const Dashboard = () => {
                             </div>
 
                             <Button
-                                onClick={() => navigate("/prep-logs")}
+                                onClick={() => setIsAddPrepLogModalOpen(true)}
+                                className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
+                                Add Prep Log
+                            </Button>
+
+                            {/* Optional: Button to View All Logs if needed later */}
+                            {/*
+                            <Button
+                                onClick={() => navigate('/prep-logs')}
                                 className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
                                 View All Logs
                             </Button>
+                             */}
                         </div>
                     </div>
                 </div>
@@ -388,11 +406,21 @@ const Dashboard = () => {
                 </div>
             </div>
 
+            {/* Modals */}
             <AddRecruiterModal
-                isOpen={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
+                isOpen={isAddRecruiterModalOpen}
+                onClose={() => setIsAddRecruiterModalOpen(false)}
                 onContactAdded={handleContactAdded}
             />
+
+            {user && (
+                <AddPrepLogModal
+                    isOpen={isAddPrepLogModalOpen}
+                    onClose={() => setIsAddPrepLogModalOpen(false)}
+                    userId={user.id}
+                    onLogAdded={handlePrepLogAdded}
+                />
+            )}
         </div>
     )
 }
