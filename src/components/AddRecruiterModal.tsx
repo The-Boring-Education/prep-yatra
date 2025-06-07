@@ -42,8 +42,6 @@ const AddRecruiterModal = ({
         comments: ""
     })
 
-    console.log("HERE", formData.status)
-
     useEffect(() => {
         if (editContact) {
             setFormData({
@@ -148,7 +146,6 @@ const AddRecruiterModal = ({
         field: keyof CreateRecruiterContact,
         value: string
     ) => {
-        console.log("HERE", 1, field, value)
         setFormData((prev) => ({ ...prev, [field]: value }))
     }
 

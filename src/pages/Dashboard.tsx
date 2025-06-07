@@ -3,13 +3,16 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, MapPin, Calendar, Award } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
+import { ExternalLink, MapPin, Calendar, Award, BookOpen } from "lucide-react"
+import { supabase } from "../lib/supabase"
 import { User } from "@supabase/supabase-js"
 import { RecruiterContact } from "@/types/recruiters"
 import AddRecruiterModal from "@/components/AddRecruiterModal"
 import RecruiterContactsTable from "@/components/RecruiterContactsTable"
 import Navbar from "@/components/Navbar"
+import { getPrepLogs } from "../services/prep-logs"
+import { PrepLog } from "../types/prep-logs"
+import moment from "moment"
 
 const Dashboard = () => {
     const navigate = useNavigate()
@@ -20,6 +23,9 @@ const Dashboard = () => {
         RecruiterContact[]
     >([])
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+    const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
+    const [prepLogsCount, setPrepLogsCount] = useState(0)
+    const [currentStreak, setCurrentStreak] = useState(0)
 
     useEffect(() => {
         const checkAuthAndProfile = async () => {
@@ -48,6 +54,7 @@ const Dashboard = () => {
 
             setProfile(profileData)
             await fetchRecruiterContacts(session.user.id)
+            await fetchPrepLogs(session.user.id)
             setLoading(false)
         }
 
@@ -74,6 +81,91 @@ const Dashboard = () => {
         } catch (error) {
             console.error("Error fetching recruiter contacts:", error)
         }
+    }
+
+    const fetchPrepLogs = async (userId: string) => {
+        try {
+            const logs = await getPrepLogs(userId)
+            if (logs) {
+                setPrepLogs(logs)
+                setPrepLogsCount(logs.length)
+                calculateStreak(logs)
+            }
+        } catch (error) {
+            console.error("Error fetching prep logs:", error)
+        }
+    }
+
+    const calculateStreak = (logs: PrepLog[]) => {
+        if (logs.length === 0) {
+            setCurrentStreak(0)
+            return
+        }
+
+        // Sort logs by date in descending order to easily check recent days
+        const sortedLogs = [...logs].sort(
+            (a, b) =>
+                moment(b.log_date).valueOf() - moment(a.log_date).valueOf()
+        )
+
+        let streak = 0
+        let currentDate = moment().startOf("day") // Start checking from the beginning of today
+
+        // Check if the most recent log was today or yesterday
+        const latestLogDate = moment(sortedLogs[0].log_date).startOf("day")
+        const today = moment().startOf("day")
+        const yesterday = moment().subtract(1, "day").startOf("day")
+
+        if (!latestLogDate.isSame(today) && !latestLogDate.isSame(yesterday)) {
+            setCurrentStreak(0) // Latest log is not today or yesterday, streak is 0
+            return
+        }
+
+        // Iterate through sorted logs to find consecutive days
+        let checkingDate = moment().startOf("day") // Start checking from today
+        let currentStreakCount = 0
+        const loggedDates = new Set(
+            sortedLogs.map((log) =>
+                moment(log.log_date).startOf("day").toISOString()
+            )
+        )
+
+        // Check for today
+        if (loggedDates.has(today.toISOString())) {
+            currentStreakCount++
+            checkingDate.subtract(1, "day")
+        } else if (loggedDates.has(yesterday.toISOString())) {
+            // If today is missed but yesterday is logged, streak starts from yesterday
+            currentStreakCount++
+            checkingDate.subtract(2, "days") // Start checking from the day before yesterday
+        } else {
+            setCurrentStreak(0)
+            return
+        }
+
+        // Check for consecutive previous days
+        while (true) {
+            const dateToCheck = checkingDate.toISOString()
+            if (loggedDates.has(dateToCheck)) {
+                currentStreakCount++
+                checkingDate.subtract(1, "day")
+            } else {
+                // If the current checking date is not in the logs, the streak is broken
+                break
+            }
+            // Prevent infinite loop - stop if we go beyond the earliest log date
+            if (
+                checkingDate.isBefore(
+                    moment(sortedLogs[sortedLogs.length - 1].log_date).startOf(
+                        "day"
+                    )
+                )
+            ) {
+                break
+            }
+        }
+
+        setCurrentStreak(currentStreakCount)
     }
 
     const handleSignOut = async () => {
@@ -250,57 +342,57 @@ const Dashboard = () => {
 
                     {/* Prep Logs Section */}
                     <div className='glass-dark rounded-2xl p-6'>
-                        <h3 className='text-xl font-bold text-white mb-4'>
-                            📝 Prep Logs
+                        <h3 className='text-xl font-bold text-white mb-4 flex items-center gap-2'>
+                            <BookOpen className='h-5 w-5 text-primary' /> Prep
+                            Logs
                         </h3>
-                        <p className='text-gray-300 mb-4'>
-                            Track your preparation progress
-                        </p>
-                        <Button className='w-full bg-primary/60 text-primary-foreground hover:bg-primary/90'>
-                            Coming Soon
-                        </Button>
-                    </div>
-                </div>
+                        <div className='space-y-4'>
+                            <div className='flex justify-around text-center'>
+                                <div>
+                                    <div className='text-3xl font-bold text-primary mb-1'>
+                                        {prepLogsCount}
+                                    </div>
+                                    <p className='text-gray-300 text-sm'>
+                                        Days Logged
+                                    </p>
+                                </div>
+                                {/* Streak Display */}
+                                <div>
+                                    <div className='text-3xl font-bold text-primary mb-1'>
+                                        {currentStreak}
+                                    </div>
+                                    <p className='text-gray-300 text-sm'>
+                                        Day Streak
+                                    </p>
+                                </div>
+                            </div>
 
-                {/* Recruiter Contacts Table */}
-                <RecruiterContactsTable
-                    contacts={recruiterContacts}
-                    onContactsChange={handleContactAdded}
-                />
-
-                {/* Get Started Section */}
-                <div className='mt-8 text-center'>
-                    <div className='glass-dark rounded-2xl p-8'>
-                        <h2 className='text-2xl font-bold text-white mb-4'>
-                            🎯 Your Journey Starts Here
-                        </h2>
-                        <p className='text-gray-300 mb-6'>
-                            PrepYatra is your companion in turning hustle into
-                            hires.
-                            {recruiterContacts.length === 0
-                                ? "Start by adding your first recruiter contact!"
-                                : "Keep building your network and tracking your progress!"}
-                        </p>
-                        <div className='flex gap-4 justify-center'>
                             <Button
-                                onClick={() => setIsAddModalOpen(true)}
-                                className='bg-primary text-primary-foreground hover:bg-primary/90'>
-                                🚀{" "}
-                                {recruiterContacts.length === 0
-                                    ? "Add First Contact"
-                                    : "Add More Contacts"}
+                                onClick={() => navigate("/prep-logs")}
+                                className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
+                                View All Logs
                             </Button>
                         </div>
                     </div>
                 </div>
 
-                {/* Add Recruiter Modal */}
-                <AddRecruiterModal
-                    isOpen={isAddModalOpen}
-                    onClose={() => setIsAddModalOpen(false)}
-                    onContactAdded={handleContactAdded}
-                />
+                {/* Recruiter Contacts Table */}
+                <div className='glass-dark rounded-2xl p-6'>
+                    <h3 className='text-xl font-bold text-white mb-4'>
+                        Recruiter Contacts
+                    </h3>
+                    <RecruiterContactsTable
+                        contacts={recruiterContacts}
+                        onContactsChange={handleContactAdded}
+                    />
+                </div>
             </div>
+
+            <AddRecruiterModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onContactAdded={handleContactAdded}
+            />
         </div>
     )
 }
