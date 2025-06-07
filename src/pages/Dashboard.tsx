@@ -31,6 +31,7 @@ const Dashboard = () => {
     const [currentStreak, setCurrentStreak] = useState(0)
     const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
     const [editingPrepLog, setEditingPrepLog] = useState<PrepLog | null>(null)
+    const [lastPrepLogDate, setLastPrepLogDate] = useState<string | null>(null)
 
     useEffect(() => {
         const checkAuthAndProfile = async () => {
@@ -91,13 +92,28 @@ const Dashboard = () => {
     const fetchPrepLogs = async (userId: string) => {
         try {
             const logs = await getPrepLogs(userId)
-            if (logs) {
+            if (logs && logs.length > 0) {
                 setPrepLogs(logs)
                 setPrepLogsCount(logs.length)
-                calculateStreak(logs) // Calculate streak after fetching logs
+                calculateStreak(logs)
+                const latestLog = logs.reduce((latest, log) => {
+                    return new Date(log.log_date) > new Date(latest.log_date)
+                        ? log
+                        : latest
+                }, logs[0])
+                setLastPrepLogDate(latestLog.log_date)
+            } else {
+                setPrepLogs([])
+                setPrepLogsCount(0)
+                setCurrentStreak(0)
+                setLastPrepLogDate(null)
             }
         } catch (error) {
             console.error("Error fetching prep logs:", error)
+            setPrepLogs([])
+            setPrepLogsCount(0)
+            setCurrentStreak(0)
+            setLastPrepLogDate(null)
         }
     }
 
@@ -353,7 +369,11 @@ const Dashboard = () => {
                                         Last contact added{" "}
                                         {new Date(
                                             recruiterContacts[0]?.created_at
-                                        ).toLocaleDateString()}
+                                        ).toLocaleDateString("en-US", {
+                                            month: "2-digit",
+                                            day: "2-digit",
+                                            year: "numeric"
+                                        })}
                                     </p>
                                 </div>
                             )}
@@ -366,30 +386,51 @@ const Dashboard = () => {
                             <BookOpen className='h-5 w-5 text-primary' /> Prep
                             Logs Summary
                         </h3>
-                        <div className='flex justify-around text-center space-x-4'>
-                            <div>
-                                <div className='text-3xl font-bold text-primary mb-1'>
-                                    {prepLogsCount}
+                        <div className='space-y-4'>
+                            <div className='flex justify-around text-center space-x-4'>
+                                <div>
+                                    <div className='text-3xl font-bold text-primary mb-1'>
+                                        {prepLogsCount}
+                                    </div>
+                                    <p className='text-gray-300 text-sm'>
+                                        Days Logged
+                                    </p>
                                 </div>
-                                <p className='text-gray-300 text-sm'>
-                                    Days Logged
-                                </p>
-                            </div>
-                            {/* Streak Display */}
-                            <div>
-                                <div className='text-3xl font-bold text-primary mb-1'>
-                                    {currentStreak}
+                                {/* Streak Display */}
+                                <div>
+                                    <div className='text-3xl font-bold text-primary mb-1'>
+                                        {currentStreak}
+                                    </div>
+                                    <p className='text-gray-300 text-sm'>
+                                        Day Streak
+                                    </p>
                                 </div>
-                                <p className='text-gray-300 text-sm'>
-                                    Day Streak
-                                </p>
                             </div>
+                            <Button
+                                onClick={handleOpenPrepLogModalForAdd}
+                                className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
+                                Add Prep Log
+                            </Button>
+                            {lastPrepLogDate && (
+                                <div className='text-center pt-2'>
+                                    <p className='text-gray-400 text-sm'>
+                                        Last log added{" "}
+                                        {new Date(
+                                            lastPrepLogDate
+                                        ).toLocaleDateString("en-US", {
+                                            month: "2-digit",
+                                            day: "2-digit",
+                                            year: "numeric"
+                                        })}
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
 
                 {/* Recruiter Contacts Table */}
-                <div className='glass-dark rounded-2xl p-6'>
+                <div className='glass-dark rounded-2xl p-6 mb-8 overflow-x-auto'>
                     <h3 className='text-xl font-bold text-white mb-4'>
                         Recruiter Contacts
                     </h3>
@@ -401,7 +442,7 @@ const Dashboard = () => {
 
                 {/* Prep Logs Table */}
                 {user && (
-                    <div className='glass-dark rounded-2xl p-6'>
+                    <div className='glass-dark rounded-2xl p-6 overflow-x-auto'>
                         <PrepLogsTable
                             logs={prepLogs}
                             userId={user.id}
