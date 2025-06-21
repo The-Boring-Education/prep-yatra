@@ -13,73 +13,96 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
+  const [centralUserId, setCentralUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
-    username: '',
-    linkedin_url: '',
-    experience_level: ''
+    workExperience: '',
+    workDomain: '',
+    techStack: [] as string[],
   });
 
   useEffect(() => {
-    const checkAuth = async () => {
+    const checkAuthAndFetchCentralUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
+
       if (!session?.user) {
         navigate('/auth');
         return;
       }
+
       setUser(session.user);
 
-      // Check if already onboarded
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('onboarding_completed')
-        .eq('id', session.user.id)
-        .single();
+      try {
+        const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/user?email=${session.user.email}`);
+        const result = await res.json();
 
-      if (profile?.onboarding_completed) {
-        navigate('/dashboard');
+        if (!result?.status || !result?.data?._id) {
+          throw new Error("User not found in central DB");
+        }
+
+        setCentralUserId(result.data._id);
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Could not verify user. Please try again.",
+          variant: "destructive",
+        });
+        navigate('/auth');
       }
     };
 
-    checkAuth();
-  }, [navigate]);
+    checkAuthAndFetchCentralUser();
+  }, [navigate, toast]);
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: string, value: string | string[]) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value
+      [field]: value,
+    }));
+  };
+
+  const toggleTechStack = (tech: string) => {
+    setFormData(prev => ({
+      ...prev,
+      techStack: prev.techStack.includes(tech)
+        ? prev.techStack.filter(t => t !== tech)
+        : [...prev.techStack, tech],
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (!user) return;
 
-    if (!formData.username || !formData.experience_level) {
+    if (!user || !centralUserId) return;
+
+    const { workExperience, workDomain, techStack } = formData;
+
+    if (!workExperience || !workDomain || techStack.length === 0) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
-        variant: "destructive"
+        variant: "destructive",
       });
       return;
     }
 
     try {
       setLoading(true);
-      
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          username: formData.username,
-          linkedin_url: formData.linkedin_url || null,
-          experience_level: formData.experience_level,
-          onboarding_completed: true,
-          updated_at: new Date().toISOString()
-        })
-        .eq('id', user.id);
 
-      if (error) throw error;
+      const response = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/user/onbording?userId=${centralUserId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workExperience: parseInt(workExperience),
+          workDomain,
+          techStack,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!result.status) throw new Error(result.message || "Onboarding failed");
 
       toast({
         title: "Welcome to PrepYatra!",
@@ -88,11 +111,11 @@ const Onboarding = () => {
 
       navigate('/dashboard');
     } catch (error) {
-      console.error('Error updating profile:', error);
+      console.error('Onboarding error:', error);
       toast({
         title: "Error",
-        description: "Failed to save your profile. Please try again.",
-        variant: "destructive"
+        description: "Failed to complete onboarding. Please try again.",
+        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -125,65 +148,78 @@ const Onboarding = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Work Experience */}
           <div>
-            <Label htmlFor="username" className="text-white font-medium">
-              Username *
+            <Label htmlFor="workExperience" className="text-white font-medium">
+              Work Experience (Years) *
             </Label>
             <Input
-              id="username"
-              type="text"
-              placeholder="Enter your username"
-              value={formData.username}
-              onChange={(e) => handleInputChange('username', e.target.value)}
+              id="workExperience"
+              type="number"
+              placeholder="e.g. 2"
+              value={formData.workExperience}
+              onChange={(e) => handleInputChange('workExperience', e.target.value)}
               className="mt-2 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
               required
             />
           </div>
 
+          {/* Work Domain */}
           <div>
-            <Label htmlFor="linkedin" className="text-white font-medium">
-              LinkedIn Profile URL
-            </Label>
-            <Input
-              id="linkedin"
-              type="url"
-              placeholder="https://linkedin.com/in/your-profile"
-              value={formData.linkedin_url}
-              onChange={(e) => handleInputChange('linkedin_url', e.target.value)}
-              className="mt-2 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
-            />
-          </div>
-
-          <div>
-            <Label className="text-white font-medium mb-4 block">
-              Experience Level *
-            </Label>
+            <Label className="text-white font-medium mb-4 block">Work Domain *</Label>
             <RadioGroup
-              value={formData.experience_level}
-              onValueChange={(value) => handleInputChange('experience_level', value)}
+              value={formData.workDomain}
+              onValueChange={(value) => handleInputChange('workDomain', value)}
               className="space-y-3"
             >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="entry" id="entry" className="border-gray-400" />
-                <Label htmlFor="entry" className="text-gray-300">Entry Level (0-2 years)</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="mid" id="mid" className="border-gray-400" />
-                <Label htmlFor="mid" className="text-gray-300">Mid Level (2-5 years)</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="senior" id="senior" className="border-gray-400" />
-                <Label htmlFor="senior" className="text-gray-300">Senior Level (5-8 years)</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="lead" id="lead" className="border-gray-400" />
-                <Label htmlFor="lead" className="text-gray-300">Lead/Principal (8+ years)</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="executive" id="executive" className="border-gray-400" />
-                <Label htmlFor="executive" className="text-gray-300">Executive/Director</Label>
-              </div>
+              {[
+                'WEB_DEVELOPMENT',
+                'DATA_SCIENCE',
+                'DEVOPS',
+                'MOBILE_DEVELOPMENT',
+                'AI_ML',
+                'UI_UX',
+                'CYBER_SECURITY',
+              ].map((domain) => (
+                <div key={domain} className="flex items-center space-x-2">
+                  <RadioGroupItem value={domain} id={domain} />
+                  <Label htmlFor={domain} className="text-gray-300">{domain.replace(/_/g, ' ')}</Label>
+                </div>
+              ))}
             </RadioGroup>
+          </div>
+
+          {/* Tech Stack */}
+          <div>
+            <Label className="text-white font-medium mb-4 block">Tech Stack *</Label>
+            <div className="grid grid-cols-2 gap-2">
+              {[
+                'JAVASCRIPT',
+                'TYPESCRIPT',
+                'REACT',
+                'NODE_JS',
+                'NEXT_JS',
+                'PYTHON',
+                'DJANGO',
+                'FLASK',
+                'JAVA',
+                'SPRING_BOOT',
+                'C_PLUS_PLUS',
+                'MONGO_DB',
+                'POSTGRESQL',
+                'AWS',
+                'DOCKER',
+              ].map((tech) => (
+                <label key={tech} className="flex items-center space-x-2 text-gray-300">
+                  <input
+                    type="checkbox"
+                    checked={formData.techStack.includes(tech)}
+                    onChange={() => toggleTechStack(tech)}
+                  />
+                  <span>{tech.replace(/_/g, ' ')}</span>
+                </label>
+              ))}
+            </div>
           </div>
 
           <Button
