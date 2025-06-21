@@ -16,7 +16,7 @@ const Auth = () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         setUser(session.user);
-        checkOnboardingStatus(session.user.id);
+        await createUserInWebapp(session.user);
       }
     };
 
@@ -27,9 +27,7 @@ const Auth = () => {
       async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
           setUser(session.user);
-          setTimeout(() => {
-            checkOnboardingStatus(session.user.id);
-          }, 0);
+          await createUserInWebapp(session.user);
         }
       }
     );
@@ -37,22 +35,37 @@ const Auth = () => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const checkOnboardingStatus = async (userId: string) => {
+  const createUserInWebapp = async (user: User) => {
     try {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('onboarding_completed')
-        .eq('id', userId)
-        .single();
+      const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/user`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: user.user_metadata?.name || '',
+          email: user.email,
+          image: user.user_metadata?.avatar_url || '',
+          provider: 'google',
+          providerAccountId: user.id,
+        }),
+      });
 
-      if (profile?.onboarding_completed) {
-        navigate('/dashboard');
-      } else {
-        navigate('/onboarding');
+      const data = await res.json();
+
+      // 🔍 Now check if isOnboarded is true or false
+      if (user.email) {
+        const checkRes = await fetch(
+          `${import.meta.env.VITE_TBE_BACKEND}/api/v1/user?email=${user.email}`
+        );
+        const checkData = await checkRes.json();
+
+        if (checkData?.data?.isOnboarded) {
+          navigate('/dashboard');
+        } else {
+          navigate('/onboarding');
+        }
       }
-    } catch (error) {
-      console.error('Error checking onboarding status:', error);
-      navigate('/onboarding');
+    } catch (err) {
+      console.error('Error creating/checking user in webapp:', err);
     }
   };
 
