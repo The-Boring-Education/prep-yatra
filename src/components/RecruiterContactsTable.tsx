@@ -43,114 +43,135 @@ import {
 import AddRecruiterModal from "./AddRecruiterModal"
 
 interface RecruiterContactsTableProps {
-    contacts: RecruiterContact[]
-    onContactsChange: () => void
+  contacts: RecruiterContact[];
+  onContactsChange: () => void;
+  mongoUserId?:string
 }
 
 const RecruiterContactsTable = ({
-    contacts,
-    onContactsChange
+  contacts,
+  onContactsChange,
+  mongoUserId
 }: RecruiterContactsTableProps) => {
     const { toast } = useToast()
     const [editingContact, setEditingContact] =
         useState<RecruiterContact | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-    const getStatusColor = (status?: string) => {
-        switch (status) {
-            case "Screening in Process":
-                return "bg-blue-500/20 text-blue-400 border-blue-500/30"
-            case "Interviewing":
-                return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
-            case "Final Round Offer":
-                return "bg-purple-500/20 text-purple-400 border-purple-500/30"
-            case "Offer Letter":
-                return "bg-green-500/20 text-green-400 border-green-500/30"
-            case "Rejected":
-                return "bg-red-500/20 text-red-400 border-red-500/30"
-            default:
-                return "bg-gray-500/20 text-gray-400 border-gray-500/30"
-        }
+  const getStatusColor = (status?: string) => {
+    switch (status) {
+      case "Screening in Process":
+        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
+      case "Interviewing":
+        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
+      case "Final Round Offer":
+        return "bg-purple-500/20 text-purple-400 border-purple-500/30";
+      case "Offer Letter":
+        return "bg-green-500/20 text-green-400 border-green-500/30";
+      case "Rejected":
+        return "bg-red-500/20 text-red-400 border-red-500/30";
+      default:
+        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
     }
+  };
 
-    const handleDelete = async (contactId: string) => {
-        try {
-            const { error } = await supabase
-                .from("recruiters")
-                .delete()
-                .eq("id", contactId)
+  const handleDelete = async (recruiterId: string) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/prep-yatra/recruiter?recruiterId=${recruiterId}`, {
+        method: "DELETE"
+      });
 
-            if (error) throw error
+      console.log(recruiterId)
 
-            toast({
-                title: "Success",
-                description: "Contact deleted successfully"
-            })
+      const result = await res.json();
 
-            onContactsChange()
-        } catch (error) {
-            console.error("Error deleting contact:", error)
-            toast({
-                title: "Error",
-                description: "Failed to delete contact",
-                variant: "destructive"
-            })
-        }
+      if (!res.ok) throw new Error(result.message);
+
+      toast({
+        title: "Deleted",
+        description: "Recruiter deleted successfully"
+      });
+
+      onContactsChange();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete recruiter",
+        variant: "destructive"
+      });
     }
+  };
 
-    const handleStatusChange = async (contactId: string, newStatus: string) => {
-        try {
-            const { error } = await supabase
-                .from("recruiters")
-                .update({ status: newStatus })
-                .eq("id", contactId)
+  const handleStatusChange = async (recruiterId: string, newStatus: string) => {
+    try {
+        console.log("this rec id is being sent",recruiterId)
+      const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/prep-yatra/recruiter`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          recruiterId,
+          applicationStatus: newStatus
+        })
+      });
 
-            if (error) throw error
+      console.log(recruiterId)
+
+      const result = await res.json();
+
+      if (!res.ok) throw new Error(result.message);
 
             toast({
                 title: "Success",
                 description: "Status updated successfully"
             })
 
-            onContactsChange()
-        } catch (error) {
-            console.error("Error updating status:", error)
-            toast({
-                title: "Error",
-                description: "Failed to update status",
-                variant: "destructive"
-            })
-        }
+      onContactsChange();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update status",
+        variant: "destructive"
+      });
     }
+  };
 
-    const handleDateChange = async (
-        contactId: string,
-        field: "follow_up_date" | "last_interview_date",
-        newDate: Date | null
-    ) => {
-        try {
-            const { error } = await supabase
-                .from("recruiters")
-                .update({ [field]: newDate?.toISOString() || null })
-                .eq("id", contactId)
+  const handleDateChange = async (
+    recruiterId: string,
+    field: "follow_up_date" | "last_interview_date",
+    newDate: Date | null
+  ) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/prep-yatra/recruiter`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          recruiterId,
+          [field]: newDate?.toISOString() || null
+        })
+      });
 
-            if (error) throw error
+      const result = await res.json();
+
+      if (!res.ok) throw new Error(result.message);
 
             toast({
                 title: "Success",
                 description: "Date updated successfully"
             })
 
-            onContactsChange()
-        } catch (error) {
-            console.error("Error updating date:", error)
-            toast({
-                title: "Error",
-                description: "Failed to update date",
-                variant: "destructive"
-            })
-        }
+      onContactsChange();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update date",
+        variant: "destructive"
+      });
     }
+  };
 
     const handleEdit = (contact: RecruiterContact) => {
         setEditingContact(contact)
@@ -240,10 +261,10 @@ const RecruiterContactsTable = ({
                         <TableBody>
                             {contacts.map((contact) => (
                                 <TableRow
-                                    key={contact.id}
+                                    key={contact._id}
                                     className='border-primary/10 hover:bg-primary/5 transition-colors'>
                                     <TableCell className='text-white font-medium'>
-                                        {contact.name}
+                                        {contact.recruiterName}
                                     </TableCell>
                                     <TableCell className='text-gray-300'>
                                         <div className='flex flex-col gap-1'>
@@ -262,10 +283,10 @@ const RecruiterContactsTable = ({
                                     <TableCell>
                                         <select
                                             className='w-[180px] bg-gray-800 border border-primary/20 text-white rounded-md px-2 py-1'
-                                            value={contact.status || ""}
+                                            value={contact.applicationStatus || ""}
                                             onChange={(e) =>
                                                 handleStatusChange(
-                                                    contact.id,
+                                                    contact._id,
                                                     e.target.value
                                                 )
                                             }>
@@ -300,7 +321,7 @@ const RecruiterContactsTable = ({
                                             }
                                             onChange={(date: Date | null) =>
                                                 handleDateChange(
-                                                    contact.id,
+                                                    contact._id,
                                                     "follow_up_date",
                                                     date
                                                 )
@@ -323,7 +344,7 @@ const RecruiterContactsTable = ({
                                             }
                                             onChange={(date: Date | null) =>
                                                 handleDateChange(
-                                                    contact.id,
+                                                    contact._id,
                                                     "last_interview_date",
                                                     date
                                                 )
@@ -417,7 +438,7 @@ const RecruiterContactsTable = ({
                                                         <AlertDialogAction
                                                             onClick={() =>
                                                                 handleDelete(
-                                                                    contact.id
+                                                                    contact._id
                                                                 )
                                                             }
                                                             className='bg-red-500 text-white hover:bg-red-600'>
@@ -440,6 +461,7 @@ const RecruiterContactsTable = ({
                 onClose={handleModalClose}
                 onContactAdded={onContactsChange}
                 editContact={editingContact}
+                mongoUserId={mongoUserId}
             />
         </>
     )

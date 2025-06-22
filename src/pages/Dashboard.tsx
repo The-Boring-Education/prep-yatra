@@ -21,6 +21,33 @@ const Dashboard = () => {
     >([])
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
 
+    const fetchRecruiterContacts = async (userId: string) => {
+        try {
+            const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/prep-yatra/recruiter?userId=${userId}`);
+            const result = await res.json();
+            if (!result.status) throw new Error(result.message);
+
+            const typedData: RecruiterContact[] = result.data.map((item) => ({
+                _id: item._id,
+                recruiterName: item.recruiterName,
+                email: item.email || "",
+                phone: item.phone || "",
+                company: item.company || "",
+                appliedPosition: item.appliedPosition || "",
+                applicationStatus: item.applicationStatus || "Screening in Process",
+                follow_up_date: item.follow_up_date || "",
+                last_interview_date: item.last_interview_date || "",
+                comments: item.comments || "",
+                link: item.link || "",
+                created_at: item.createdAt
+            }));
+
+            setRecruiterContacts(typedData);
+        } catch (error) {
+            console.error("Error fetching recruiter contacts:", error);
+        }
+    };
+
     useEffect(() => {
         const checkAuthAndProfile = async () => {
             const {
@@ -34,47 +61,27 @@ const Dashboard = () => {
 
             setUser(session.user)
 
-            // Get user profile
-            const { data: profileData } = await supabase
-                .from("profiles")
-                .select("*")
-                .eq("id", session.user.id)
-                .single()
+            try {
+                const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/user?email=${session.user.email}`);
+                const result = await res.json();
+                const profileData = result.data;
 
-            if (!profileData?.onboarding_completed) {
-                navigate("/onboarding")
-                return
+                if (!profileData?.isOnboarded) {
+                    navigate("/onboarding")
+                    return
+                }
+
+                setProfile(profileData)
+                await fetchRecruiterContacts(profileData._id)
+            } catch (err) {
+                console.error("Failed to fetch profile:", err)
+            } finally {
+                setLoading(false)
             }
-
-            setProfile(profileData)
-            await fetchRecruiterContacts(session.user.id)
-            setLoading(false)
         }
 
         checkAuthAndProfile()
     }, [navigate])
-
-    const fetchRecruiterContacts = async (userId: string) => {
-        try {
-            const { data, error } = await supabase
-                .from("recruiters")
-                .select("*")
-                .eq("user_id", userId)
-                .order("created_at", { ascending: false })
-
-            if (error) throw error
-
-            // Type cast the data to ensure status field matches our union type
-            const typedData: RecruiterContact[] = (data || []).map((item) => ({
-                ...item,
-                status: item.status as RecruiterContact["status"]
-            }))
-
-            setRecruiterContacts(typedData)
-        } catch (error) {
-            console.error("Error fetching recruiter contacts:", error)
-        }
-    }
 
     const handleSignOut = async () => {
         await supabase.auth.signOut()
@@ -82,8 +89,8 @@ const Dashboard = () => {
     }
 
     const handleContactAdded = () => {
-        if (user) {
-            fetchRecruiterContacts(user.id)
+        if (profile?._id) {
+            fetchRecruiterContacts(profile._id)
         }
     }
 
@@ -240,7 +247,7 @@ const Dashboard = () => {
                                     <p className='text-gray-400 text-sm'>
                                         Last contact added{" "}
                                         {new Date(
-                                            recruiterContacts[0]?.created_at
+                                            recruiterContacts[0]?.createdAt
                                         ).toLocaleDateString()}
                                     </p>
                                 </div>
@@ -266,6 +273,7 @@ const Dashboard = () => {
                 <RecruiterContactsTable
                     contacts={recruiterContacts}
                     onContactsChange={handleContactAdded}
+                    mongoUserId={profile._id}
                 />
 
                 {/* Get Started Section */}
@@ -299,6 +307,7 @@ const Dashboard = () => {
                     isOpen={isAddModalOpen}
                     onClose={() => setIsAddModalOpen(false)}
                     onContactAdded={handleContactAdded}
+                    mongoUserId={profile._id}
                 />
             </div>
         </div>
