@@ -211,7 +211,7 @@ const RecruiterContactsTable = ({
                 <p className='text-gray-300'>
                     Start building your recruiter network by adding your first
                     contact!
-                </p>
+                </p>                
             </div>
         )
     }
@@ -249,6 +249,9 @@ const RecruiterContactsTable = ({
                                 </TableHead>
                                 <TableHead className='text-primary font-semibold'>
                                     Last Interview
+                                </TableHead>
+                                <TableHead className='text-primary font-semibold'>
+                                    Comapany
                                 </TableHead>
                                 <TableHead className='text-primary font-semibold'>
                                     Comments
@@ -355,6 +358,11 @@ const RecruiterContactsTable = ({
                                             isClearable
                                             portalId='recruiter-datepicker-portal'
                                         />
+                                    </TableCell>
+                                    <TableCell className='text-gray-300 max-w-xs'>
+                                        <div className='line-clamp-2 whitespace-pre-line break-words'>
+                                            {contact.company || "-"}
+                                        </div>
                                     </TableCell>
                                     <TableCell className='text-gray-300 max-w-xs'>
                                         <div className='line-clamp-2 whitespace-pre-line break-words'>

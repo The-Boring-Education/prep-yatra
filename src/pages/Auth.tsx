@@ -58,9 +58,16 @@ const Auth = () => {
         );
         const checkData = await checkRes.json();
 
-        if (checkData?.data?.isOnboarded) {
+        console.log("this is data for",checkData?.data?.prepYatra?.pyOnboarded)
+        
+
+        if (checkData?.data?.prepYatra?.pyOnboarded) {
+            console.log("✅ Onboarded. Navigating to dashboard...");
+
           navigate('/dashboard');
         } else {
+            console.log("🛑 Not onboarded. Navigating to onboarding...");
+
           navigate('/onboarding');
         }
       }
