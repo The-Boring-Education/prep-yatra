@@ -43,135 +43,153 @@ import {
 import AddRecruiterModal from "./AddRecruiterModal"
 
 interface RecruiterContactsTableProps {
-  contacts: RecruiterContact[];
-  onContactsChange: () => void;
-  mongoUserId?:string
+    contacts: RecruiterContact[]
+    onContactsChange: () => void
+    mongoUserId?: string
 }
 
 const RecruiterContactsTable = ({
-  contacts,
-  onContactsChange,
-  mongoUserId
+    contacts,
+    onContactsChange,
+    mongoUserId
 }: RecruiterContactsTableProps) => {
     const { toast } = useToast()
     const [editingContact, setEditingContact] =
         useState<RecruiterContact | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
 
-  const getStatusColor = (status?: string) => {
-    switch (status) {
-      case "Screening in Process":
-        return "bg-blue-500/20 text-blue-400 border-blue-500/30";
-      case "Interviewing":
-        return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
-      case "Final Round Offer":
-        return "bg-purple-500/20 text-purple-400 border-purple-500/30";
-      case "Offer Letter":
-        return "bg-green-500/20 text-green-400 border-green-500/30";
-      case "Rejected":
-        return "bg-red-500/20 text-red-400 border-red-500/30";
-      default:
-        return "bg-gray-500/20 text-gray-400 border-gray-500/30";
+    const getStatusColor = (status?: string) => {
+        switch (status) {
+            case "Screening in Process":
+                return "bg-blue-500/20 text-blue-400 border-blue-500/30"
+            case "Interviewing":
+                return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+            case "Final Round Offer":
+                return "bg-purple-500/20 text-purple-400 border-purple-500/30"
+            case "Offer Letter":
+                return "bg-green-500/20 text-green-400 border-green-500/30"
+            case "Rejected":
+                return "bg-red-500/20 text-red-400 border-red-500/30"
+            default:
+                return "bg-gray-500/20 text-gray-400 border-gray-500/30"
+        }
     }
-  };
 
-  const handleDelete = async (recruiterId: string) => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/prep-yatra/recruiter?recruiterId=${recruiterId}`, {
-        method: "DELETE"
-      });
+    const handleDelete = async (recruiterId: string) => {
+        try {
+            const res = await fetch(
+                `${
+                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                }/api/v1/prep-yatra/recruiter?recruiterId=${recruiterId}`,
+                {
+                    method: "DELETE"
+                }
+            )
 
-      console.log(recruiterId)
+            console.log(recruiterId)
 
-      const result = await res.json();
+            const result = await res.json()
 
-      if (!res.ok) throw new Error(result.message);
+            if (!res.ok) throw new Error(result.message)
 
-      toast({
-        title: "Deleted",
-        description: "Recruiter deleted successfully"
-      });
+            toast({
+                title: "Deleted",
+                description: "Recruiter deleted successfully"
+            })
 
-      onContactsChange();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete recruiter",
-        variant: "destructive"
-      });
+            onContactsChange()
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to delete recruiter",
+                variant: "destructive"
+            })
+        }
     }
-  };
 
-  const handleStatusChange = async (recruiterId: string, newStatus: string) => {
-    try {
-        console.log("this rec id is being sent",recruiterId)
-      const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/prep-yatra/recruiter`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          recruiterId,
-          applicationStatus: newStatus
-        })
-      });
+    const handleStatusChange = async (
+        recruiterId: string,
+        newStatus: string
+    ) => {
+        try {
+            console.log("this rec id is being sent", recruiterId)
+            const res = await fetch(
+                `${
+                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                }/api/v1/prep-yatra/recruiter`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        recruiterId,
+                        applicationStatus: newStatus
+                    })
+                }
+            )
 
-      console.log(recruiterId)
+            console.log(recruiterId)
 
-      const result = await res.json();
+            const result = await res.json()
 
-      if (!res.ok) throw new Error(result.message);
+            if (!res.ok) throw new Error(result.message)
 
             toast({
                 title: "Success",
                 description: "Status updated successfully"
             })
 
-      onContactsChange();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update status",
-        variant: "destructive"
-      });
+            onContactsChange()
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to update status",
+                variant: "destructive"
+            })
+        }
     }
-  };
 
-  const handleDateChange = async (
-    recruiterId: string,
-    field: "follow_up_date" | "last_interview_date",
-    newDate: Date | null
-  ) => {
-    try {
-      const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/prep-yatra/recruiter`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          recruiterId,
-          [field]: newDate?.toISOString() || null
-        })
-      });
+    const handleDateChange = async (
+        recruiterId: string,
+        field: "follow_up_date" | "last_interview_date",
+        newDate: Date | null
+    ) => {
+        try {
+            const res = await fetch(
+                `${
+                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                }/api/v1/prep-yatra/recruiter`,
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        recruiterId,
+                        [field]: newDate?.toISOString() || null
+                    })
+                }
+            )
 
-      const result = await res.json();
+            const result = await res.json()
 
-      if (!res.ok) throw new Error(result.message);
+            if (!res.ok) throw new Error(result.message)
 
             toast({
                 title: "Success",
                 description: "Date updated successfully"
             })
 
-      onContactsChange();
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update date",
-        variant: "destructive"
-      });
+            onContactsChange()
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: "Failed to update date",
+                variant: "destructive"
+            })
+        }
     }
-  };
 
     const handleEdit = (contact: RecruiterContact) => {
         setEditingContact(contact)
@@ -211,7 +229,7 @@ const RecruiterContactsTable = ({
                 <p className='text-gray-300'>
                     Start building your recruiter network by adding your first
                     contact!
-                </p>                
+                </p>
             </div>
         )
     }
@@ -286,7 +304,9 @@ const RecruiterContactsTable = ({
                                     <TableCell>
                                         <select
                                             className='w-[180px] bg-gray-800 border border-primary/20 text-white rounded-md px-2 py-1'
-                                            value={contact.applicationStatus || ""}
+                                            value={
+                                                contact.applicationStatus || ""
+                                            }
                                             onChange={(e) =>
                                                 handleStatusChange(
                                                     contact._id,
