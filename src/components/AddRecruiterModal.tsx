@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Input, InputField } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {
@@ -151,10 +151,10 @@ const AddRecruiterModal = ({
         <form onSubmit={handleSubmit} className='space-y-4'>
           <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <InputField label='Name' value={formData.recruiterName} field='recruiterName' onChange={handleInputChange} required />
-            <InputField label='Email' type='email' value={formData.email} field='email' onChange={handleInputChange} />
-            <InputField label='Phone' value={formData.phone} field='phone' onChange={handleInputChange} />
-            <InputField label='Company' value={formData.company} field='company' onChange={handleInputChange} />
-            <InputField label='Applied Position' value={formData.appliedPosition} field='appliedPosition' onChange={handleInputChange} />
+            <InputField label='Email' type='email' value={formData.email} field='email' placeholder="Optional" onChange={handleInputChange} />
+            <InputField label='Phone' placeholder="Optional" value={formData.phone} field='phone'  onChange={handleInputChange}  />
+            <InputField label='Company' placeholder="Optional" value={formData.company} field='company' onChange={handleInputChange} />
+            <InputField label='Applied Position' placeholder="Optional" value={formData.appliedPosition} field='appliedPosition' onChange={handleInputChange} />
             <div className='flex gap-2 flex-col'>
               <Label htmlFor='applicationStatus' className='text-white'>Status</Label>
               <select
@@ -170,12 +170,13 @@ const AddRecruiterModal = ({
             </div>
             <InputField label='Follow-up Date' type='date' value={formData.follow_up_date} field='follow_up_date' onChange={handleInputChange} />
             <InputField label='Last Interview Date' type='date' value={formData.last_interview_date} field='last_interview_date' onChange={handleInputChange} />
-            <InputField label='Link' value={formData.link} field='link' onChange={handleInputChange} />
+            <InputField label='Link' value={formData.link} placeholder="Optional" field='link' onChange={handleInputChange} />
           </div>
           <div>
             <Label htmlFor='comments' className='text-white'>Comments</Label>
             <Textarea
               id='comments'
+              placeholder="Optional"
               value={formData.comments}
               onChange={(e) => handleInputChange("comments", e.target.value)}
               className='bg-gray-800 border-gray-600 text-white resize-none'
@@ -209,32 +210,5 @@ const AddRecruiterModal = ({
   )
 }
 
-const InputField = ({
-  label,
-  field,
-  value,
-  onChange,
-  type = "text",
-  required = false
-}: {
-  label: string
-  field: string
-  value: string
-  type?: string
-  required?: boolean
-  onChange: (field: string, value: string) => void
-}) => (
-  <div className='flex gap-2 flex-col'>
-    <Label htmlFor={field} className='text-white'>{label}{required && " *"}</Label>
-    <Input
-      id={field}
-      type={type}
-      value={value}
-      onChange={(e) => onChange(field, e.target.value)}
-      required={required}
-      className='bg-gray-800 border-gray-600 text-white'
-    />
-  </div>
-)
 
 export default AddRecruiterModal

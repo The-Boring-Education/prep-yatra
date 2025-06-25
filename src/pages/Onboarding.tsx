@@ -17,9 +17,9 @@ const Onboarding = () => {
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
+    linkedInUrl:'',
     workExperience: '',
     workDomain: '',
-    techStack: [] as string[],
   });
 
   useEffect(() => {
@@ -62,23 +62,14 @@ const Onboarding = () => {
     }));
   };
 
-  const toggleTechStack = (tech: string) => {
-    setFormData(prev => ({
-      ...prev,
-      techStack: prev.techStack.includes(tech)
-        ? prev.techStack.filter(t => t !== tech)
-        : [...prev.techStack, tech],
-    }));
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!user || !centralUserId) return;
 
-    const { workExperience, workDomain, techStack } = formData;
+    const { workExperience, workDomain, linkedInUrl } = formData;
 
-    if (!workExperience || !workDomain || techStack.length === 0) {
+    if (!workExperience || !workDomain) {
       toast({
         title: "Missing Information",
         description: "Please fill in all required fields.",
@@ -96,7 +87,7 @@ const Onboarding = () => {
         body: JSON.stringify({
           workExperience: parseInt(workExperience),
           workDomain,
-          techStack,
+          linkedInUrl,
         }),
       });
 
@@ -128,6 +119,8 @@ const Onboarding = () => {
     </div>;
   }
 
+  //remove kills section add button just like tbe and add an input box user clixks enters skill is selelcted same ui for work doman input box user search click enter domain selected 
+
   return (
     <div className="min-h-screen flex items-center justify-center px-4 relative overflow-hidden">
       {/* Background Animation Elements */}
@@ -148,6 +141,20 @@ const Onboarding = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* LinkedIn Url */}
+           <div>
+           <Label htmlFor="linkedInUrl" className="text-white font-medium">
+              LinkedIn Url
+            </Label>
+            <Input
+              id="linkedInUrl"
+              type="url"
+              placeholder="https://www.linkedin.com/in/your-profile"
+              value={formData.linkedInUrl}
+              onChange={(e) => handleInputChange('linkedInUrl', e.target.value)}
+              className="mt-2 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
+            />
+          </div>
           {/* Work Experience */}
           <div>
             <Label htmlFor="workExperience" className="text-white font-medium">
@@ -188,40 +195,6 @@ const Onboarding = () => {
               ))}
             </RadioGroup>
           </div>
-
-          {/* Tech Stack */}
-          <div>
-            <Label className="text-white font-medium mb-4 block">Tech Stack *</Label>
-            <div className="grid grid-cols-2 gap-2">
-              {[
-                'JAVASCRIPT',
-                'TYPESCRIPT',
-                'REACT',
-                'NODE_JS',
-                'NEXT_JS',
-                'PYTHON',
-                'DJANGO',
-                'FLASK',
-                'JAVA',
-                'SPRING_BOOT',
-                'C_PLUS_PLUS',
-                'MONGO_DB',
-                'POSTGRESQL',
-                'AWS',
-                'DOCKER',
-              ].map((tech) => (
-                <label key={tech} className="flex items-center space-x-2 text-gray-300">
-                  <input
-                    type="checkbox"
-                    checked={formData.techStack.includes(tech)}
-                    onChange={() => toggleTechStack(tech)}
-                  />
-                  <span>{tech.replace(/_/g, ' ')}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
           <Button
             type="submit"
             disabled={loading}

@@ -3,23 +3,48 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, MapPin, Calendar, Award } from "lucide-react"
+import { ExternalLink, Calendar, Award } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { User } from "@supabase/supabase-js"
 import { RecruiterContact } from "@/types/recruiters"
 import AddRecruiterModal from "@/components/AddRecruiterModal"
 import RecruiterContactsTable from "@/components/RecruiterContactsTable"
 import Navbar from "@/components/Navbar"
+import AddPrepLogModal from "@/components/AddPrepLogModal"
+import PrepLogList from "@/components/PrepLogsList"
+import PrepLogCard from "@/components/PrepLogsList"
+
+type PrepLog = {
+  _id: string
+  userId: string
+  title: string
+  description?: string
+  timeSpent: number
+  createdAt: string
+}
+
+type Profile = {
+  _id: string
+  name: string
+  username: string
+  experience_level: string
+  createdAt: string
+  prepYatra: {
+    workExperience: number
+    linkedInUrl?: string
+    pyOnboarded: boolean
+  }
+}
 
 const Dashboard = () => {
-    const navigate = useNavigate()
-    const [user, setUser] = useState<User | null>(null)
-    const [profile, setProfile] = useState(null)
-    const [loading, setLoading] = useState(true)
-    const [recruiterContacts, setRecruiterContacts] = useState<
-        RecruiterContact[]
-    >([])
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const navigate = useNavigate()
+  const [user, setUser] = useState<User | null>(null)
+  const [profile, setProfile] = useState<Profile | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [recruiterContacts, setRecruiterContacts] = useState<RecruiterContact[]>([])
+  const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
 
     const fetchRecruiterContacts = async (userId: string) => {
         try {
@@ -48,6 +73,19 @@ const Dashboard = () => {
         }
     };
 
+    
+  const fetchPrepLogs = async (userId: string) => {
+    try {
+      const res = await fetch(`${import.meta.env.VITE_TBE_BACKEND}/api/v1/prep-yatra/prep-log?userId=${userId}`)
+      const result = await res.json()
+      if (!result.status) throw new Error(result.message)
+      setPrepLogs(result.data)
+    } catch (err) {
+      console.error("Failed to fetch prep logs:", err)
+    }
+  }
+
+
     useEffect(() => {
         const checkAuthAndProfile = async () => {
             const {
@@ -66,13 +104,14 @@ const Dashboard = () => {
                 const result = await res.json();
                 const profileData = result.data;
 
-                if (!profileData?.isOnboarded) {
+                if (!profileData?.prepYatra.pyOnboarded) {
                     navigate("/onboarding")
                     return
                 }
 
                 setProfile(profileData)
                 await fetchRecruiterContacts(profileData._id)
+               await fetchPrepLogs(profileData._id)
             } catch (err) {
                 console.error("Failed to fetch profile:", err)
             } finally {
@@ -88,11 +127,11 @@ const Dashboard = () => {
         navigate("/auth")
     }
 
-    const handleContactAdded = () => {
-        if (profile?._id) {
-            fetchRecruiterContacts(profile._id)
-        }
+  const handleContactAdded = () => {
+    if (profile?._id) {
+      fetchRecruiterContacts(profile._id)
     }
+  }
 
     const getInitials = (name: string) => {
         return name
@@ -102,6 +141,8 @@ const Dashboard = () => {
             .toUpperCase()
             .slice(0, 2)
     }
+
+      const totalTimeSpent = prepLogs.reduce((acc, log) => acc + (log.timeSpent || 0), 0)
 
     const formatExperienceLevel = (level: string) => {
         return level.charAt(0).toUpperCase() + level.slice(1)
@@ -175,25 +216,25 @@ const Dashboard = () => {
                             </div>
                         </div>
 
-                        <div className='space-y-3'>
-                            <div className='flex items-center gap-2 text-gray-300'>
-                                <Award className='h-4 w-4 text-primary' />
-                                <span className='text-sm'>
-                                    <strong>Experience:</strong>{" "}
-                                    {profile?.experience_level
-                                        ? formatExperienceLevel(
-                                              profile.experience_level
-                                          )
-                                        : "Not specified"}
-                                </span>
-                            </div>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-gray-300">
+                <Award className="h-4 w-4 text-primary" />
+                <span className="text-sm">
+                  <strong>Experience:</strong>{" "}
+                  {profile?.prepYatra?.workExperience != null
+                    ? `${profile.prepYatra.workExperience} year${
+                        profile.prepYatra.workExperience > 1 ? "s" : ""
+                      }`
+                    : "Not specified"}
+                </span>
+              </div>
 
                             <div className='flex items-center gap-2 text-gray-300'>
                                 <Calendar className='h-4 w-4 text-primary' />
                                 <span className='text-sm'>
                                     <strong>Member since:</strong>{" "}
                                     {new Date(
-                                        profile?.created_at
+                                        profile?.createdAt
                                     ).toLocaleDateString("en-US", {
                                         month: "short",
                                         year: "numeric"
@@ -201,14 +242,14 @@ const Dashboard = () => {
                                 </span>
                             </div>
 
-                            {profile?.linkedin_url && (
+                            {profile?.prepYatra.linkedInUrl && (
                                 <div className='flex items-center gap-2'>
                                     <Button
                                         variant='ghost'
                                         size='sm'
                                         onClick={() =>
                                             window.open(
-                                                profile.linkedin_url,
+                                                profile.prepYatra.linkedInUrl,
                                                 "_blank"
                                             )
                                         }
@@ -255,19 +296,36 @@ const Dashboard = () => {
                         </div>
                     </div>
 
-                    {/* Prep Logs Section */}
-                    <div className='glass-dark rounded-2xl p-6'>
-                        <h3 className='text-xl font-bold text-white mb-4'>
-                            📝 Prep Logs
-                        </h3>
-                        <p className='text-gray-300 mb-4'>
-                            Track your preparation progress
-                        </p>
-                        <Button className='w-full bg-primary/60 text-primary-foreground hover:bg-primary/90'>
-                            Coming Soon
-                        </Button>
-                    </div>
+          {/* Prep Logs Card */}
+          <div className="glass-dark rounded-2xl p-6">
+            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">📝 Prep Logs</h3>
+            <div className="space-y-4">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-primary mb-1">{prepLogs.length}</div>
+                <p className="text-gray-300 text-sm">Total Logs</p>
+              </div>
+              <div className="text-center">
+                <div className="text-lg text-gray-300">
+                  ⏱️ Total Time Spent:{" "}
+                  <span className="text-primary font-semibold">{totalTimeSpent} hrs</span>
                 </div>
+              </div>
+              <Button
+                onClick={() => setIsPrepLogModalOpen(true)}
+                className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                + Add Prep Log
+              </Button>
+              {prepLogs.length > 0 && (
+                <div className="text-center pt-2">
+                  <p className="text-gray-400 text-sm">
+                    Last log added {new Date(prepLogs[0]?.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
 
                 {/* Recruiter Contacts Table */}
                 <RecruiterContactsTable
@@ -276,42 +334,28 @@ const Dashboard = () => {
                     mongoUserId={profile._id}
                 />
 
-                {/* Get Started Section */}
-                <div className='mt-8 text-center'>
-                    <div className='glass-dark rounded-2xl p-8'>
-                        <h2 className='text-2xl font-bold text-white mb-4'>
-                            🎯 Your Journey Starts Here
-                        </h2>
-                        <p className='text-gray-300 mb-6'>
-                            PrepYatra is your companion in turning hustle into
-                            hires.
-                            {recruiterContacts.length === 0
-                                ? "Start by adding your first recruiter contact!"
-                                : "Keep building your network and tracking your progress!"}
-                        </p>
-                        <div className='flex gap-4 justify-center'>
-                            <Button
-                                onClick={() => setIsAddModalOpen(true)}
-                                className='bg-primary text-primary-foreground hover:bg-primary/90'>
-                                🚀{" "}
-                                {recruiterContacts.length === 0
-                                    ? "Add First Contact"
-                                    : "Add More Contacts"}
-                            </Button>
-                        </div>
-                    </div>
-                </div>
+        <PrepLogCard
+          logs={prepLogs}
+          onLogUpdated={() => fetchPrepLogs(profile._id)}
+          mongoUserId={profile._id}
+        />
 
-                {/* Add Recruiter Modal */}
-                <AddRecruiterModal
-                    isOpen={isAddModalOpen}
-                    onClose={() => setIsAddModalOpen(false)}
-                    onContactAdded={handleContactAdded}
-                    mongoUserId={profile._id}
-                />
-            </div>
-        </div>
-    )
+        <AddRecruiterModal
+          isOpen={isAddModalOpen}
+          onClose={() => setIsAddModalOpen(false)}
+          onContactAdded={handleContactAdded}
+          mongoUserId={profile._id}
+        />
+
+        <AddPrepLogModal
+          isOpen={isPrepLogModalOpen}
+          onClose={() => setIsPrepLogModalOpen(false)}
+          onLogAdded={() => fetchPrepLogs(profile._id)}
+          mongoUserId={profile._id}
+        />
+      </div>
+    </div>
+  )
 }
 
 export default Dashboard

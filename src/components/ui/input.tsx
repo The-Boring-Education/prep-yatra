@@ -1,6 +1,7 @@
 import * as React from "react"
 
 import { cn } from "@/lib/utils"
+import { Label } from "@/components/ui/label"
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
   ({ className, type, ...props }, ref) => {
@@ -19,4 +20,36 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
 )
 Input.displayName = "Input"
 
-export { Input }
+
+const InputField = ({
+  label,
+  field,
+  value,
+  onChange,
+  type = "text",
+  required = false,
+  placeholder,
+}: {
+  label: string
+  field: string
+  value: string
+  type?: string
+  required?: boolean
+  placeholder?:string
+  onChange: (field: string, value: string) => void
+}) => (
+  <div className='flex gap-2 flex-col'>
+    <Label htmlFor={field} className='text-white'>{label}{required && " *"}</Label>
+    <Input
+      id={field}
+      type={type}
+      value={value}
+      onChange={(e) => onChange(field, e.target.value)}
+      required={required}
+      placeholder={placeholder}
+      className='bg-gray-800 border-gray-600 text-white'
+    />
+  </div>
+)
+
+export { Input, InputField }
