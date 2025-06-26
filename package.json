@@ -19,7 +19,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "update-browserslist": "npx update-browserslist-db@latest",
-    "postinstall": "echo 'Dependencies installed successfully'"
+    "test-build": "bash scripts/test-build.sh"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

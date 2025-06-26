@@ -5,11 +5,4 @@
 [[redirects]]
   from = "/*"
   to = "/index.html"
-  status = 200
-
-[build.environment]
-  NODE_VERSION = "18"
-  NODE_ENV = "production"
-  VITE_SUPABASE_URL = "https://mnpxxxoffgqznwzihnwu.supabase.co"
-  VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1ucHh4eG9mZmdxem53emlobnd1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgxOTQ5MTIsImV4cCI6MjA2Mzc3MDkxMn0.GVEsjWXA2NQ6_P31H8OOuTkf9qCuY7IYJwlDQvVDblc"
-  VITE_TBE_WEBAPP_API_URL = "https://www.theboringeducation.com" 
+  status = 200 
