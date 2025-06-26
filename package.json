@@ -18,7 +18,8 @@
     "build:preview": "vite build && vite preview",
     "lint": "eslint .",
     "preview": "vite preview",
-    "update-browserslist": "npx update-browserslist-db@latest"
+    "update-browserslist": "npx update-browserslist-db@latest",
+    "postinstall": "echo 'Dependencies installed successfully'"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
