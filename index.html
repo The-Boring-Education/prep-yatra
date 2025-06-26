@@ -1,36 +1,57 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PrepYatra - Turn Hustle Into Hires</title>
-    <meta name="description" content="The ultimate community platform for job hunters to store recruiter contacts, share prep logs, and crowdsource resources together." />
-    <meta name="author" content="The Boring Education" />
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="PrepYatra - Turn Hustle Into Hires" />
-    <meta property="og:description" content="The ultimate community platform for job hunters to store recruiter contacts, share prep logs, and crowdsource resources together." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://prepyatra.com" />
-    <meta property="og:image" content="https://prepyatra.com/og-image.png" />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PrepYatra - Turn Hustle Into Hires</title>
+  <meta name="description"
+    content="The ultimate community platform for job hunters to store recruiter contacts, share prep logs, and crowdsource resources together." />
+  <meta name="author" content="The Boring Education" />
 
-    <!-- Twitter Meta Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@theboringeducation" />
-    <meta name="twitter:title" content="PrepYatra - Turn Hustle Into Hires" />
-    <meta name="twitter:description" content="The ultimate community platform for job hunters to store recruiter contacts, share prep logs, and crowdsource resources together." />
-    <meta name="twitter:image" content="https://prepyatra.com/og-image.png" />
+  <!-- PWA Manifest -->
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#3b82f6" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Prep Yatra" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
-    <!-- Additional SEO Meta Tags -->
-    <meta name="keywords" content="job hunting, career, interview preparation, recruiter contacts, job search community, career development" />
-    <link rel="canonical" href="https://prepyatra.com" />
-  </head>
+  <!-- Preload critical resources -->
+  <link rel="preload" href="/src/main.tsx" as="script" />
+  <link rel="preload" href="/src/index.css" as="style" />
 
-  <body>
-    <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+  <!-- DNS Prefetch for external domains -->
+  <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="//cdn.gpteng.co" />
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="PrepYatra - Turn Hustle Into Hires" />
+  <meta property="og:description"
+    content="The ultimate community platform for job hunters to store recruiter contacts, share prep logs, and crowdsource resources together." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://prepyatra.com" />
+  <meta property="og:image" content="https://prepyatra.com/og-image.png" />
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@theboringeducation" />
+  <meta name="twitter:title" content="PrepYatra - Turn Hustle Into Hires" />
+  <meta name="twitter:description"
+    content="The ultimate community platform for job hunters to store recruiter contacts, share prep logs, and crowdsource resources together." />
+  <meta name="twitter:image" content="https://prepyatra.com/og-image.png" />
+
+  <!-- Additional SEO Meta Tags -->
+  <meta name="keywords"
+    content="job hunting, career, interview preparation, recruiter contacts, job search community, career development" />
+  <link rel="canonical" href="https://prepyatra.com" />
+</head>
+
+<body>
+  <div id="root"></div>
+  <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
+  <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
+  <script type="module" src="/src/main.tsx"></script>
+</body>
+
 </html>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, lazy, Suspense } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -7,12 +7,23 @@ import { ExternalLink, Calendar, Award } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { User } from "@supabase/supabase-js"
 import { RecruiterContact } from "@/types/recruiters"
-import AddRecruiterModal from "@/components/AddRecruiterModal"
-import RecruiterContactsTable from "@/components/RecruiterContactsTable"
 import Navbar from "@/components/Navbar"
-import AddPrepLogModal from "@/components/AddPrepLogModal"
-import PrepLogList from "@/components/PrepLogsList"
-import PrepLogCard from "@/components/PrepLogsList"
+
+// Lazy load heavy components
+const AddRecruiterModal = lazy(() => import("@/components/AddRecruiterModal"))
+const RecruiterContactsTable = lazy(
+    () => import("@/components/RecruiterContactsTable")
+)
+const AddPrepLogModal = lazy(() => import("@/components/AddPrepLogModal"))
+const PrepLogList = lazy(() => import("@/components/PrepLogsList"))
+const PrepLogCard = lazy(() => import("@/components/PrepLogsList"))
+
+// Loading component for Suspense fallback
+const ComponentLoader = () => (
+    <div className='flex items-center justify-center p-4'>
+        <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-primary'></div>
+    </div>
+)
 
 type PrepLog = {
     _id: string
@@ -359,31 +370,39 @@ const Dashboard = () => {
                 </div>
 
                 {/* Recruiter Contacts Table */}
-                <RecruiterContactsTable
-                    contacts={recruiterContacts}
-                    onContactsChange={handleContactAdded}
-                    mongoUserId={profile._id}
-                />
+                <Suspense fallback={<ComponentLoader />}>
+                    <RecruiterContactsTable
+                        contacts={recruiterContacts}
+                        onContactsChange={handleContactAdded}
+                        mongoUserId={profile._id}
+                    />
+                </Suspense>
 
-                <PrepLogCard
-                    logs={prepLogs}
-                    onLogUpdated={() => fetchPrepLogs(profile._id)}
-                    mongoUserId={profile._id}
-                />
+                <Suspense fallback={<ComponentLoader />}>
+                    <PrepLogCard
+                        logs={prepLogs}
+                        onLogUpdated={() => fetchPrepLogs(profile._id)}
+                        mongoUserId={profile._id}
+                    />
+                </Suspense>
 
-                <AddRecruiterModal
-                    isOpen={isAddModalOpen}
-                    onClose={() => setIsAddModalOpen(false)}
-                    onContactAdded={handleContactAdded}
-                    mongoUserId={profile._id}
-                />
+                <Suspense fallback={<ComponentLoader />}>
+                    <AddRecruiterModal
+                        isOpen={isAddModalOpen}
+                        onClose={() => setIsAddModalOpen(false)}
+                        onContactAdded={handleContactAdded}
+                        mongoUserId={profile._id}
+                    />
+                </Suspense>
 
-                <AddPrepLogModal
-                    isOpen={isPrepLogModalOpen}
-                    onClose={() => setIsPrepLogModalOpen(false)}
-                    onLogAdded={() => fetchPrepLogs(profile._id)}
-                    mongoUserId={profile._id}
-                />
+                <Suspense fallback={<ComponentLoader />}>
+                    <AddPrepLogModal
+                        isOpen={isPrepLogModalOpen}
+                        onClose={() => setIsPrepLogModalOpen(false)}
+                        onLogAdded={() => fetchPrepLogs(profile._id)}
+                        mongoUserId={profile._id}
+                    />
+                </Suspense>
             </div>
         </div>
     )

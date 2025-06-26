@@ -1,0 +1,75 @@
+{
+    "name": "Prep Yatra - Recruitment Management",
+    "short_name": "Prep Yatra",
+    "description": "Professional recruitment management platform for job seekers",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#3b82f6",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "en",
+    "categories": [
+        "productivity",
+        "business"
+    ],
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "16x16 32x32",
+            "type": "image/x-icon"
+        },
+        {
+            "src": "/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Dashboard",
+            "short_name": "Dashboard",
+            "description": "View your recruitment dashboard",
+            "url": "/dashboard",
+            "icons": [
+                {
+                    "src": "/favicon.ico",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Add Recruiter",
+            "short_name": "Add Recruiter",
+            "description": "Add a new recruiter contact",
+            "url": "/dashboard?action=add-recruiter",
+            "icons": [
+                {
+                    "src": "/favicon.ico",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/screenshot-wide.png",
+            "sizes": "1280x720",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/screenshot-narrow.png",
+            "sizes": "750x1334",
+            "type": "image/png",
+            "form_factor": "narrow"
+        }
+    ]
+}
