@@ -4,7 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import Footer from "./components/Footer"
 
 // Lazy load page components for code splitting
 const Index = lazy(() => import("./pages/Index"))
@@ -51,7 +50,6 @@ const App: React.FC = () => {
                         </Routes>
                     </Suspense>
                 </BrowserRouter>
-                <Footer />
             </TooltipProvider>
         </QueryClientProvider>
     )
