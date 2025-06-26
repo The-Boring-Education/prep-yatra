@@ -1,5 +1,12 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "prep-yatra",
+  "author": "The Boring Education",
+  "license": "MIT",
+  "homepage": "https://prep-yatra.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theboringeducation/prep-yatra"
+  },
   "private": true,
   "version": "0.0.0",
   "type": "module",
