@@ -8,6 +8,7 @@ import { supabase } from "@/integrations/supabase/client"
 import { User } from "@supabase/supabase-js"
 import { RecruiterContact } from "@/types/recruiters"
 import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
 
 // Lazy load heavy components
 const AddRecruiterModal = lazy(() => import("@/components/AddRecruiterModal"))
@@ -186,17 +187,17 @@ const Dashboard = () => {
     return (
         <div className='min-h-screen px-0 py-0'>
             <Navbar
-                username={profile?.username || user?.email || "User"}
+                username={profile?.name || "User"}
                 onSignOut={handleSignOut}
             />
             <div className='container mx-auto px-4 py-8'>
                 <div className='flex justify-between items-center mb-8'>
                     <div>
                         <h1 className='text-3xl font-bold text-white mb-2'>
-                            Welcome back, {profile?.username}! 🚀
+                         What are you Learning Today ?
                         </h1>
                         <p className='text-gray-300'>
-                            Ready to turn your hustle into hires?
+                           Remember Slow and Steady Wins !!
                         </p>
                     </div>
                 </div>
@@ -404,6 +405,7 @@ const Dashboard = () => {
                     />
                 </Suspense>
             </div>
+            <Footer />
         </div>
     )
 }
