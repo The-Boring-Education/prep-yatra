@@ -132,8 +132,6 @@ const Onboarding = () => {
         )
     }
 
-    //remove kills section add button just like tbe and add an input box user clixks enters skill is selelcted same ui for work doman input box user search click enter domain selected
-
     return (
         <div className='min-h-screen flex items-center justify-center px-4 relative overflow-hidden'>
             {/* Background Animation Elements */}
@@ -212,36 +210,31 @@ const Onboarding = () => {
                         <Label className='text-white font-medium mb-4 block'>
                             Work Domain *
                         </Label>
-                        <RadioGroup
-                            value={formData.workDomain}
-                            onValueChange={(value) =>
-                                handleInputChange("workDomain", value)
-                            }
-                            className='space-y-3'>
+                        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-3'>
                             {[
-                                "WEB_DEVELOPMENT",
-                                "DATA_SCIENCE",
-                                "DEVOPS",
-                                "MOBILE_DEVELOPMENT",
-                                "AI_ML",
-                                "UI_UX",
-                                "CYBER_SECURITY"
+                                "MERN Full-stack",
+                                "Java Full-stack",
+                                "Python Full-stack",
+                                "Data Analysis",
+                                "Machine Learning",
+                                "AI",
+                                "App Development",
+                                "Others"
                             ].map((domain) => (
-                                <div
+                                <button
+                                    type='button'
                                     key={domain}
-                                    className='flex items-center space-x-2'>
-                                    <RadioGroupItem
-                                        value={domain}
-                                        id={domain}
-                                    />
-                                    <Label
-                                        htmlFor={domain}
-                                        className='text-gray-300'>
-                                        {domain.replace(/_/g, " ")}
-                                    </Label>
-                                </div>
+                                    onClick={() => handleInputChange("workDomain", domain)}
+                                    className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
+                                        formData.workDomain === domain
+                                            ? "bg-primary text-white border-primary"
+                                            : "bg-transparent text-gray-300 border-gray-600 hover:bg-gray-700"
+                                    }`}
+                                >
+                                    {domain}
+                                </button>
                             ))}
-                        </RadioGroup>
+                        </div>
                     </div>
                     <Button
                         type='submit'

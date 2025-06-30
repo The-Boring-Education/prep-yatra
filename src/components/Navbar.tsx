@@ -6,6 +6,10 @@ interface NavbarProps {
     onSignOut: () => void
 }
 
+const capitalize = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
 const Navbar: React.FC<NavbarProps> = ({ username, onSignOut }) => {
     return (
         <nav className='w-full bg-gray-900 border-b border-primary/20 px-4 py-3 flex items-center justify-between'>
@@ -19,7 +23,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, onSignOut }) => {
             </div>
             <div className='flex items-center gap-4'>
                 <span className='text-white font-medium hidden sm:inline'>
-                    {username}
+                    Hello {capitalize(username)}
                 </span>
                 <Button
                     onClick={onSignOut}
