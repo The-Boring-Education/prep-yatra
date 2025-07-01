@@ -4,9 +4,8 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLink, Calendar, Award, Share2 } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
-import { User } from "@supabase/supabase-js"
 import { RecruiterContact } from "@/types/recruiters"
+import { useAuth } from "@/contexts/AuthContext"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 
@@ -50,7 +49,7 @@ type Profile = {
 
 const Dashboard = () => {
     const navigate = useNavigate()
-    const [user, setUser] = useState<User | null>(null)
+    const { user, signOut } = useAuth()
     const [profile, setProfile] = useState<Profile | null>(null)
     const [loading, setLoading] = useState(true)
     const [recruiterContacts, setRecruiterContacts] = useState<
@@ -109,22 +108,16 @@ const Dashboard = () => {
 
     useEffect(() => {
         const checkAuthAndProfile = async () => {
-            const {
-                data: { session }
-            } = await supabase.auth.getSession()
-
-            if (!session?.user) {
+            if (!user) {
                 navigate("/auth")
                 return
             }
-
-            setUser(session.user)
 
             try {
                 const res = await fetch(
                     `${
                         import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/user?email=${session.user.email}`
+                    }/api/v1/user?email=${user.email}`
                 )
                 const result = await res.json()
                 const profileData = result.data
@@ -145,11 +138,10 @@ const Dashboard = () => {
         }
 
         checkAuthAndProfile()
-    }, [navigate])
+    }, [navigate, user])
 
     const handleSignOut = async () => {
-        await supabase.auth.signOut()
-        navigate("/auth")
+        await signOut()
     }
 
     const handleContactAdded = () => {
@@ -212,10 +204,7 @@ const Dashboard = () => {
                         <div className='flex items-center gap-4 mb-6'>
                             <Avatar className='h-16 w-16 border-2 border-primary/30'>
                                 <AvatarImage
-                                    src={
-                                        user?.user_metadata?.avatar_url ||
-                                        user?.user_metadata?.picture
-                                    }
+                                    src={user?.picture}
                                     alt={profile?.username || "User"}
                                 />
                                 <AvatarFallback className='bg-primary text-primary-foreground text-lg font-bold'>
@@ -230,7 +219,7 @@ const Dashboard = () => {
                                     {profile?.username}
                                 </h4>
                                 <p className='text-gray-300 text-sm'>
-                                    {user?.user_metadata?.name || user?.email}
+                                    {user?.name || user?.email}
                                 </p>
                                 {profile?.experience_level && (
                                     <Badge

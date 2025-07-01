@@ -4,14 +4,13 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { supabase } from "@/integrations/supabase/client"
-import { User } from "@supabase/supabase-js"
+import { useAuth } from "@/contexts/AuthContext"
 import { useToast } from "@/hooks/use-toast"
 
 const Onboarding = () => {
     const navigate = useNavigate()
     const { toast } = useToast()
-    const [user, setUser] = useState<User | null>(null)
+    const { user } = useAuth()
     const [centralUserId, setCentralUserId] = useState<string | null>(null)
     const [loading, setLoading] = useState(false)
 
@@ -23,22 +22,16 @@ const Onboarding = () => {
 
     useEffect(() => {
         const checkAuthAndFetchCentralUser = async () => {
-            const {
-                data: { session }
-            } = await supabase.auth.getSession()
-
-            if (!session?.user) {
+            if (!user) {
                 navigate("/auth")
                 return
             }
-
-            setUser(session.user)
 
             try {
                 const res = await fetch(
                     `${
                         import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/user?email=${session.user.email}`
+                    }/api/v1/user?email=${user.email}`
                 )
                 const result = await res.json()
 
@@ -58,7 +51,7 @@ const Onboarding = () => {
         }
 
         checkAuthAndFetchCentralUser()
-    }, [navigate, toast])
+    }, [navigate, toast, user])
 
     const handleInputChange = (field: string, value: string | string[]) => {
         setFormData((prev) => ({
@@ -224,13 +217,14 @@ const Onboarding = () => {
                                 <button
                                     type='button'
                                     key={domain}
-                                    onClick={() => handleInputChange("workDomain", domain)}
+                                    onClick={() =>
+                                        handleInputChange("workDomain", domain)
+                                    }
                                     className={`px-4 py-2 rounded-full text-sm font-medium border transition-all ${
                                         formData.workDomain === domain
                                             ? "bg-primary text-white border-primary"
                                             : "bg-transparent text-gray-300 border-gray-600 hover:bg-gray-700"
-                                    }`}
-                                >
+                                    }`}>
                                     {domain}
                                 </button>
                             ))}

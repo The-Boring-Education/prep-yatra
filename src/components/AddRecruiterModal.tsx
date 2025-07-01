@@ -11,9 +11,9 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog"
-import { supabase } from "@/integrations/supabase/client"
 import { RecruiterContact } from "@/types/recruiters"
 import { useToast } from "@/hooks/use-toast"
+import { useUser } from "@/hooks/use-user"
 
 interface AddRecruiterModalProps {
     isOpen: boolean
@@ -31,6 +31,7 @@ const AddRecruiterModal = ({
     mongoUserId
 }: AddRecruiterModalProps) => {
     const { toast } = useToast()
+    const { isAuthenticated } = useUser()
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         recruiterName: "",
@@ -85,11 +86,7 @@ const AddRecruiterModal = ({
         setLoading(true)
 
         try {
-            const {
-                data: { user }
-            } = await supabase.auth.getUser()
-
-            if (!user) {
+            if (!isAuthenticated) {
                 toast({
                     title: "Error",
                     description: "User not authenticated.",

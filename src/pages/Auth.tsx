@@ -1,108 +1,36 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
-import { supabase } from "@/integrations/supabase/client"
-import { User } from "@supabase/supabase-js"
+import { useGoogleLogin } from "@react-oauth/google"
+import { useAuth } from "@/contexts/AuthContext"
 
 const Auth = () => {
     const navigate = useNavigate()
-    const [loading, setLoading] = useState(false)
-    const [user, setUser] = useState<User | null>(null)
+    const { signIn, loading } = useAuth()
 
-    useEffect(() => {
-        // Check if user is already logged in
-        const checkUser = async () => {
-            const {
-                data: { session }
-            } = await supabase.auth.getSession()
-            if (session?.user) {
-                setUser(session.user)
-                await createUserInWebapp(session.user)
+    const login = useGoogleLogin({
+        onSuccess: async (response) => {
+            try {
+                // Get user info from Google
+                const userInfo = await fetch(
+                    "https://www.googleapis.com/oauth2/v3/userinfo",
+                    {
+                        headers: {
+                            Authorization: `Bearer ${response.access_token}`
+                        }
+                    }
+                ).then((res) => res.json())
+
+                // Sign in with our auth context
+                await signIn(userInfo)
+            } catch (error) {
+                console.error("Error during Google login:", error)
             }
+        },
+        onError: (error) => {
+            console.error("Google login error:", error)
         }
-
-        checkUser()
-
-        // Listen for auth changes
-        const {
-            data: { subscription }
-        } = supabase.auth.onAuthStateChange(async (event, session) => {
-            if (event === "SIGNED_IN" && session?.user) {
-                setUser(session.user)
-                await createUserInWebapp(session.user)
-            }
-        })
-
-        return () => subscription.unsubscribe()
-    }, [])
-
-    const createUserInWebapp = async (user: User) => {
-        try {
-            const res = await fetch(
-                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/user`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        name: user.user_metadata?.name || "",
-                        email: user.email,
-                        image: user.user_metadata?.avatar_url || "",
-                        provider: "google",
-                        providerAccountId: user.id
-                    })
-                }
-            )
-
-            const data = await res.json()
-
-            // 🔍 Now check if isOnboarded is true or false
-            if (user.email) {
-                const checkRes = await fetch(
-                    `${
-                        import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/user?email=${user.email}`
-                )
-                const checkData = await checkRes.json()
-
-                console.log(
-                    "this is data for",
-                    checkData?.data?.prepYatra?.pyOnboarded
-                )
-
-                if (checkData?.data?.prepYatra?.pyOnboarded) {
-                    console.log("✅ Onboarded. Navigating to dashboard...")
-
-                    navigate("/dashboard")
-                } else {
-                    console.log("🛑 Not onboarded. Navigating to onboarding...")
-
-                    navigate("/onboarding")
-                }
-            }
-        } catch (err) {
-            console.error("Error creating/checking user in webapp:", err)
-        }
-    }
-
-    const signInWithGoogle = async () => {
-        try {
-            setLoading(true)
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: `${window.location.origin}/auth`
-                }
-            })
-
-            if (error) {
-                console.error("Error signing in with Google:", error.message)
-            }
-        } catch (error) {
-            console.error("Error:", error)
-        } finally {
-            setLoading(false)
-        }
-    }
+    })
 
     return (
         <div className='min-h-screen flex items-center justify-center px-4 relative overflow-hidden'>
@@ -136,7 +64,7 @@ const Auth = () => {
                 </div>
 
                 <Button
-                    onClick={signInWithGoogle}
+                    onClick={() => login()}
                     disabled={loading}
                     className='w-full bg-white text-gray-900 hover:bg-gray-100 font-semibold py-3 px-4 rounded-lg transition-all duration-300 hover:scale-105'>
                     <svg className='w-5 h-5 mr-3' viewBox='0 0 24 24'>
