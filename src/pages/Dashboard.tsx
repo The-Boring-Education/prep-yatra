@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Calendar, Award, Share2 } from "lucide-react"
+import { ExternalLink, Calendar, Award, Share2, ChevronDown, ChevronUp } from "lucide-react"
 import { RecruiterContact } from "@/types/recruiters"
 import { useAuth } from "@/contexts/AuthContext"
 import Navbar from "@/components/Navbar"
@@ -44,6 +44,7 @@ type Profile = {
         workExperience: number
         linkedInUrl?: string
         pyOnboarded: boolean
+        supabaseUserId?: string
     }
 }
 
@@ -58,6 +59,8 @@ const Dashboard = () => {
     const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
+    const [onboardingDetails, setOnboardingDetails] = useState(null);
+    const [showDetails, setShowDetails] = useState(false);
 
     const fetchRecruiterContacts = async (userId: string) => {
         try {
@@ -67,6 +70,9 @@ const Dashboard = () => {
                 }/api/v1/prep-yatra/recruiter?userId=${userId}`
             )
             const result = await res.json()
+            console.log("thsi is user.id", user.id)
+            console.log("this is profile._id", profile?._id)
+            console.log()
             if (!result.status) throw new Error(result.message)
 
             const typedData: RecruiterContact[] = result.data.map((item) => ({
@@ -82,7 +88,7 @@ const Dashboard = () => {
                 last_interview_date: item.last_interview_date || "",
                 comments: item.comments || "",
                 link: item.link || "",
-                created_at: item.createdAt
+                createdAt: item.createdAt
             }))
 
             setRecruiterContacts(typedData)
@@ -115,9 +121,7 @@ const Dashboard = () => {
 
             try {
                 const res = await fetch(
-                    `${
-                        import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/user?email=${user.email}`
+                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/user?email=${user.email}`
                 )
                 const result = await res.json()
                 const profileData = result.data
@@ -130,6 +134,16 @@ const Dashboard = () => {
                 setProfile(profileData)
                 await fetchRecruiterContacts(profileData._id)
                 await fetchPrepLogs(profileData._id)
+                // Fetch onboarding details using profile._id as userId
+                if (profileData?._id) {
+                    const onboardingRes = await fetch(
+                        `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/prepyatra/onboarding?userId=${profileData._id}`
+                    );
+                    const onboardingResult = await onboardingRes.json();
+                    if (onboardingResult.status) {
+                        setOnboardingDetails(onboardingResult.data);
+                    }
+                }
             } catch (err) {
                 console.error("Failed to fetch profile:", err)
             } finally {
@@ -237,29 +251,20 @@ const Dashboard = () => {
                             <div className='flex items-center gap-2 text-gray-300'>
                                 <Award className='h-4 w-4 text-primary' />
                                 <span className='text-sm'>
-                                    <strong>Experience:</strong>{" "}
+                                    <strong>Experience:</strong>{' '}
                                     {profile?.prepYatra?.workExperience != null
-                                        ? `${
-                                              profile.prepYatra.workExperience
-                                          } year${
-                                              profile.prepYatra.workExperience >
-                                              1
-                                                  ? "s"
-                                                  : ""
-                                          }`
-                                        : "Not specified"}
+                                        ? `${profile.prepYatra.workExperience} year${profile.prepYatra.workExperience > 1 ? 's' : ''}`
+                                        : 'Not specified'}
                                 </span>
                             </div>
 
                             <div className='flex items-center gap-2 text-gray-300'>
                                 <Calendar className='h-4 w-4 text-primary' />
                                 <span className='text-sm'>
-                                    <strong>Member since:</strong>{" "}
-                                    {new Date(
-                                        profile?.createdAt
-                                    ).toLocaleDateString("en-US", {
-                                        month: "short",
-                                        year: "numeric"
+                                    <strong>Member since:</strong>{' '}
+                                    {new Date(profile?.createdAt).toLocaleDateString('en-US', {
+                                        month: 'short',
+                                        year: 'numeric',
                                     })}
                                 </span>
                             </div>
@@ -272,7 +277,7 @@ const Dashboard = () => {
                                         onClick={() =>
                                             window.open(
                                                 profile.prepYatra.linkedInUrl,
-                                                "_blank"
+                                                '_blank'
                                             )
                                         }
                                         className='text-primary hover:bg-primary/10 p-0 h-auto font-normal justify-start'>
@@ -280,6 +285,43 @@ const Dashboard = () => {
                                         View LinkedIn Profile
                                     </Button>
                                 </div>
+                            )}
+                            {/* Collapsible Onboarding Details */}
+                            {onboardingDetails && (
+                                <>
+                                    <button
+                                        className="mt-4 flex items-center text-primary hover:underline font-medium"
+                                        onClick={() => setShowDetails((v) => !v)}
+                                    >
+                                        {showDetails ? <ChevronUp className="w-4 h-4 mr-1" /> : <ChevronDown className="w-4 h-4 mr-1" />}
+                                        {showDetails ? 'Hide Onboarding Details' : 'Show Onboarding Details'}
+                                    </button>
+                                    {showDetails && (
+                                        <div className="mt-3 bg-gray-800/60 rounded-lg p-4 border border-gray-700">
+                                            <div className="border-b border-gray-700 mb-3 pb-2">
+                                                <span className="uppercase tracking-wide text-xs text-primary font-semibold">Onboarding Details</span>
+                                            </div>
+                                            <div className="space-y-2">
+                                                <div>
+                                                    <span className="font-semibold text-white text-sm">Goal:</span>
+                                                    <span className="ml-2 text-gray-300 text-base">{onboardingDetails.goal}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="font-semibold text-white text-sm">Target Companies:</span>
+                                                    <span className="ml-2 text-gray-300 text-base">{onboardingDetails.targetCompanies?.join(', ') || 'N/A'}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="font-semibold text-white text-sm">Interview Categories:</span>
+                                                    <span className="ml-2 text-gray-300 text-base">{onboardingDetails.interviewCategories?.join(', ') || 'N/A'}</span>
+                                                </div>
+                                                <div>
+                                                    <span className="font-semibold text-white text-sm">Focus Areas:</span>
+                                                    <span className="ml-2 text-gray-300 text-base">{onboardingDetails.focusAreas?.join(', ') || 'N/A'}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
@@ -309,9 +351,9 @@ const Dashboard = () => {
                                 <div className='text-center pt-2'>
                                     <p className='text-gray-400 text-sm'>
                                         Last contact added{" "}
-                                        {new Date(
-                                            recruiterContacts[0]?.createdAt
-                                        ).toLocaleDateString()}
+                                        {recruiterContacts[0]?.createdAt
+                                            ? new Date(recruiterContacts[0].createdAt).toLocaleDateString()
+                                            : "No contacts yet"}
                                     </p>
                                 </div>
                             )}
