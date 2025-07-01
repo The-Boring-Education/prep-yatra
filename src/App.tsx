@@ -10,6 +10,7 @@ const Index = lazy(() => import("./pages/Index"))
 const Auth = lazy(() => import("./pages/Auth"))
 const Onboarding = lazy(() => import("./pages/Onboarding"))
 const Dashboard = lazy(() => import("./pages/Dashboard"))
+const PrepLogsShowcase = lazy(() => import("./pages/PrepLogsShowcase"))
 const NotFound = lazy(() => import("./pages/NotFound"))
 
 // Loading component for Suspense fallback
@@ -46,6 +47,10 @@ const App: React.FC = () => {
                                 element={<Onboarding />}
                             />
                             <Route path='/dashboard' element={<Dashboard />} />
+                            <Route
+                                path='/journey/:userId'
+                                element={<PrepLogsShowcase />}
+                            />
                             <Route path='*' element={<NotFound />} />
                         </Routes>
                     </Suspense>

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Calendar, Award } from "lucide-react"
+import { ExternalLink, Calendar, Award, Share2 } from "lucide-react"
 import { supabase } from "@/integrations/supabase/client"
 import { User } from "@supabase/supabase-js"
 import { RecruiterContact } from "@/types/recruiters"
@@ -194,10 +194,10 @@ const Dashboard = () => {
                 <div className='flex justify-between items-center mb-8'>
                     <div>
                         <h1 className='text-3xl font-bold text-white mb-2'>
-                         What are you Learning Today ?
+                            What are you Learning Today ?
                         </h1>
                         <p className='text-gray-300'>
-                           Remember Slow and Steady Wins !!
+                            Remember Slow and Steady Wins !!
                         </p>
                     </div>
                 </div>
@@ -351,11 +351,29 @@ const Dashboard = () => {
                                     </span>
                                 </div>
                             </div>
-                            <Button
-                                onClick={() => setIsPrepLogModalOpen(true)}
-                                className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
-                                + Add Prep Log
-                            </Button>
+                            <div className='space-y-2'>
+                                <Button
+                                    onClick={() => setIsPrepLogModalOpen(true)}
+                                    className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
+                                    + Add Prep Log
+                                </Button>
+                                <Button
+                                    variant='outline'
+                                    onClick={() => {
+                                        const journeyUrl = `${window.location.origin}/journey/${profile._id}`
+                                        navigator.clipboard.writeText(
+                                            journeyUrl
+                                        )
+                                        // You could add a toast notification here
+                                        alert(
+                                            "Journey URL copied to clipboard!"
+                                        )
+                                    }}
+                                    className='w-full border-primary/30 text-primary hover:bg-primary/10'>
+                                    <Share2 className='w-4 h-4 mr-2' />
+                                    Share Journey
+                                </Button>
+                            </div>
                             {prepLogs.length > 0 && (
                                 <div className='text-center pt-2'>
                                     <p className='text-gray-400 text-sm'>
