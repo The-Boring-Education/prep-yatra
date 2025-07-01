@@ -25,6 +25,7 @@ import Footer from "@/components/Footer"
 const PrepLogsShowcase = () => {
     const { userId } = useParams<{ userId: string }>()
     const navigate = useNavigate()
+
     const {
         logs,
         loading,

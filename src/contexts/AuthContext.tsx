@@ -120,6 +120,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             // Store user data in localStorage
             localStorage.setItem("auth_user", JSON.stringify(userData))
 
+            // Check if there's a redirect URL stored
+            const redirectUrl = localStorage.getItem("redirectAfterLogin")
+            if (redirectUrl) {
+                localStorage.removeItem("redirectAfterLogin")
+                navigate(redirectUrl)
+                return
+            }
+
             // Check onboarding status and navigate accordingly
             await checkUserOnboarding(userData.email)
         } catch (error) {
@@ -159,18 +167,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 )
                 const data = await res.json()
 
-                if (data?.data) {
-                    // User exists, check onboarding
-                    if (data.data.prepYatra?.pyOnboarded) {
-                        navigate("/dashboard")
-                    } else {
-                        navigate("/onboarding")
-                    }
-                } else {
+                if (!data?.data) {
                     // User doesn't exist in backend, clear local data
                     localStorage.removeItem("auth_user")
                     setUser(null)
                 }
+                // Don't auto-redirect here - let ProtectedRoute handle it
             }
         } catch (error) {
             console.error("Error checking auth:", error)

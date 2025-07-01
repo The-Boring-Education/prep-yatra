@@ -6,6 +6,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import { AuthProvider } from "@/contexts/AuthContext"
+import PublicRoute from "@/components/PublicRoute"
+import ProtectedRoute from "@/components/ProtectedRoute"
 
 // Lazy load page components for code splitting
 const Index = lazy(() => import("./pages/Index"))
@@ -13,6 +15,7 @@ const Auth = lazy(() => import("./pages/Auth"))
 const Onboarding = lazy(() => import("./pages/Onboarding"))
 const Dashboard = lazy(() => import("./pages/Dashboard"))
 const PrepLogsShowcase = lazy(() => import("./pages/PrepLogsShowcase"))
+
 const NotFound = lazy(() => import("./pages/NotFound"))
 
 // Loading component for Suspense fallback
@@ -45,21 +48,60 @@ const App: React.FC = () => {
                         <AuthProvider>
                             <Suspense fallback={<PageLoader />}>
                                 <Routes>
-                                    <Route path='/' element={<Index />} />
-                                    <Route path='/auth' element={<Auth />} />
+                                    {/* Public Routes */}
                                     <Route
-                                        path='/onboarding'
-                                        element={<Onboarding />}
+                                        path='/'
+                                        element={
+                                            <PublicRoute>
+                                                <Index />
+                                            </PublicRoute>
+                                        }
                                     />
                                     <Route
-                                        path='/dashboard'
-                                        element={<Dashboard />}
+                                        path='/auth'
+                                        element={
+                                            <PublicRoute>
+                                                <Auth />
+                                            </PublicRoute>
+                                        }
                                     />
                                     <Route
                                         path='/journey/:userId'
-                                        element={<PrepLogsShowcase />}
+                                        element={
+                                            <PublicRoute>
+                                                <PrepLogsShowcase />
+                                            </PublicRoute>
+                                        }
                                     />
-                                    <Route path='*' element={<NotFound />} />
+
+                                    {/* Protected Routes */}
+                                    <Route
+                                        path='/onboarding'
+                                        element={
+                                            <ProtectedRoute>
+                                                <Onboarding />
+                                            </ProtectedRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path='/dashboard'
+                                        element={
+                                            <ProtectedRoute
+                                                requireOnboarding={true}>
+                                                <Dashboard />
+                                            </ProtectedRoute>
+                                        }
+                                    />
+
+                                    {/* 404 Route */}
+                                    <Route
+                                        path='*'
+                                        element={
+                                            <PublicRoute>
+                                                <NotFound />
+                                            </PublicRoute>
+                                        }
+                                    />
                                 </Routes>
                             </Suspense>
                         </AuthProvider>
