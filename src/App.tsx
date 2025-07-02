@@ -8,6 +8,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google"
 import { AuthProvider } from "@/contexts/AuthContext"
 import PublicRoute from "@/components/PublicRoute"
 import ProtectedRoute from "@/components/ProtectedRoute"
+import PricingPage from "./pages/Pricing"
 
 // Lazy load page components for code splitting
 const Index = lazy(() => import("./pages/Index"))
@@ -89,6 +90,16 @@ const App: React.FC = () => {
                                             <ProtectedRoute
                                                 requireOnboarding={true}>
                                                 <Dashboard />
+                                            </ProtectedRoute>
+                                        }
+                                    />
+
+                                    <Route
+                                        path='/pricing'
+                                        element={
+                                            <ProtectedRoute
+                                                requireOnboarding={true}>
+                                                <PricingPage />
                                             </ProtectedRoute>
                                         }
                                     />
