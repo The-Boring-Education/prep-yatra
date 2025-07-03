@@ -8,6 +8,7 @@ import { RecruiterContact } from "@/types/recruiters"
 import { useAuth } from "@/contexts/AuthContext"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import InstallButton from "@/components/InstallButton"
 
 // Lazy load heavy components
 const AddRecruiterModal = lazy(() => import("@/components/AddRecruiterModal"))
@@ -70,9 +71,6 @@ const Dashboard = () => {
                 }/api/v1/prep-yatra/recruiter?userId=${userId}`
             )
             const result = await res.json()
-            console.log("thsi is user.id", user.id)
-            console.log("this is profile._id", profile?._id)
-            console.log()
             if (!result.status) throw new Error(result.message)
 
             const typedData: RecruiterContact[] = result.data.map((item) => ({
@@ -455,6 +453,7 @@ const Dashboard = () => {
                 </Suspense>
             </div>
             <Footer />
+            <InstallButton />
         </div>
     )
 }

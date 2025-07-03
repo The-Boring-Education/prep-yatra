@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useGoogleLogin } from "@react-oauth/google"
 import { useAuth } from "@/contexts/AuthContext"
+import InstallButton from "@/components/InstallButton"
 
 const Auth = () => {
     const navigate = useNavigate()
@@ -95,6 +96,7 @@ const Auth = () => {
                     </p>
                 </div>
             </div>
+            <InstallButton />
         </div>
     )
 }
