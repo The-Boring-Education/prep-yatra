@@ -1,3 +1,5 @@
+import { NavbarDropdownLink } from "@/interfaces/components";
+
 const socialLinks = [
   {
     name: "Instagram",
@@ -37,4 +39,33 @@ const productLinks = [
   }
 ]
 
-export { socialLinks, productLinks }
+const CONFETTI_COLORS = [
+    "#facc15", // yellow-400
+    "#38bdf8", // sky-400
+    "#4ade80", // green-400
+    "#f472b6", // pink-400
+    "#fff",    // white
+    "#f59e42", // custom orange
+    "#818cf8", // indigo-400
+]
+
+const links: NavbarDropdownLink[] = [
+  {
+    name: "Explore Courses",
+    href: "https://www.theboringeducation.com/shiksha",
+    description: "Find courses on The Boring Education",
+  },
+  {
+    name: "Tech Yatra",
+    href: "https://techyatra.netlify.app/",
+    description: "Start Tech Journey",
+  },
+  {
+    name: "Resume Yatra",
+    href: "https://resumeyatra.netlify.app/",
+    description: "Fix Your Resume",
+  },
+];
+
+
+export { socialLinks, productLinks, CONFETTI_COLORS, links }
