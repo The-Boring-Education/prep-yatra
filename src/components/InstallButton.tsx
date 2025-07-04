@@ -31,7 +31,7 @@ export default function InstallButton() {
       style={{ boxShadow: '0 4px 24px 0 rgba(0,0,0,0.15)' }}
     >
       <Download className="w-5 h-5 mr-2" />
-      <span className="font-semibold">View in app</span>
+      <span className="font-semibold">Install App</span>
     </Button>
   )
 }
