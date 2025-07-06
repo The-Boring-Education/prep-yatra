@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import { AuthProvider } from "@/contexts/AuthContext"
+import { GamificationProvider } from "@/contexts/GamificationContext"
 import PublicRoute from "@/components/PublicRoute"
 import ProtectedRoute from "@/components/ProtectedRoute"
 import PricingPage from "./pages/Pricing"
@@ -47,7 +48,8 @@ const App: React.FC = () => {
                     <Sonner />
                     <BrowserRouter>
                         <AuthProvider>
-                            <Suspense fallback={<PageLoader />}>
+                            <GamificationProvider>
+                                <Suspense fallback={<PageLoader />}>
                                 <Routes>
                                     {/* Public Routes */}
                                     <Route
@@ -115,6 +117,7 @@ const App: React.FC = () => {
                                     />
                                 </Routes>
                             </Suspense>
+                            </GamificationProvider>
                         </AuthProvider>
                     </BrowserRouter>
                 </TooltipProvider>
