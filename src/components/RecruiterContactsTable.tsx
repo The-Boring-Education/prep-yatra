@@ -85,8 +85,6 @@ const RecruiterContactsTable = ({
                 }
             )
 
-            console.log(recruiterId)
-
             const result = await res.json()
 
             if (!res.ok) throw new Error(result.message)
@@ -111,7 +109,6 @@ const RecruiterContactsTable = ({
         newStatus: string
     ) => {
         try {
-            console.log("this rec id is being sent", recruiterId)
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
@@ -127,8 +124,6 @@ const RecruiterContactsTable = ({
                     })
                 }
             )
-
-            console.log(recruiterId)
 
             const result = await res.json()
 

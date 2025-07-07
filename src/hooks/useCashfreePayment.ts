@@ -8,7 +8,6 @@ declare global {
 }
 
 const isProductionEnv = process.env.NODE_ENV === 'production';
-console.log("which env", isProductionEnv);
 
 
 const CASHFREE_SCRIPT_URL = 'https://sdk.cashfree.com/js/v3/cashfree.js';
