@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Calendar, Award, Share2, ChevronDown, ChevronUp } from "lucide-react"
+import { ExternalLink, Calendar, Award, Share2, ChevronDown, ChevronUp, Edit, RefreshCw } from "lucide-react"
 import { RecruiterContact } from "@/types/recruiters"
 import { useAuth } from "@/contexts/AuthContext"
 import Navbar from "@/components/Navbar"
@@ -20,6 +20,7 @@ const RecruiterContactsTable = lazy(
 const AddPrepLogModal = lazy(() => import("@/components/AddPrepLogModal"))
 const PrepLogList = lazy(() => import("@/components/PrepLogsList"))
 const PrepLogCard = lazy(() => import("@/components/PrepLogsList"))
+const EditOnboardingModal = lazy(() => import("@/components/EditOnboardingModal"))
 
 // Loading component for Suspense fallback
 const ComponentLoader = () => (
@@ -66,6 +67,7 @@ const Dashboard = () => {
     const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
     const [onboardingDetails, setOnboardingDetails] = useState(null);
     const [showDetails, setShowDetails] = useState(false);
+    const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] = useState(false);
 
     const fetchRecruiterContacts = async (userId: string) => {
         try {
@@ -114,6 +116,27 @@ const Dashboard = () => {
         }
     }
 
+    const fetchOnboardingDetails = async (userId: string) => {
+        try {
+            const timestamp = new Date().getTime();
+            const onboardingRes = await fetch(
+                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/prepyatra/onboarding?userId=${userId}&t=${timestamp}`,
+                {
+                    headers: {
+                        'Cache-Control': 'no-cache'
+                    }
+                }
+            );
+            const onboardingResult = await onboardingRes.json();
+            
+            if (onboardingResult.status) {
+                setOnboardingDetails(onboardingResult.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch onboarding details:", error);
+        }
+    }
+
     useEffect(() => {
         const checkAuthAndProfile = async () => {
             if (!user) {
@@ -136,16 +159,7 @@ const Dashboard = () => {
                 setProfile(profileData)
                 await fetchRecruiterContacts(profileData._id)
                 await fetchPrepLogs(profileData._id)
-                // Fetch onboarding details using profile._id as userId
-                if (profileData?._id) {
-                    const onboardingRes = await fetch(
-                        `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/prepyatra/onboarding?userId=${profileData._id}`
-                    );
-                    const onboardingResult = await onboardingRes.json();
-                    if (onboardingResult.status) {
-                        setOnboardingDetails(onboardingResult.data);
-                    }
-                }
+                await fetchOnboardingDetails(profileData._id)
             } catch (err) {
                 console.error("Failed to fetch profile:", err)
             } finally {
@@ -168,12 +182,6 @@ const Dashboard = () => {
         if (profile?._id) {
             fetchRecruiterContacts(profile._id)
             showCelebration(25)
-            toast({
-                title: "+25 Points Earned!",
-                description: "You earned 25 points for adding a recruiter contact.",
-                duration: 4000,
-                className: "bg-blue-600/90 text-white border-blue-400/40"
-            });
             setTimeout(() => {
                 window.dispatchEvent(new CustomEvent("gamification-refetch"));
             }, 1000);
@@ -303,21 +311,43 @@ const Dashboard = () => {
                                     </Button>
                                 </div>
                             )}
-                            {/* Collapsible Onboarding Details */}
-                            {onboardingDetails && (
-                                <>
+                            {/* Onboarding Details Section */}
+                            <div className="mt-4">
+                                <div className="flex items-center justify-between mb-2">
                                     <button
-                                        className="mt-4 flex items-center text-primary hover:underline font-medium"
+                                        className="flex items-center text-primary hover:underline font-medium"
                                         onClick={() => setShowDetails((v) => !v)}
                                     >
                                         {showDetails ? <ChevronUp className="w-4 h-4 mr-1" /> : <ChevronDown className="w-4 h-4 mr-1" />}
-                                        {showDetails ? 'Hide Onboarding Details' : 'Show Onboarding Details'}
+                                        {showDetails ? 'Hide User Details' : 'Show User Details'}
                                     </button>
-                                    {showDetails && (
-                                        <div className="mt-3 bg-gray-800/60 rounded-lg p-4 border border-gray-700">
-                                            <div className="border-b border-gray-700 mb-3 pb-2">
-                                                <span className="uppercase tracking-wide text-xs text-primary font-semibold">Onboarding Details</span>
-                                            </div>
+                                    <div className="flex gap-1">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => fetchOnboardingDetails(profile._id)}
+                                            className="text-primary hover:bg-primary/10 p-1 h-auto"
+                                            title="Refresh data"
+                                        >
+                                            <RefreshCw className="w-4 h-4" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setIsEditOnboardingModalOpen(true)}
+                                            className="text-primary hover:bg-primary/10 p-1 h-auto"
+                                        >
+                                            <Edit className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+                                
+                                {showDetails && (
+                                    <div className="mt-3 bg-gray-800/60 rounded-lg p-4 border border-gray-700">
+                                        <div className="border-b border-gray-700 mb-3 pb-2">
+                                            <span className="uppercase tracking-wide text-xs text-primary font-semibold">Onboarding Details</span>
+                                        </div>
+                                        {onboardingDetails ? (
                                             <div className="space-y-2">
                                                 <div>
                                                     <span className="font-semibold text-white text-sm">Goal:</span>
@@ -336,10 +366,15 @@ const Dashboard = () => {
                                                     <span className="ml-2 text-gray-300 text-base">{onboardingDetails.focusAreas?.join(', ') || 'N/A'}</span>
                                                 </div>
                                             </div>
-                                        </div>
-                                    )}
-                                </>
-                            )}
+                                        ) : (
+                                            <div className="text-center py-4">
+                                                <p className="text-gray-400 text-sm">No onboarding details found.</p>
+                                                <p className="text-gray-500 text-xs mt-1">Click the edit button to add your preferences.</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -440,7 +475,8 @@ const Dashboard = () => {
                 <Suspense fallback={<ComponentLoader />}>
                     <RecruiterContactsTable
                         contacts={recruiterContacts}
-                        onContactsChange={handleContactAdded}
+                        onContactAdded={handleContactAdded}
+                        onContactDeleted={() => fetchRecruiterContacts(profile._id)}
                         mongoUserId={profile._id}
                     />
                 </Suspense>
@@ -469,17 +505,28 @@ const Dashboard = () => {
                         onLogAdded={() => {
                             fetchPrepLogs(profile._id)
                             showCelebration(15)
-                            toast({
-                                title: "+15 Points Earned!",
-                                description: "You earned 15 points for creating a prep log.",
-                                duration: 4000,
-                                className: "bg-yellow-400/90 text-gray-900 border-yellow-300/40"
-                            });
+            
                             setTimeout(() => {
                                 window.dispatchEvent(new CustomEvent("gamification-refetch"));
                             }, 1000);
                         }}
                         mongoUserId={profile._id}
+                    />
+                </Suspense>
+
+                <Suspense fallback={<ComponentLoader />}>
+                    <EditOnboardingModal
+                        isOpen={isEditOnboardingModalOpen}
+                        onClose={() => setIsEditOnboardingModalOpen(false)}
+                        onUpdate={(updatedData) => {
+                            setOnboardingDetails(updatedData);
+                            toast({
+                                title: "Success!",
+                                description: "Onboarding details updated successfully.",
+                            });
+                        }}
+                        currentData={onboardingDetails}
+                        userId={profile._id}
                     />
                 </Suspense>
             </div>

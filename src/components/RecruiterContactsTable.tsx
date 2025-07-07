@@ -43,13 +43,15 @@ import AddRecruiterModal from "./AddRecruiterModal"
 
 interface RecruiterContactsTableProps {
     contacts: RecruiterContact[]
-    onContactsChange: () => void
+    onContactAdded?: () => void
+    onContactDeleted?: () => void
     mongoUserId?: string
 }
 
 const RecruiterContactsTable = ({
     contacts,
-    onContactsChange,
+    onContactAdded,
+    onContactDeleted,
     mongoUserId
 }: RecruiterContactsTableProps) => {
     const { toast } = useToast()
@@ -94,7 +96,7 @@ const RecruiterContactsTable = ({
                 description: "Recruiter deleted successfully"
             })
 
-            onContactsChange()
+            if (onContactDeleted) onContactDeleted();
         } catch (error) {
             toast({
                 title: "Error",
@@ -134,7 +136,7 @@ const RecruiterContactsTable = ({
                 description: "Status updated successfully"
             })
 
-            onContactsChange()
+            if (onContactAdded) onContactAdded();
         } catch (error) {
             toast({
                 title: "Error",
@@ -175,7 +177,7 @@ const RecruiterContactsTable = ({
                 description: "Date updated successfully"
             })
 
-            onContactsChange()
+            if (onContactAdded) onContactAdded();
         } catch (error) {
             toast({
                 title: "Error",
@@ -481,7 +483,7 @@ const RecruiterContactsTable = ({
             <AddRecruiterModal
                 isOpen={isModalOpen}
                 onClose={handleModalClose}
-                onContactAdded={onContactsChange}
+                onContactAdded={onContactAdded}
                 editContact={editingContact}
                 mongoUserId={mongoUserId}
             />
