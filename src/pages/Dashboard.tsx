@@ -9,6 +9,8 @@ import { useAuth } from "@/contexts/AuthContext"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import InstallButton from "@/components/InstallButton"
+import { useGamificationContext } from "@/contexts/GamificationContext"
+import { useToast } from "@/hooks/use-toast"
 
 // Lazy load heavy components
 const AddRecruiterModal = lazy(() => import("@/components/AddRecruiterModal"))
@@ -52,6 +54,8 @@ type Profile = {
 const Dashboard = () => {
     const navigate = useNavigate()
     const { user, signOut } = useAuth()
+    const { showCelebration } = useGamificationContext()
+    const { toast } = useToast();
     const [profile, setProfile] = useState<Profile | null>(null)
     const [loading, setLoading] = useState(true)
     const [recruiterContacts, setRecruiterContacts] = useState<
@@ -156,9 +160,23 @@ const Dashboard = () => {
         await signOut()
     }
 
+    /**
+     * Handler for when a recruiter contact is added.
+     * Shows celebration, toast, and triggers gamification refetch.
+     */
     const handleContactAdded = () => {
         if (profile?._id) {
             fetchRecruiterContacts(profile._id)
+            showCelebration(25)
+            toast({
+                title: "+25 Points Earned!",
+                description: "You earned 25 points for adding a recruiter contact.",
+                duration: 4000,
+                className: "bg-blue-600/90 text-white border-blue-400/40"
+            });
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent("gamification-refetch"));
+            }, 1000);
         }
     }
 
@@ -193,6 +211,7 @@ const Dashboard = () => {
             <Navbar
                 username={profile?.name || "User"}
                 onSignOut={handleSignOut}
+                userId={profile?._id}
             />
             <div className='container mx-auto px-4 py-8'>
                 <div className='flex justify-between items-center mb-8'>
@@ -206,7 +225,7 @@ const Dashboard = () => {
                     </div>
                 </div>
 
-                <div className='grid md:grid-cols-3 gap-6 mb-8'>
+                <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
                     {/* Enhanced Profile Section */}
                     <div className='glass-dark rounded-2xl p-6'>
                         <h3 className='text-xl font-bold text-white mb-6 flex items-center gap-2'>
@@ -447,7 +466,19 @@ const Dashboard = () => {
                     <AddPrepLogModal
                         isOpen={isPrepLogModalOpen}
                         onClose={() => setIsPrepLogModalOpen(false)}
-                        onLogAdded={() => fetchPrepLogs(profile._id)}
+                        onLogAdded={() => {
+                            fetchPrepLogs(profile._id)
+                            showCelebration(15)
+                            toast({
+                                title: "+15 Points Earned!",
+                                description: "You earned 15 points for creating a prep log.",
+                                duration: 4000,
+                                className: "bg-yellow-400/90 text-gray-900 border-yellow-300/40"
+                            });
+                            setTimeout(() => {
+                                window.dispatchEvent(new CustomEvent("gamification-refetch"));
+                            }, 1000);
+                        }}
                         mongoUserId={profile._id}
                     />
                 </Suspense>
