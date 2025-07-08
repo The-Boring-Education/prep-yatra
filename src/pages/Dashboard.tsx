@@ -116,11 +116,11 @@ const Dashboard = () => {
         }
     }
 
-    const fetchOnboardingDetails = async (userId: string) => {
+    const fetchOnboardingDetails = async (supabaseUserId: string) => {
         try {
             const timestamp = new Date().getTime();
             const onboardingRes = await fetch(
-                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/prepyatra/onboarding?userId=${userId}&t=${timestamp}`,
+                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/prepyatra/onboarding?userId=${supabaseUserId}&t=${timestamp}`,
                 {
                     headers: {
                         'Cache-Control': 'no-cache'
@@ -159,7 +159,7 @@ const Dashboard = () => {
                 setProfile(profileData)
                 await fetchRecruiterContacts(profileData._id)
                 await fetchPrepLogs(profileData._id)
-                await fetchOnboardingDetails(profileData._id)
+                await fetchOnboardingDetails(user.id)
             } catch (err) {
                 console.error("Failed to fetch profile:", err)
             } finally {
@@ -325,7 +325,7 @@ const Dashboard = () => {
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            onClick={() => fetchOnboardingDetails(profile._id)}
+                                            onClick={() => fetchOnboardingDetails(user.id)}
                                             className="text-primary hover:bg-primary/10 p-1 h-auto"
                                             title="Refresh data"
                                         >
@@ -518,8 +518,8 @@ const Dashboard = () => {
                     <EditOnboardingModal
                         isOpen={isEditOnboardingModalOpen}
                         onClose={() => setIsEditOnboardingModalOpen(false)}
-                        onUpdate={(updatedData) => {
-                            setOnboardingDetails(updatedData);
+                        onUpdate={async (updatedData) => {
+                            await fetchOnboardingDetails(user.id);
                             toast({
                                 title: "Success!",
                                 description: "Onboarding details updated successfully.",
@@ -527,6 +527,7 @@ const Dashboard = () => {
                         }}
                         currentData={onboardingDetails}
                         userId={profile._id}
+                        fetchOnboardingDetails={fetchOnboardingDetails}
                     />
                 </Suspense>
             </div>

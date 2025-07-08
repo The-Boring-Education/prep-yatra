@@ -12,6 +12,7 @@ interface EditOnboardingModalProps {
     onUpdate: (data: OnboardingData) => void;
     currentData?: any;
     userId: string;
+    fetchOnboardingDetails: (userId: string) => Promise<void>;
 }
 
 const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
@@ -19,7 +20,8 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
     onClose,
     onUpdate,
     currentData,
-    userId
+    userId,
+    fetchOnboardingDetails
 }) => {
     const { toast } = useToast();
     const { user } = useAuth();
@@ -93,7 +95,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         try {
             const requestBody = {
                 userId,
-                supabaseUserId: user?.providerAccountId,
+                supabaseUserId: user?.id,
                 ...formData
             };
             
@@ -126,7 +128,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                     title: "Success!",
                     description: "Onboarding details updated successfully.",
                 });
-                
+                await fetchOnboardingDetails(user.id);
                 // Use response data if available, otherwise use form data
                 if (result.data?.prepYatraUser) {
                     const updatedData = {
@@ -139,7 +141,6 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 } else {
                     onUpdate(formData);
                 }
-                
                 onClose();
             } else {
                 throw new Error(result.message || 'Failed to update onboarding details');
