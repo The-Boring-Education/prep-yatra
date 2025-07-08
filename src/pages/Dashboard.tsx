@@ -3,7 +3,16 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Calendar, Award, Share2, ChevronDown, ChevronUp, Edit, RefreshCw } from "lucide-react"
+import {
+    ExternalLink,
+    Calendar,
+    Award,
+    Share2,
+    ChevronDown,
+    ChevronUp,
+    Edit,
+    RefreshCw
+} from "lucide-react"
 import { RecruiterContact } from "@/types/recruiters"
 import { useAuth } from "@/contexts/AuthContext"
 import Navbar from "@/components/Navbar"
@@ -20,7 +29,9 @@ const RecruiterContactsTable = lazy(
 const AddPrepLogModal = lazy(() => import("@/components/AddPrepLogModal"))
 const PrepLogList = lazy(() => import("@/components/PrepLogsList"))
 const PrepLogCard = lazy(() => import("@/components/PrepLogsList"))
-const EditOnboardingModal = lazy(() => import("@/components/EditOnboardingModal"))
+const EditOnboardingModal = lazy(
+    () => import("@/components/EditOnboardingModal")
+)
 
 // Loading component for Suspense fallback
 const ComponentLoader = () => (
@@ -48,7 +59,7 @@ type Profile = {
         workExperience: number
         linkedInUrl?: string
         pyOnboarded: boolean
-        supabaseUserId?: string
+        userId?: string
     }
 }
 
@@ -56,7 +67,7 @@ const Dashboard = () => {
     const navigate = useNavigate()
     const { user, signOut } = useAuth()
     const { showCelebration } = useGamificationContext()
-    const { toast } = useToast();
+    const { toast } = useToast()
     const [profile, setProfile] = useState<Profile | null>(null)
     const [loading, setLoading] = useState(true)
     const [recruiterContacts, setRecruiterContacts] = useState<
@@ -65,9 +76,10 @@ const Dashboard = () => {
     const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
-    const [onboardingDetails, setOnboardingDetails] = useState(null);
-    const [showDetails, setShowDetails] = useState(false);
-    const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] = useState(false);
+    const [onboardingDetails, setOnboardingDetails] = useState(null)
+    const [showDetails, setShowDetails] = useState(false)
+    const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] =
+        useState(false)
 
     const fetchRecruiterContacts = async (userId: string) => {
         try {
@@ -116,24 +128,26 @@ const Dashboard = () => {
         }
     }
 
-    const fetchOnboardingDetails = async (supabaseUserId: string) => {
+    const fetchOnboardingDetails = async (userId: string) => {
         try {
-            const timestamp = new Date().getTime();
+            const timestamp = new Date().getTime()
             const onboardingRes = await fetch(
-                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/prepyatra/onboarding?userId=${supabaseUserId}&t=${timestamp}`,
+                `${
+                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                }/api/v1/prepyatra/onboarding?userId=${userId}&t=${timestamp}`,
                 {
                     headers: {
-                        'Cache-Control': 'no-cache'
+                        "Cache-Control": "no-cache"
                     }
                 }
-            );
-            const onboardingResult = await onboardingRes.json();
-            
+            )
+            const onboardingResult = await onboardingRes.json()
+
             if (onboardingResult.status) {
-                setOnboardingDetails(onboardingResult.data);
+                setOnboardingDetails(onboardingResult.data)
             }
         } catch (error) {
-            console.error("Failed to fetch onboarding details:", error);
+            console.error("Failed to fetch onboarding details:", error)
         }
     }
 
@@ -146,7 +160,9 @@ const Dashboard = () => {
 
             try {
                 const res = await fetch(
-                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/user?email=${user.email}`
+                    `${
+                        import.meta.env.VITE_TBE_WEBAPP_API_URL
+                    }/api/v1/user?email=${user.email}`
                 )
                 const result = await res.json()
                 const profileData = result.data
@@ -183,8 +199,8 @@ const Dashboard = () => {
             fetchRecruiterContacts(profile._id)
             showCelebration(25)
             setTimeout(() => {
-                window.dispatchEvent(new CustomEvent("gamification-refetch"));
-            }, 1000);
+                window.dispatchEvent(new CustomEvent("gamification-refetch"))
+            }, 1000)
         }
     }
 
@@ -276,20 +292,29 @@ const Dashboard = () => {
                             <div className='flex items-center gap-2 text-gray-300'>
                                 <Award className='h-4 w-4 text-primary' />
                                 <span className='text-sm'>
-                                    <strong>Experience:</strong>{' '}
+                                    <strong>Experience:</strong>{" "}
                                     {profile?.prepYatra?.workExperience != null
-                                        ? `${profile.prepYatra.workExperience} year${profile.prepYatra.workExperience > 1 ? 's' : ''}`
-                                        : 'Not specified'}
+                                        ? `${
+                                              profile.prepYatra.workExperience
+                                          } year${
+                                              profile.prepYatra.workExperience >
+                                              1
+                                                  ? "s"
+                                                  : ""
+                                          }`
+                                        : "Not specified"}
                                 </span>
                             </div>
 
                             <div className='flex items-center gap-2 text-gray-300'>
                                 <Calendar className='h-4 w-4 text-primary' />
                                 <span className='text-sm'>
-                                    <strong>Member since:</strong>{' '}
-                                    {new Date(profile?.createdAt).toLocaleDateString('en-US', {
-                                        month: 'short',
-                                        year: 'numeric',
+                                    <strong>Member since:</strong>{" "}
+                                    {new Date(
+                                        profile?.createdAt
+                                    ).toLocaleDateString("en-US", {
+                                        month: "short",
+                                        year: "numeric"
                                     })}
                                 </span>
                             </div>
@@ -302,7 +327,7 @@ const Dashboard = () => {
                                         onClick={() =>
                                             window.open(
                                                 profile.prepYatra.linkedInUrl,
-                                                '_blank'
+                                                "_blank"
                                             )
                                         }
                                         className='text-primary hover:bg-primary/10 p-0 h-auto font-normal justify-start'>
@@ -312,64 +337,104 @@ const Dashboard = () => {
                                 </div>
                             )}
                             {/* Onboarding Details Section */}
-                            <div className="mt-4">
-                                <div className="flex items-center justify-between mb-2">
+                            <div className='mt-4'>
+                                <div className='flex items-center justify-between mb-2'>
                                     <button
-                                        className="flex items-center text-primary hover:underline font-medium"
-                                        onClick={() => setShowDetails((v) => !v)}
-                                    >
-                                        {showDetails ? <ChevronUp className="w-4 h-4 mr-1" /> : <ChevronDown className="w-4 h-4 mr-1" />}
-                                        {showDetails ? 'Hide User Details' : 'Show User Details'}
+                                        className='flex items-center text-primary hover:underline font-medium'
+                                        onClick={() =>
+                                            setShowDetails((v) => !v)
+                                        }>
+                                        {showDetails ? (
+                                            <ChevronUp className='w-4 h-4 mr-1' />
+                                        ) : (
+                                            <ChevronDown className='w-4 h-4 mr-1' />
+                                        )}
+                                        {showDetails
+                                            ? "Hide User Details"
+                                            : "Show User Details"}
                                     </button>
-                                    <div className="flex gap-1">
+                                    <div className='flex gap-1'>
                                         <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => fetchOnboardingDetails(user.id)}
-                                            className="text-primary hover:bg-primary/10 p-1 h-auto"
-                                            title="Refresh data"
-                                        >
-                                            <RefreshCw className="w-4 h-4" />
+                                            variant='ghost'
+                                            size='sm'
+                                            onClick={() =>
+                                                fetchOnboardingDetails(user.id)
+                                            }
+                                            className='text-primary hover:bg-primary/10 p-1 h-auto'
+                                            title='Refresh data'>
+                                            <RefreshCw className='w-4 h-4' />
                                         </Button>
                                         <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => setIsEditOnboardingModalOpen(true)}
-                                            className="text-primary hover:bg-primary/10 p-1 h-auto"
-                                        >
-                                            <Edit className="w-4 h-4" />
+                                            variant='ghost'
+                                            size='sm'
+                                            onClick={() =>
+                                                setIsEditOnboardingModalOpen(
+                                                    true
+                                                )
+                                            }
+                                            className='text-primary hover:bg-primary/10 p-1 h-auto'>
+                                            <Edit className='w-4 h-4' />
                                         </Button>
                                     </div>
                                 </div>
-                                
+
                                 {showDetails && (
-                                    <div className="mt-3 bg-gray-800/60 rounded-lg p-4 border border-gray-700">
-                                        <div className="border-b border-gray-700 mb-3 pb-2">
-                                            <span className="uppercase tracking-wide text-xs text-primary font-semibold">Onboarding Details</span>
+                                    <div className='mt-3 bg-gray-800/60 rounded-lg p-4 border border-gray-700'>
+                                        <div className='border-b border-gray-700 mb-3 pb-2'>
+                                            <span className='uppercase tracking-wide text-xs text-primary font-semibold'>
+                                                Onboarding Details
+                                            </span>
                                         </div>
                                         {onboardingDetails ? (
-                                            <div className="space-y-2">
+                                            <div className='space-y-2'>
                                                 <div>
-                                                    <span className="font-semibold text-white text-sm">Goal:</span>
-                                                    <span className="ml-2 text-gray-300 text-base">{onboardingDetails.goal}</span>
+                                                    <span className='font-semibold text-white text-sm'>
+                                                        Goal:
+                                                    </span>
+                                                    <span className='ml-2 text-gray-300 text-base'>
+                                                        {onboardingDetails.goal}
+                                                    </span>
                                                 </div>
                                                 <div>
-                                                    <span className="font-semibold text-white text-sm">Target Companies:</span>
-                                                    <span className="ml-2 text-gray-300 text-base">{onboardingDetails.targetCompanies?.join(', ') || 'N/A'}</span>
+                                                    <span className='font-semibold text-white text-sm'>
+                                                        Target Companies:
+                                                    </span>
+                                                    <span className='ml-2 text-gray-300 text-base'>
+                                                        {onboardingDetails.targetCompanies?.join(
+                                                            ", "
+                                                        ) || "N/A"}
+                                                    </span>
                                                 </div>
                                                 <div>
-                                                    <span className="font-semibold text-white text-sm">Interview Categories:</span>
-                                                    <span className="ml-2 text-gray-300 text-base">{onboardingDetails.interviewCategories?.join(', ') || 'N/A'}</span>
+                                                    <span className='font-semibold text-white text-sm'>
+                                                        Interview Categories:
+                                                    </span>
+                                                    <span className='ml-2 text-gray-300 text-base'>
+                                                        {onboardingDetails.interviewCategories?.join(
+                                                            ", "
+                                                        ) || "N/A"}
+                                                    </span>
                                                 </div>
                                                 <div>
-                                                    <span className="font-semibold text-white text-sm">Focus Areas:</span>
-                                                    <span className="ml-2 text-gray-300 text-base">{onboardingDetails.focusAreas?.join(', ') || 'N/A'}</span>
+                                                    <span className='font-semibold text-white text-sm'>
+                                                        Focus Areas:
+                                                    </span>
+                                                    <span className='ml-2 text-gray-300 text-base'>
+                                                        {onboardingDetails.focusAreas?.join(
+                                                            ", "
+                                                        ) || "N/A"}
+                                                    </span>
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="text-center py-4">
-                                                <p className="text-gray-400 text-sm">No onboarding details found.</p>
-                                                <p className="text-gray-500 text-xs mt-1">Click the edit button to add your preferences.</p>
+                                            <div className='text-center py-4'>
+                                                <p className='text-gray-400 text-sm'>
+                                                    No onboarding details found.
+                                                </p>
+                                                <p className='text-gray-500 text-xs mt-1'>
+                                                    Click the edit button to add
+                                                    your preferences.
+                                                </p>
                                             </div>
                                         )}
                                     </div>
@@ -404,7 +469,9 @@ const Dashboard = () => {
                                     <p className='text-gray-400 text-sm'>
                                         Last contact added{" "}
                                         {recruiterContacts[0]?.createdAt
-                                            ? new Date(recruiterContacts[0].createdAt).toLocaleDateString()
+                                            ? new Date(
+                                                  recruiterContacts[0].createdAt
+                                              ).toLocaleDateString()
                                             : "No contacts yet"}
                                     </p>
                                 </div>
@@ -476,7 +543,9 @@ const Dashboard = () => {
                     <RecruiterContactsTable
                         contacts={recruiterContacts}
                         onContactAdded={handleContactAdded}
-                        onContactDeleted={() => fetchRecruiterContacts(profile._id)}
+                        onContactDeleted={() =>
+                            fetchRecruiterContacts(profile._id)
+                        }
                         mongoUserId={profile._id}
                     />
                 </Suspense>
@@ -505,10 +574,12 @@ const Dashboard = () => {
                         onLogAdded={() => {
                             fetchPrepLogs(profile._id)
                             showCelebration(15)
-            
+
                             setTimeout(() => {
-                                window.dispatchEvent(new CustomEvent("gamification-refetch"));
-                            }, 1000);
+                                window.dispatchEvent(
+                                    new CustomEvent("gamification-refetch")
+                                )
+                            }, 1000)
                         }}
                         mongoUserId={profile._id}
                     />
@@ -519,11 +590,12 @@ const Dashboard = () => {
                         isOpen={isEditOnboardingModalOpen}
                         onClose={() => setIsEditOnboardingModalOpen(false)}
                         onUpdate={async (updatedData) => {
-                            await fetchOnboardingDetails(user.id);
+                            await fetchOnboardingDetails(user.id)
                             toast({
                                 title: "Success!",
-                                description: "Onboarding details updated successfully.",
-                            });
+                                description:
+                                    "Onboarding details updated successfully."
+                            })
                         }}
                         currentData={onboardingDetails}
                         userId={profile._id}
