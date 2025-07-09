@@ -325,6 +325,23 @@ const Dashboard = () => {
                                     </Button>
                                 </div>
                             )}
+                            {profile?.prepYatra.leetcodeUrl && (
+                                <div className='flex items-center gap-2'>
+                                    <Button
+                                        variant='ghost'
+                                        size='sm'
+                                        onClick={() =>
+                                            window.open(
+                                                profile.prepYatra.leetcodeUrl,
+                                                "_blank"
+                                            )
+                                        }
+                                        className='text-yellow-400 hover:bg-yellow-400/10 p-0 h-auto font-normal justify-start'>
+                                        <ExternalLink className='h-4 w-4 mr-2' />
+                                        View LeetCode Profile
+                                    </Button>
+                                </div>
+                            )}
                             {/* Onboarding Details Section */}
                             <div className='mt-4'>
                                 <div className='flex items-center justify-between mb-2'>
