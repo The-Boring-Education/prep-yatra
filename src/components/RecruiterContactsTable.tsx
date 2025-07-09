@@ -81,7 +81,7 @@ const RecruiterContactsTable = ({
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/recruiter?recruiterId=${recruiterId}`,
+                }/api/v1/prepyatra/recruiter?recruiterId=${recruiterId}`,
                 {
                     method: "DELETE"
                 }
@@ -114,7 +114,7 @@ const RecruiterContactsTable = ({
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/recruiter`,
+                }/api/v1/prepyatra/recruiter`,
                 {
                     method: "PUT",
                     headers: {
@@ -155,7 +155,7 @@ const RecruiterContactsTable = ({
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/recruiter`,
+                }/api/v1/prepyatra/recruiter`,
                 {
                     method: "PUT",
                     headers: {
@@ -312,20 +312,23 @@ const RecruiterContactsTable = ({
                                             <option value='' disabled>
                                                 Select status
                                             </option>
-                                            <option value='Screening in Process'>
+                                            <option value='Screening'>
                                                 Screening in Process
                                             </option>
                                             <option value='Interviewing'>
                                                 Interviewing
                                             </option>
-                                            <option value='Final Round Offer'>
-                                                Final Round Offer
+                                            <option value='Final Round Done'>
+                                                Final Round Done
                                             </option>
                                             <option value='Offer Letter'>
                                                 Offer Letter
                                             </option>
                                             <option value='Rejected'>
                                                 Rejected
+                                            </option>
+                                            <option value='Rejected'>
+                                                Not Interested
                                             </option>
                                         </select>
                                     </TableCell>

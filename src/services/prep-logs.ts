@@ -6,7 +6,7 @@ export const prepLogsService = {
             const response = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/prep-log?userId=${userId}`,
+                }/api/v1/prepyatra/prep-log?userId=${userId}`,
                 {
                     headers: {
                         "Content-Type": "application/json"
@@ -41,7 +41,7 @@ export const prepLogsService = {
             const response = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/prep-log`,
+                }/api/v1/prepyatra/prep-log`,
                 {
                     method: "POST",
                     headers: {
@@ -80,7 +80,7 @@ export const prepLogsService = {
             const response = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/prep-log?prepLogId=${id}`,
+                }/api/v1/prepyatra/prep-log?prepLogId=${id}`,
                 {
                     method: "PUT",
                     headers: {
@@ -112,7 +112,7 @@ export const prepLogsService = {
             const response = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/prep-log?prepLogId=${id}`,
+                }/api/v1/prepyatra/prep-log?prepLogId=${id}`,
                 {
                     method: "DELETE",
                     headers: {
