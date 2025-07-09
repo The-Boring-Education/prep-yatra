@@ -21,12 +21,11 @@ import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/contexts/AuthContext"
 
 interface EditOnboardingModalProps {
-    isOpen: boolean
-    onClose: () => void
-    onUpdate: (data: OnboardingData) => void
-    currentData?: any
-    userId: string
-    fetchOnboardingDetails: (userId: string) => Promise<void>
+    isOpen: boolean;
+    onClose: () => void;
+    onUpdate: (data: OnboardingData) => void;
+    currentData?: any;
+    userId: string;
 }
 
 const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
@@ -34,8 +33,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
     onClose,
     onUpdate,
     currentData,
-    userId,
-    fetchOnboardingDetails
+    userId
 }) => {
     const { toast } = useToast()
     const { user } = useAuth()
@@ -92,11 +90,12 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
     ) => {
         setFormData((prev) => ({
             ...prev,
-            [field]: (prev[field] as any[]).includes(value)
-                ? (prev[field] as any[]).filter((item) => item !== value)
-                : [...(prev[field] as any[]), value]
-        }))
-    }
+            [field]: (prev[field] as unknown[]).includes(value)
+                ? (prev[field] as unknown[]).filter(item => item !== value)
+                : [...(prev[field] as unknown[]), value]
+        }));
+    };
+    
 
     const handleSubmit = async () => {
         if (
@@ -116,50 +115,28 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         try {
             const requestBody = {
                 userId,
-                userId: user?.id,
-                ...formData
-            }
-
-            // Try PUT first, fallback to POST if user not found
-            let response = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/onboarding`,
-                {
-                    method: "PUT",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(requestBody)
-                }
-            )
-
-            let result = await response.json()
-
-            // If PUT fails with "User not found", try POST instead
-            if (!result.status && result.message?.includes("User not found")) {
-                response = await fetch(
-                    `${
-                        import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/prepyatra/onboarding`,
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify(requestBody)
-                    }
-                )
-
-                result = await response.json()
-            }
-
+                name: formData.name,
+                username: formData.username,
+                goal: formData.goal,
+                targetCompanies: formData.targetCompanies,
+                preferredCategories: formData.preferredCategories,
+            };
+            
+            const response = await fetch(`${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/prepyatra/onboarding`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestBody),
+            });
+            
+            const result = await response.json();
+            
             if (result.status) {
                 toast({
                     title: "Success!",
-                    description: "Onboarding details updated successfully."
-                })
-                await fetchOnboardingDetails(user.id)
+                    description: "Onboarding details updated successfully.",
+                });
                 // Use response data if available, otherwise use form data
                 if (result.data?.prepYatraUser) {
                     const updatedData = {

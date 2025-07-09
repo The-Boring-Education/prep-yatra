@@ -87,7 +87,7 @@ const AddPrepLogModal = ({
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/prep-log`,
+                }/api/v1/prepyatra/prep-log`,
                 {
                     method: editLog ? "PUT" : "POST",
                     headers: { "Content-Type": "application/json" },

@@ -49,7 +49,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/prep-log?prepLogId=${deleteId}`,
+                }/api/v1/prepyatra/prep-log?prepLogId=${deleteId}`,
                 {
                     method: "DELETE"
                 }

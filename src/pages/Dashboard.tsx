@@ -53,13 +53,19 @@ type Profile = {
     _id: string
     name: string
     username: string
+    userName?: string
     experience_level: string
     createdAt: string
     prepYatra: {
         workExperience: number
         linkedInUrl?: string
         pyOnboarded: boolean
-        userId?: string
+        goal?: string
+        targetCompanies?: string[]
+        preferences?: {
+            interviewCategories: string[]
+            focusAreas: string[]
+        }
     }
 }
 
@@ -76,17 +82,16 @@ const Dashboard = () => {
     const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
-    const [onboardingDetails, setOnboardingDetails] = useState(null)
-    const [showDetails, setShowDetails] = useState(false)
-    const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] =
-        useState(false)
+
+    const [showDetails, setShowDetails] = useState(false);
+    const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] = useState(false);
 
     const fetchRecruiterContacts = async (userId: string) => {
         try {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/recruiter?userId=${userId}`
+                }/api/v1/prepyatra/recruiter?userId=${userId}`
             )
             const result = await res.json()
             if (!result.status) throw new Error(result.message)
@@ -118,7 +123,7 @@ const Dashboard = () => {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/prep-log?userId=${userId}`
+                }/api/v1/prepyatra/prep-log?userId=${userId}`
             )
             const result = await res.json()
             if (!result.status) throw new Error(result.message)
@@ -128,28 +133,13 @@ const Dashboard = () => {
         }
     }
 
-    const fetchOnboardingDetails = async (userId: string) => {
-        try {
-            const timestamp = new Date().getTime()
-            const onboardingRes = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/onboarding?userId=${userId}&t=${timestamp}`,
-                {
-                    headers: {
-                        "Cache-Control": "no-cache"
-                    }
-                }
-            )
-            const onboardingResult = await onboardingRes.json()
-
-            if (onboardingResult.status) {
-                setOnboardingDetails(onboardingResult.data)
-            }
-        } catch (error) {
-            console.error("Failed to fetch onboarding details:", error)
-        }
-    }
+    // Onboarding details are now available in profile.prepYatra
+    const onboardingDetails = profile?.prepYatra ? {
+        goal: profile.prepYatra.goal,
+        targetCompanies: profile.prepYatra.targetCompanies || [],
+        interviewCategories: profile.prepYatra.preferences?.interviewCategories || [],
+        focusAreas: profile.prepYatra.preferences?.focusAreas || [],
+    } : null;
 
     useEffect(() => {
         const checkAuthAndProfile = async () => {
@@ -175,7 +165,6 @@ const Dashboard = () => {
                 setProfile(profileData)
                 await fetchRecruiterContacts(profileData._id)
                 await fetchPrepLogs(profileData._id)
-                await fetchOnboardingDetails(user.id)
             } catch (err) {
                 console.error("Failed to fetch profile:", err)
             } finally {
@@ -353,27 +342,14 @@ const Dashboard = () => {
                                             ? "Hide User Details"
                                             : "Show User Details"}
                                     </button>
-                                    <div className='flex gap-1'>
+                                    <div className="flex gap-1">
                                         <Button
-                                            variant='ghost'
-                                            size='sm'
-                                            onClick={() =>
-                                                fetchOnboardingDetails(user.id)
-                                            }
-                                            className='text-primary hover:bg-primary/10 p-1 h-auto'
-                                            title='Refresh data'>
-                                            <RefreshCw className='w-4 h-4' />
-                                        </Button>
-                                        <Button
-                                            variant='ghost'
-                                            size='sm'
-                                            onClick={() =>
-                                                setIsEditOnboardingModalOpen(
-                                                    true
-                                                )
-                                            }
-                                            className='text-primary hover:bg-primary/10 p-1 h-auto'>
-                                            <Edit className='w-4 h-4' />
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setIsEditOnboardingModalOpen(true)}
+                                            className="text-primary hover:bg-primary/10 p-1 h-auto"
+                                        >
+                                            <Edit className="w-4 h-4" />
                                         </Button>
                                     </div>
                                 </div>
@@ -590,7 +566,18 @@ const Dashboard = () => {
                         isOpen={isEditOnboardingModalOpen}
                         onClose={() => setIsEditOnboardingModalOpen(false)}
                         onUpdate={async (updatedData) => {
-                            await fetchOnboardingDetails(user.id)
+                            // Refresh the profile data to get updated onboarding details
+                            try {
+                                const res = await fetch(
+                                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/user?email=${user.email}`
+                                )
+                                const result = await res.json()
+                                if (result.status) {
+                                    setProfile(result.data)
+                                }
+                            } catch (error) {
+                                console.error("Failed to refresh profile:", error)
+                            }
                             toast({
                                 title: "Success!",
                                 description:
@@ -599,7 +586,6 @@ const Dashboard = () => {
                         }}
                         currentData={onboardingDetails}
                         userId={profile._id}
-                        fetchOnboardingDetails={fetchOnboardingDetails}
                     />
                 </Suspense>
             </div>

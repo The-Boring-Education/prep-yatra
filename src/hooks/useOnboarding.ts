@@ -141,30 +141,29 @@ export function useOnboarding() {
                 )
             }
 
-            // Step 2-6: PrepYatra onboarding
-            const prepYatraResponse = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/onboarding`,
-                {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                        userId: user.id,
-                        name: formData.name,
-                        username: formData.username,
-                        goal: formData.goal,
-                        targetCompanies: formData.targetCompanies,
-                        preferredCategories: formData.preferredCategories
-                    })
-                }
-            )
-            const prepYatraResult = await prepYatraResponse.json()
-            if (!prepYatraResult.status) {
-                throw new Error(
-                    prepYatraResult.message || "PrepYatra onboarding failed"
-                )
-            }
+      // Step 2-6: PrepYatra onboarding
+      const requestBody = {
+        userId: centralUserId,
+        name: user.name,
+        email: user.email,
+        username: formData.username,
+        goal: formData.goal,
+        targetCompanies: formData.targetCompanies,
+        preferredCategories: formData.preferredCategories,
+      };
+      
+      const prepYatraResponse = await fetch(
+        `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/prepyatra/onboarding`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody),
+        }
+      );
+      const prepYatraResult = await prepYatraResponse.json();
+      if (!prepYatraResult.status) {
+        throw new Error(prepYatraResult.message || 'PrepYatra onboarding failed');
+      }
 
             toast({
                 title: "Welcome to PrepYatra!",
