@@ -17,7 +17,6 @@ import {
     Edit2,
     Calendar
 } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
 import { RecruiterContact } from "@/types/recruiters"
 import { useToast } from "@/hooks/use-toast"
 import DatePicker from "react-datepicker"
@@ -44,13 +43,15 @@ import AddRecruiterModal from "./AddRecruiterModal"
 
 interface RecruiterContactsTableProps {
     contacts: RecruiterContact[]
-    onContactsChange: () => void
+    onContactAdded?: () => void
+    onContactDeleted?: () => void
     mongoUserId?: string
 }
 
 const RecruiterContactsTable = ({
     contacts,
-    onContactsChange,
+    onContactAdded,
+    onContactDeleted,
     mongoUserId
 }: RecruiterContactsTableProps) => {
     const { toast } = useToast()
@@ -80,13 +81,11 @@ const RecruiterContactsTable = ({
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/recruiter?recruiterId=${recruiterId}`,
+                }/api/v1/prepyatra/recruiter?recruiterId=${recruiterId}`,
                 {
                     method: "DELETE"
                 }
             )
-
-            console.log(recruiterId)
 
             const result = await res.json()
 
@@ -97,7 +96,7 @@ const RecruiterContactsTable = ({
                 description: "Recruiter deleted successfully"
             })
 
-            onContactsChange()
+            if (onContactDeleted) onContactDeleted();
         } catch (error) {
             toast({
                 title: "Error",
@@ -112,11 +111,10 @@ const RecruiterContactsTable = ({
         newStatus: string
     ) => {
         try {
-            console.log("this rec id is being sent", recruiterId)
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/recruiter`,
+                }/api/v1/prepyatra/recruiter`,
                 {
                     method: "PUT",
                     headers: {
@@ -129,8 +127,6 @@ const RecruiterContactsTable = ({
                 }
             )
 
-            console.log(recruiterId)
-
             const result = await res.json()
 
             if (!res.ok) throw new Error(result.message)
@@ -140,7 +136,7 @@ const RecruiterContactsTable = ({
                 description: "Status updated successfully"
             })
 
-            onContactsChange()
+            if (onContactAdded) onContactAdded();
         } catch (error) {
             toast({
                 title: "Error",
@@ -159,7 +155,7 @@ const RecruiterContactsTable = ({
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/recruiter`,
+                }/api/v1/prepyatra/recruiter`,
                 {
                     method: "PUT",
                     headers: {
@@ -181,7 +177,7 @@ const RecruiterContactsTable = ({
                 description: "Date updated successfully"
             })
 
-            onContactsChange()
+            if (onContactAdded) onContactAdded();
         } catch (error) {
             toast({
                 title: "Error",
@@ -316,20 +312,23 @@ const RecruiterContactsTable = ({
                                             <option value='' disabled>
                                                 Select status
                                             </option>
-                                            <option value='Screening in Process'>
+                                            <option value='Screening'>
                                                 Screening in Process
                                             </option>
                                             <option value='Interviewing'>
                                                 Interviewing
                                             </option>
-                                            <option value='Final Round Offer'>
-                                                Final Round Offer
+                                            <option value='Final Round Done'>
+                                                Final Round Done
                                             </option>
                                             <option value='Offer Letter'>
                                                 Offer Letter
                                             </option>
                                             <option value='Rejected'>
                                                 Rejected
+                                            </option>
+                                            <option value='Rejected'>
+                                                Not Interested
                                             </option>
                                         </select>
                                     </TableCell>
@@ -487,7 +486,7 @@ const RecruiterContactsTable = ({
             <AddRecruiterModal
                 isOpen={isModalOpen}
                 onClose={handleModalClose}
-                onContactAdded={onContactsChange}
+                onContactAdded={onContactAdded}
                 editContact={editingContact}
                 mongoUserId={mongoUserId}
             />

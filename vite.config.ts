@@ -70,7 +70,7 @@ export default defineConfig(({ mode }) => ({
                         "lucide-react"
                     ],
                     forms: ["react-hook-form", "@hookform/resolvers", "zod"],
-                    data: ["@tanstack/react-query", "@supabase/supabase-js"],
+                    data: ["@tanstack/react-query"],
                     charts: ["recharts"],
                     datepicker: ["react-datepicker", "react-day-picker"]
                 },
@@ -102,8 +102,7 @@ export default defineConfig(({ mode }) => ({
             "react",
             "react-dom",
             "react-router-dom",
-            "@tanstack/react-query",
-            "@supabase/supabase-js"
+            "@tanstack/react-query"
         ]
     }
 }))

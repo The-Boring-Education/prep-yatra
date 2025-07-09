@@ -3,12 +3,23 @@ import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Calendar, Award } from "lucide-react"
-import { supabase } from "@/integrations/supabase/client"
-import { User } from "@supabase/supabase-js"
+import {
+    ExternalLink,
+    Calendar,
+    Award,
+    Share2,
+    ChevronDown,
+    ChevronUp,
+    Edit,
+    RefreshCw
+} from "lucide-react"
 import { RecruiterContact } from "@/types/recruiters"
+import { useAuth } from "@/contexts/AuthContext"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
+import InstallButton from "@/components/InstallButton"
+import { useGamificationContext } from "@/contexts/GamificationContext"
+import { useToast } from "@/hooks/use-toast"
 
 // Lazy load heavy components
 const AddRecruiterModal = lazy(() => import("@/components/AddRecruiterModal"))
@@ -18,6 +29,9 @@ const RecruiterContactsTable = lazy(
 const AddPrepLogModal = lazy(() => import("@/components/AddPrepLogModal"))
 const PrepLogList = lazy(() => import("@/components/PrepLogsList"))
 const PrepLogCard = lazy(() => import("@/components/PrepLogsList"))
+const EditOnboardingModal = lazy(
+    () => import("@/components/EditOnboardingModal")
+)
 
 // Loading component for Suspense fallback
 const ComponentLoader = () => (
@@ -39,18 +53,27 @@ type Profile = {
     _id: string
     name: string
     username: string
+    userName?: string
     experience_level: string
     createdAt: string
     prepYatra: {
         workExperience: number
         linkedInUrl?: string
         pyOnboarded: boolean
+        goal?: string
+        targetCompanies?: string[]
+        preferences?: {
+            interviewCategories: string[]
+            focusAreas: string[]
+        }
     }
 }
 
 const Dashboard = () => {
     const navigate = useNavigate()
-    const [user, setUser] = useState<User | null>(null)
+    const { user, signOut } = useAuth()
+    const { showCelebration } = useGamificationContext()
+    const { toast } = useToast()
     const [profile, setProfile] = useState<Profile | null>(null)
     const [loading, setLoading] = useState(true)
     const [recruiterContacts, setRecruiterContacts] = useState<
@@ -60,12 +83,15 @@ const Dashboard = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
 
+    const [showDetails, setShowDetails] = useState(false);
+    const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] = useState(false);
+
     const fetchRecruiterContacts = async (userId: string) => {
         try {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/recruiter?userId=${userId}`
+                }/api/v1/prepyatra/recruiter?userId=${userId}`
             )
             const result = await res.json()
             if (!result.status) throw new Error(result.message)
@@ -83,7 +109,7 @@ const Dashboard = () => {
                 last_interview_date: item.last_interview_date || "",
                 comments: item.comments || "",
                 link: item.link || "",
-                created_at: item.createdAt
+                createdAt: item.createdAt
             }))
 
             setRecruiterContacts(typedData)
@@ -97,7 +123,7 @@ const Dashboard = () => {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/prep-log?userId=${userId}`
+                }/api/v1/prepyatra/prep-log?userId=${userId}`
             )
             const result = await res.json()
             if (!result.status) throw new Error(result.message)
@@ -107,24 +133,26 @@ const Dashboard = () => {
         }
     }
 
+    // Onboarding details are now available in profile.prepYatra
+    const onboardingDetails = profile?.prepYatra ? {
+        goal: profile.prepYatra.goal,
+        targetCompanies: profile.prepYatra.targetCompanies || [],
+        interviewCategories: profile.prepYatra.preferences?.interviewCategories || [],
+        focusAreas: profile.prepYatra.preferences?.focusAreas || [],
+    } : null;
+
     useEffect(() => {
         const checkAuthAndProfile = async () => {
-            const {
-                data: { session }
-            } = await supabase.auth.getSession()
-
-            if (!session?.user) {
+            if (!user) {
                 navigate("/auth")
                 return
             }
-
-            setUser(session.user)
 
             try {
                 const res = await fetch(
                     `${
                         import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/user?email=${session.user.email}`
+                    }/api/v1/user?email=${user.email}`
                 )
                 const result = await res.json()
                 const profileData = result.data
@@ -145,16 +173,23 @@ const Dashboard = () => {
         }
 
         checkAuthAndProfile()
-    }, [navigate])
+    }, [navigate, user])
 
     const handleSignOut = async () => {
-        await supabase.auth.signOut()
-        navigate("/auth")
+        await signOut()
     }
 
+    /**
+     * Handler for when a recruiter contact is added.
+     * Shows celebration, toast, and triggers gamification refetch.
+     */
     const handleContactAdded = () => {
         if (profile?._id) {
             fetchRecruiterContacts(profile._id)
+            showCelebration(25)
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent("gamification-refetch"))
+            }, 1000)
         }
     }
 
@@ -189,20 +224,21 @@ const Dashboard = () => {
             <Navbar
                 username={profile?.name || "User"}
                 onSignOut={handleSignOut}
+                userId={profile?._id}
             />
             <div className='container mx-auto px-4 py-8'>
                 <div className='flex justify-between items-center mb-8'>
                     <div>
                         <h1 className='text-3xl font-bold text-white mb-2'>
-                         What are you Learning Today ?
+                            What are you Learning Today ?
                         </h1>
                         <p className='text-gray-300'>
-                           Remember Slow and Steady Wins !!
+                            Remember Slow and Steady Wins !!
                         </p>
                     </div>
                 </div>
 
-                <div className='grid md:grid-cols-3 gap-6 mb-8'>
+                <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
                     {/* Enhanced Profile Section */}
                     <div className='glass-dark rounded-2xl p-6'>
                         <h3 className='text-xl font-bold text-white mb-6 flex items-center gap-2'>
@@ -212,10 +248,7 @@ const Dashboard = () => {
                         <div className='flex items-center gap-4 mb-6'>
                             <Avatar className='h-16 w-16 border-2 border-primary/30'>
                                 <AvatarImage
-                                    src={
-                                        user?.user_metadata?.avatar_url ||
-                                        user?.user_metadata?.picture
-                                    }
+                                    src={user?.picture}
                                     alt={profile?.username || "User"}
                                 />
                                 <AvatarFallback className='bg-primary text-primary-foreground text-lg font-bold'>
@@ -230,7 +263,7 @@ const Dashboard = () => {
                                     {profile?.username}
                                 </h4>
                                 <p className='text-gray-300 text-sm'>
-                                    {user?.user_metadata?.name || user?.email}
+                                    {user?.name || user?.email}
                                 </p>
                                 {profile?.experience_level && (
                                     <Badge
@@ -292,6 +325,97 @@ const Dashboard = () => {
                                     </Button>
                                 </div>
                             )}
+                            {/* Onboarding Details Section */}
+                            <div className='mt-4'>
+                                <div className='flex items-center justify-between mb-2'>
+                                    <button
+                                        className='flex items-center text-primary hover:underline font-medium'
+                                        onClick={() =>
+                                            setShowDetails((v) => !v)
+                                        }>
+                                        {showDetails ? (
+                                            <ChevronUp className='w-4 h-4 mr-1' />
+                                        ) : (
+                                            <ChevronDown className='w-4 h-4 mr-1' />
+                                        )}
+                                        {showDetails
+                                            ? "Hide User Details"
+                                            : "Show User Details"}
+                                    </button>
+                                    <div className="flex gap-1">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => setIsEditOnboardingModalOpen(true)}
+                                            className="text-primary hover:bg-primary/10 p-1 h-auto"
+                                        >
+                                            <Edit className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {showDetails && (
+                                    <div className='mt-3 bg-gray-800/60 rounded-lg p-4 border border-gray-700'>
+                                        <div className='border-b border-gray-700 mb-3 pb-2'>
+                                            <span className='uppercase tracking-wide text-xs text-primary font-semibold'>
+                                                Onboarding Details
+                                            </span>
+                                        </div>
+                                        {onboardingDetails ? (
+                                            <div className='space-y-2'>
+                                                <div>
+                                                    <span className='font-semibold text-white text-sm'>
+                                                        Goal:
+                                                    </span>
+                                                    <span className='ml-2 text-gray-300 text-base'>
+                                                        {onboardingDetails.goal}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span className='font-semibold text-white text-sm'>
+                                                        Target Companies:
+                                                    </span>
+                                                    <span className='ml-2 text-gray-300 text-base'>
+                                                        {onboardingDetails.targetCompanies?.join(
+                                                            ", "
+                                                        ) || "N/A"}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span className='font-semibold text-white text-sm'>
+                                                        Interview Categories:
+                                                    </span>
+                                                    <span className='ml-2 text-gray-300 text-base'>
+                                                        {onboardingDetails.interviewCategories?.join(
+                                                            ", "
+                                                        ) || "N/A"}
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <span className='font-semibold text-white text-sm'>
+                                                        Focus Areas:
+                                                    </span>
+                                                    <span className='ml-2 text-gray-300 text-base'>
+                                                        {onboardingDetails.focusAreas?.join(
+                                                            ", "
+                                                        ) || "N/A"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className='text-center py-4'>
+                                                <p className='text-gray-400 text-sm'>
+                                                    No onboarding details found.
+                                                </p>
+                                                <p className='text-gray-500 text-xs mt-1'>
+                                                    Click the edit button to add
+                                                    your preferences.
+                                                </p>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
@@ -320,9 +444,11 @@ const Dashboard = () => {
                                 <div className='text-center pt-2'>
                                     <p className='text-gray-400 text-sm'>
                                         Last contact added{" "}
-                                        {new Date(
-                                            recruiterContacts[0]?.createdAt
-                                        ).toLocaleDateString()}
+                                        {recruiterContacts[0]?.createdAt
+                                            ? new Date(
+                                                  recruiterContacts[0].createdAt
+                                              ).toLocaleDateString()
+                                            : "No contacts yet"}
                                     </p>
                                 </div>
                             )}
@@ -351,11 +477,29 @@ const Dashboard = () => {
                                     </span>
                                 </div>
                             </div>
-                            <Button
-                                onClick={() => setIsPrepLogModalOpen(true)}
-                                className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
-                                + Add Prep Log
-                            </Button>
+                            <div className='space-y-2'>
+                                <Button
+                                    onClick={() => setIsPrepLogModalOpen(true)}
+                                    className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
+                                    + Add Prep Log
+                                </Button>
+                                <Button
+                                    variant='outline'
+                                    onClick={() => {
+                                        const journeyUrl = `${window.location.origin}/journey/${profile._id}`
+                                        navigator.clipboard.writeText(
+                                            journeyUrl
+                                        )
+                                        // You could add a toast notification here
+                                        alert(
+                                            "Journey URL copied to clipboard!"
+                                        )
+                                    }}
+                                    className='w-full border-primary/30 text-primary hover:bg-primary/10'>
+                                    <Share2 className='w-4 h-4 mr-2' />
+                                    Share Journey
+                                </Button>
+                            </div>
                             {prepLogs.length > 0 && (
                                 <div className='text-center pt-2'>
                                     <p className='text-gray-400 text-sm'>
@@ -374,7 +518,10 @@ const Dashboard = () => {
                 <Suspense fallback={<ComponentLoader />}>
                     <RecruiterContactsTable
                         contacts={recruiterContacts}
-                        onContactsChange={handleContactAdded}
+                        onContactAdded={handleContactAdded}
+                        onContactDeleted={() =>
+                            fetchRecruiterContacts(profile._id)
+                        }
                         mongoUserId={profile._id}
                     />
                 </Suspense>
@@ -400,12 +547,50 @@ const Dashboard = () => {
                     <AddPrepLogModal
                         isOpen={isPrepLogModalOpen}
                         onClose={() => setIsPrepLogModalOpen(false)}
-                        onLogAdded={() => fetchPrepLogs(profile._id)}
+                        onLogAdded={() => {
+                            fetchPrepLogs(profile._id)
+                            showCelebration(15)
+
+                            setTimeout(() => {
+                                window.dispatchEvent(
+                                    new CustomEvent("gamification-refetch")
+                                )
+                            }, 1000)
+                        }}
                         mongoUserId={profile._id}
+                    />
+                </Suspense>
+
+                <Suspense fallback={<ComponentLoader />}>
+                    <EditOnboardingModal
+                        isOpen={isEditOnboardingModalOpen}
+                        onClose={() => setIsEditOnboardingModalOpen(false)}
+                        onUpdate={async (updatedData) => {
+                            // Refresh the profile data to get updated onboarding details
+                            try {
+                                const res = await fetch(
+                                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/user?email=${user.email}`
+                                )
+                                const result = await res.json()
+                                if (result.status) {
+                                    setProfile(result.data)
+                                }
+                            } catch (error) {
+                                console.error("Failed to refresh profile:", error)
+                            }
+                            toast({
+                                title: "Success!",
+                                description:
+                                    "Onboarding details updated successfully."
+                            })
+                        }}
+                        currentData={onboardingDetails}
+                        userId={profile._id}
                     />
                 </Suspense>
             </div>
             <Footer />
+            <InstallButton />
         </div>
     )
 }

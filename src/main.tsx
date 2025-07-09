@@ -2,7 +2,12 @@ import React from "react"
 import ReactDOM from "react-dom/client"
 import App from "./App.tsx"
 import "./index.css"
-
+// Global beforeinstallprompt event caching
+window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    (window as any).deferredBeforeInstallPrompt = e;
+  });
+  
 // Register service worker for caching and offline support
 if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
