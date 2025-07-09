@@ -1,12 +1,14 @@
 import React from "react"
 import { Button } from "@/components/ui/button"
+import GamificationDisplay from "@/components/GamificationDisplay"
+import NavbarDropdownLinks from "@/components/NavbarDropdownLinks"
+import { NavbarProps } from "@/interfaces/components"
 
-interface NavbarProps {
-    username: string
-    onSignOut: () => void
+const capitalize = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1)
 }
 
-const Navbar: React.FC<NavbarProps> = ({ username, onSignOut }) => {
+const Navbar: React.FC<NavbarProps> = ({ username, onSignOut, userId }) => {
     return (
         <nav className='w-full bg-gray-900 border-b border-primary/20 px-4 py-3 flex items-center justify-between'>
             <div className='flex flex-col gap-1'>
@@ -18,8 +20,10 @@ const Navbar: React.FC<NavbarProps> = ({ username, onSignOut }) => {
                 </span>
             </div>
             <div className='flex items-center gap-4'>
+                <NavbarDropdownLinks />
+                {userId && <GamificationDisplay userId={userId} />}
                 <span className='text-white font-medium hidden sm:inline'>
-                    {username}
+                    Hello {capitalize(username)}
                 </span>
                 <Button
                     onClick={onSignOut}

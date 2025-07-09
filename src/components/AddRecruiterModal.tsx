@@ -11,9 +11,9 @@ import {
     DialogHeader,
     DialogTitle
 } from "@/components/ui/dialog"
-import { supabase } from "@/integrations/supabase/client"
 import { RecruiterContact } from "@/types/recruiters"
 import { useToast } from "@/hooks/use-toast"
+import { useUser } from "@/hooks/use-user"
 
 interface AddRecruiterModalProps {
     isOpen: boolean
@@ -31,6 +31,7 @@ const AddRecruiterModal = ({
     mongoUserId
 }: AddRecruiterModalProps) => {
     const { toast } = useToast()
+    const { isAuthenticated } = useUser()
     const [loading, setLoading] = useState(false)
     const [formData, setFormData] = useState({
         recruiterName: "",
@@ -38,7 +39,7 @@ const AddRecruiterModal = ({
         phone: "",
         company: "",
         appliedPosition: "",
-        applicationStatus: "Screening in Process",
+        applicationStatus: "Screening",
         follow_up_date: "",
         last_interview_date: "",
         link: "",
@@ -54,7 +55,7 @@ const AddRecruiterModal = ({
                 company: editContact.company || "",
                 appliedPosition: editContact.appliedPosition || "",
                 applicationStatus:
-                    editContact.applicationStatus || "Screening in Process",
+                    editContact.applicationStatus || "Screening",
                 follow_up_date: editContact.follow_up_date || "",
                 last_interview_date: editContact.last_interview_date || "",
                 link: editContact.link || "",
@@ -67,7 +68,7 @@ const AddRecruiterModal = ({
                 phone: "",
                 company: "",
                 appliedPosition: "",
-                applicationStatus: "Screening in Process",
+                applicationStatus: "Screening",
                 follow_up_date: "",
                 last_interview_date: "",
                 link: "",
@@ -85,11 +86,7 @@ const AddRecruiterModal = ({
         setLoading(true)
 
         try {
-            const {
-                data: { user }
-            } = await supabase.auth.getUser()
-
-            if (!user) {
+            if (!isAuthenticated) {
                 toast({
                     title: "Error",
                     description: "User not authenticated.",
@@ -106,7 +103,7 @@ const AddRecruiterModal = ({
             const response = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prep-yatra/recruiter`,
+                }/api/v1/prepyatra/recruiter`,
                 {
                     method: editContact ? "PUT" : "POST",
                     headers: {
