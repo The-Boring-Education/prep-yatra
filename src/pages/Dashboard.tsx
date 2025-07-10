@@ -193,6 +193,16 @@ const Dashboard = () => {
         }
     }
 
+    /**
+     * Handler for when a recruiter contact is updated.
+     * Only refreshes the data without celebration.
+     */
+    const handleContactUpdated = () => {
+        if (profile?._id) {
+            fetchRecruiterContacts(profile._id)
+        }
+    }
+
     const getInitials = (name: string) => {
         return name
             .split(" ")
@@ -358,7 +368,7 @@ const Dashboard = () => {
                                     <div className='mt-3 bg-gray-800/60 rounded-lg p-4 border border-gray-700'>
                                         <div className='border-b border-gray-700 mb-3 pb-2'>
                                             <span className='uppercase tracking-wide text-xs text-primary font-semibold'>
-                                                Onboarding Details
+                                                Your Details
                                             </span>
                                         </div>
                                         {onboardingDetails ? (
@@ -405,7 +415,7 @@ const Dashboard = () => {
                                         ) : (
                                             <div className='text-center py-4'>
                                                 <p className='text-gray-400 text-sm'>
-                                                    No onboarding details found.
+                                                    No user details found.
                                                 </p>
                                                 <p className='text-gray-500 text-xs mt-1'>
                                                     Click the edit button to add
@@ -519,6 +529,7 @@ const Dashboard = () => {
                     <RecruiterContactsTable
                         contacts={recruiterContacts}
                         onContactAdded={handleContactAdded}
+                        onContactUpdated={handleContactUpdated}
                         onContactDeleted={() =>
                             fetchRecruiterContacts(profile._id)
                         }
