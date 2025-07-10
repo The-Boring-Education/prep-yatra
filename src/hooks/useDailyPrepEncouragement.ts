@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { usePrepLogs } from "./use-prep-logs"
+import { usePrepStats } from "./use-prep-stats"
 
 export interface DailyPrepEncouragementData {
     hasLoggedToday: boolean
@@ -13,19 +13,9 @@ export interface DailyPrepEncouragementData {
 }
 
 export function useDailyPrepEncouragement(userId: string): DailyPrepEncouragementData {
-    const { logs, streak, totalLogs, totalTimeSpent } = usePrepLogs(userId)
+    const { currentStreak, totalLogs, totalTimeSpent, hasLoggedToday } = usePrepStats(userId)
 
     const encouragementData = useMemo(() => {
-        // Check if user has logged anything today
-        const today = new Date()
-        today.setHours(0, 0, 0, 0)
-        
-        const hasLoggedToday = logs.some(log => {
-            const logDate = new Date(log.createdAt)
-            logDate.setHours(0, 0, 0, 0)
-            return logDate.getTime() === today.getTime()
-        })
-
         let encouragementMessage: string
         let encouragementEmoji: string
         let buttonText: string
@@ -33,21 +23,21 @@ export function useDailyPrepEncouragement(userId: string): DailyPrepEncouragemen
 
         if (hasLoggedToday) {
             // User has already logged today
-            encouragementMessage = streak > 1 
-                ? `Amazing! You're on a ${streak}-day streak! 🔥`
+            encouragementMessage = currentStreak > 1 
+                ? `Amazing! You're on a ${currentStreak}-day streak! 🔥`
                 : "Great job logging your prep today! 🎉"
             encouragementEmoji = "✅"
             buttonText = "Add Another Log"
             motivationalTip = "Keep the momentum going! Consider adding another study session."
         } else {
             // User hasn't logged today
-            if (streak === 0) {
+            if (currentStreak === 0) {
                 // No streak, encourage to start
                 encouragementMessage = "Ready to start your prep journey today?"
                 encouragementEmoji = "🚀"
                 buttonText = "Log Your First Session"
                 motivationalTip = "Every expert was once a beginner. Start your journey today!"
-            } else if (streak === 1) {
+            } else if (currentStreak === 1) {
                 // Just started streak
                 encouragementMessage = "Don't break the chain! Add today's prep log."
                 encouragementEmoji = "⏰"
@@ -55,7 +45,7 @@ export function useDailyPrepEncouragement(userId: string): DailyPrepEncouragemen
                 motivationalTip = "Consistency is key. Keep building your daily habit!"
             } else {
                 // Has existing streak
-                encouragementMessage = `You have a ${streak}-day streak! Don't let it slip away.`
+                encouragementMessage = `You have a ${currentStreak}-day streak! Don't let it slip away.`
                 encouragementEmoji = "🔥"
                 buttonText = "Maintain Your Streak"
                 motivationalTip = "You're doing great! Each day of preparation brings you closer to your goals."
@@ -64,7 +54,7 @@ export function useDailyPrepEncouragement(userId: string): DailyPrepEncouragemen
 
         return {
             hasLoggedToday,
-            streak,
+            streak: currentStreak,
             totalLogs,
             totalTimeSpent,
             encouragementMessage,
@@ -72,7 +62,7 @@ export function useDailyPrepEncouragement(userId: string): DailyPrepEncouragemen
             buttonText,
             motivationalTip
         }
-    }, [logs, streak, totalLogs, totalTimeSpent])
+    }, [currentStreak, totalLogs, totalTimeSpent, hasLoggedToday])
 
     return encouragementData
 }

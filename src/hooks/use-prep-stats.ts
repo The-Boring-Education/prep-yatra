@@ -1,0 +1,80 @@
+import { useState, useEffect } from "react"
+import { prepStatsService, PrepStats } from "@/services/prep-stats"
+
+export function usePrepStats(userId: string) {
+    const [stats, setStats] = useState<PrepStats | null>(null)
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+
+    useEffect(() => {
+        const fetchPrepStats = async () => {
+            if (!userId) {
+                setError("User ID is required")
+                setLoading(false)
+                return
+            }
+
+            try {
+                setLoading(true)
+                setError(null)
+                console.log("Fetching prep stats for userId:", userId)
+
+                const data = await prepStatsService.getByUserId(userId)
+                console.log("Received prep stats:", data)
+                setStats(data)
+            } catch (err) {
+                console.error("Error fetching prep stats:", err)
+                setError(
+                    err instanceof Error
+                        ? err.message
+                        : "Failed to fetch prep stats"
+                )
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        fetchPrepStats()
+
+        // Listen for stats refresh events
+        const handleStatsRefetch = () => {
+            console.log("Stats refresh event triggered")
+            fetchPrepStats()
+        }
+        window.addEventListener("prep-stats-refetch", handleStatsRefetch)
+        
+        return () => {
+            window.removeEventListener("prep-stats-refetch", handleStatsRefetch)
+        }
+    }, [userId])
+
+    // Calculate total time spent from weekly logs
+    const totalTimeSpent = stats?.weeklyLogs?.reduce(
+        (acc, log) => acc + (log.timeSpent || 0),
+        0
+    ) || 0
+
+    // Calculate average time per session
+    const averageTimePerSession = stats?.totalLogs > 0 
+        ? Math.round((totalTimeSpent / stats.totalLogs) * 10) / 10
+        : 0
+
+    return {
+        stats,
+        loading,
+        error,
+        currentStreak: stats?.currentStreak || 0,
+        longestStreak: stats?.longestStreak || 0,
+        totalLogs: stats?.totalLogs || 0,
+        totalTimeSpent,
+        averageTimePerSession,
+        hasLoggedToday: stats?.hasLoggedToday || false,
+        recentLogs: stats?.recentLogs || 0,
+        weeklyLogs: stats?.weeklyLogs || [],
+        lastLoggedDate: stats?.lastLoggedDate,
+        refetch: () => {
+            setLoading(true)
+            setError(null)
+        }
+    }
+} 
