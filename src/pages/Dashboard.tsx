@@ -20,6 +20,7 @@ import Footer from "@/components/Footer"
 import InstallButton from "@/components/InstallButton"
 import { useGamificationContext } from "@/contexts/GamificationContext"
 import { useToast } from "@/hooks/use-toast"
+import DailyPrepEncouragement from "@/components/DailyPrepEncouragement"
 
 // Lazy load heavy components
 const AddRecruiterModal = lazy(() => import("@/components/AddRecruiterModal"))
@@ -247,6 +248,13 @@ const Dashboard = () => {
                         </p>
                     </div>
                 </div>
+
+                {/* Daily Prep Encouragement Section */}
+                <DailyPrepEncouragement
+                    userId={profile?._id || ""}
+                    onAddPrepLog={() => setIsPrepLogModalOpen(true)}
+                    className="mb-8"
+                />
 
                 <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
                     {/* Enhanced Profile Section */}
