@@ -11,7 +11,6 @@ export type InterviewCategory =
 
 export interface OnboardingData {
   linkedInUrl: string;
-  workExperience: string;
   workDomain: string;
   name: string;
   username: string;
