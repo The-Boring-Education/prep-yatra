@@ -54,7 +54,6 @@ type Profile = {
     name: string
     username: string
     userName?: string
-    experience_level: string
     createdAt: string
     prepYatra: {
         workExperience: number
@@ -62,6 +61,7 @@ type Profile = {
         pyOnboarded: boolean
         goal?: string
         targetCompanies?: string[]
+        experienceLevel?: string
         preferences?: {
             interviewCategories: string[]
             focusAreas: string[]
@@ -275,15 +275,6 @@ const Dashboard = () => {
                                 <p className='text-gray-300 text-sm'>
                                     {user?.name || user?.email}
                                 </p>
-                                {profile?.experience_level && (
-                                    <Badge
-                                        variant='secondary'
-                                        className='mt-1 bg-primary/20 text-primary text-xs'>
-                                        {formatExperienceLevel(
-                                            profile.experience_level
-                                        )}
-                                    </Badge>
-                                )}
                             </div>
                         </div>
 
@@ -292,16 +283,7 @@ const Dashboard = () => {
                                 <Award className='h-4 w-4 text-primary' />
                                 <span className='text-sm'>
                                     <strong>Experience:</strong>{" "}
-                                    {profile?.prepYatra?.workExperience != null
-                                        ? `${
-                                              profile.prepYatra.workExperience
-                                          } year${
-                                              profile.prepYatra.workExperience >
-                                              1
-                                                  ? "s"
-                                                  : ""
-                                          }`
-                                        : "Not specified"}
+                                    {profile?.prepYatra?.experienceLevel}
                                 </span>
                             </div>
 

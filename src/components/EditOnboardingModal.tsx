@@ -39,7 +39,6 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
     const { user } = useAuth()
     const [formData, setFormData] = useState<OnboardingData>({
         linkedInUrl: "",
-        workExperience: "",
         workDomain: "",
         name: "",
         username: "",
@@ -54,7 +53,6 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         if (currentData) {
             setFormData({
                 linkedInUrl: currentData.linkedInUrl || "",
-                workExperience: currentData.workExperience || "",
                 workDomain: currentData.workDomain || "",
                 name: currentData.name || user?.name || "",
                 username:
@@ -68,7 +66,6 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
             // Set default values for new users
             setFormData({
                 linkedInUrl: "",
-                workExperience: "",
                 workDomain: "",
                 name: user?.name || "",
                 username: user?.email?.split("@")[0] || "",
