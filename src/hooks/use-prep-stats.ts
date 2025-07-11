@@ -17,13 +17,10 @@ export function usePrepStats(userId: string) {
             try {
                 setLoading(true)
                 setError(null)
-                console.log("Fetching prep stats for userId:", userId)
 
                 const data = await prepStatsService.getByUserId(userId)
-                console.log("Received prep stats:", data)
                 setStats(data)
             } catch (err) {
-                console.error("Error fetching prep stats:", err)
                 setError(
                     err instanceof Error
                         ? err.message
@@ -42,22 +39,24 @@ export function usePrepStats(userId: string) {
             fetchPrepStats()
         }
         window.addEventListener("prep-stats-refetch", handleStatsRefetch)
-        
+
         return () => {
             window.removeEventListener("prep-stats-refetch", handleStatsRefetch)
         }
     }, [userId])
 
     // Calculate total time spent from weekly logs
-    const totalTimeSpent = stats?.weeklyLogs?.reduce(
-        (acc, log) => acc + (log.timeSpent || 0),
-        0
-    ) || 0
+    const totalTimeSpent =
+        stats?.weeklyLogs?.reduce(
+            (acc, log) => acc + (log.timeSpent || 0),
+            0
+        ) || 0
 
     // Calculate average time per session
-    const averageTimePerSession = stats?.totalLogs > 0 
-        ? Math.round((totalTimeSpent / stats.totalLogs) * 10) / 10
-        : 0
+    const averageTimePerSession =
+        stats?.totalLogs > 0
+            ? Math.round((totalTimeSpent / stats.totalLogs) * 10) / 10
+            : 0
 
     return {
         stats,
@@ -77,4 +76,4 @@ export function usePrepStats(userId: string) {
             setError(null)
         }
     }
-} 
+}

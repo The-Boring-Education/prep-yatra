@@ -5,8 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import { GoogleOAuthProvider } from "@react-oauth/google"
-import { AuthProvider } from "@/contexts/AuthContext"
 import { GamificationProvider } from "@/contexts/GamificationContext"
+import AuthProvider from "@/contexts/AuthContext"
 import PublicRoute from "@/components/PublicRoute"
 import ProtectedRoute from "@/components/ProtectedRoute"
 import PricingPage from "./pages/Pricing"
@@ -50,73 +50,73 @@ const App: React.FC = () => {
                         <AuthProvider>
                             <GamificationProvider>
                                 <Suspense fallback={<PageLoader />}>
-                                <Routes>
-                                    {/* Public Routes */}
-                                    <Route
-                                        path='/'
-                                        element={
-                                            <PublicRoute>
-                                                <Index />
-                                            </PublicRoute>
-                                        }
-                                    />
-                                    <Route
-                                        path='/auth'
-                                        element={
-                                            <PublicRoute>
-                                                <Auth />
-                                            </PublicRoute>
-                                        }
-                                    />
-                                    <Route
-                                        path='/journey/:userId'
-                                        element={
-                                            <PublicRoute>
-                                                <PrepLogsShowcase />
-                                            </PublicRoute>
-                                        }
-                                    />
+                                    <Routes>
+                                        {/* Public Routes */}
+                                        <Route
+                                            path='/'
+                                            element={
+                                                <PublicRoute>
+                                                    <Index />
+                                                </PublicRoute>
+                                            }
+                                        />
+                                        <Route
+                                            path='/auth'
+                                            element={
+                                                <PublicRoute>
+                                                    <Auth />
+                                                </PublicRoute>
+                                            }
+                                        />
+                                        <Route
+                                            path='/journey/:userId'
+                                            element={
+                                                <PublicRoute>
+                                                    <PrepLogsShowcase />
+                                                </PublicRoute>
+                                            }
+                                        />
 
-                                    {/* Protected Routes */}
-                                    <Route
-                                        path='/onboarding'
-                                        element={
-                                            <ProtectedRoute>
-                                                <Onboarding />
-                                            </ProtectedRoute>
-                                        }
-                                    />
-                                    <Route
-                                        path='/dashboard'
-                                        element={
-                                            <ProtectedRoute
-                                                requireOnboarding={true}>
-                                                <Dashboard />
-                                            </ProtectedRoute>
-                                        }
-                                    />
+                                        {/* Protected Routes */}
+                                        <Route
+                                            path='/onboarding'
+                                            element={
+                                                <ProtectedRoute>
+                                                    <Onboarding />
+                                                </ProtectedRoute>
+                                            }
+                                        />
+                                        <Route
+                                            path='/dashboard'
+                                            element={
+                                                <ProtectedRoute
+                                                    requireOnboarding={true}>
+                                                    <Dashboard />
+                                                </ProtectedRoute>
+                                            }
+                                        />
 
-                                    <Route
-                                        path='/pricing'
-                                        element={
-                                            <ProtectedRoute
-                                                requireOnboarding={true}>
-                                                <PricingPage />
-                                            </ProtectedRoute>
-                                        }
-                                    />
+                                        <Route
+                                            path='/pricing'
+                                            element={
+                                                <ProtectedRoute
+                                                    requireOnboarding={true}>
+                                                    <PricingPage />
+                                                </ProtectedRoute>
+                                            }
+                                        />
 
-                                    {/* 404 Route */}
-                                    <Route
-                                        path='*'
-                                        element={
-                                            <PublicRoute>
-                                                <NotFound />
-                                            </PublicRoute>
-                                        }
-                                    />
-                                </Routes>
-                            </Suspense>
+                                        {/* 404 Route */}
+                                        <Route
+                                            path='*'
+                                            element={
+                                                <PublicRoute>
+                                                    <NotFound />
+                                                </PublicRoute>
+                                            }
+                                        />
+                                    </Routes>
+                                </Suspense>
                             </GamificationProvider>
                         </AuthProvider>
                     </BrowserRouter>

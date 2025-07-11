@@ -14,7 +14,7 @@ import {
     RefreshCw
 } from "lucide-react"
 import { RecruiterContact } from "@/types/recruiters"
-import { useAuth } from "@/contexts/AuthContext"
+import { useAuth } from "@/contexts/useAuth"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
 import InstallButton from "@/components/InstallButton"
@@ -85,8 +85,9 @@ const Dashboard = () => {
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
     const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
 
-    const [showDetails, setShowDetails] = useState(false);
-    const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] = useState(false);
+    const [showDetails, setShowDetails] = useState(false)
+    const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] =
+        useState(false)
 
     const fetchRecruiterContacts = async (userId: string) => {
         try {
@@ -136,12 +137,15 @@ const Dashboard = () => {
     }
 
     // Onboarding details are now available in profile.prepYatra
-    const onboardingDetails = profile?.prepYatra ? {
-        goal: profile.prepYatra.goal,
-        targetCompanies: profile.prepYatra.targetCompanies || [],
-        interviewCategories: profile.prepYatra.preferences?.interviewCategories || [],
-        focusAreas: profile.prepYatra.preferences?.focusAreas || [],
-    } : null;
+    const onboardingDetails = profile?.prepYatra
+        ? {
+              goal: profile.prepYatra.goal,
+              targetCompanies: profile.prepYatra.targetCompanies || [],
+              interviewCategories:
+                  profile.prepYatra.preferences?.interviewCategories || [],
+              focusAreas: profile.prepYatra.preferences?.focusAreas || []
+          }
+        : null
 
     useEffect(() => {
         const checkAuthAndProfile = async () => {
@@ -215,17 +219,13 @@ const Dashboard = () => {
     }
 
     // Use stats API for more accurate calculations
-    const { totalTimeSpent: statsTotalTimeSpent, totalLogs: statsTotalLogs } = usePrepStats(profile?._id || "")
-    
-    // Fallback to simple calculation if stats API fails
-    const totalTimeSpent = statsTotalTimeSpent || prepLogs.reduce(
-        (acc, log) => acc + (log.timeSpent || 0),
-        0
-    )
+    const { totalTimeSpent: statsTotalTimeSpent, totalLogs: statsTotalLogs } =
+        usePrepStats(profile?._id || "")
 
-    const formatExperienceLevel = (level: string) => {
-        return level.charAt(0).toUpperCase() + level.slice(1)
-    }
+    // Fallback to simple calculation if stats API fails
+    const totalTimeSpent =
+        statsTotalTimeSpent ||
+        prepLogs.reduce((acc, log) => acc + (log.timeSpent || 0), 0)
 
     if (loading) {
         return (
@@ -234,6 +234,8 @@ const Dashboard = () => {
             </div>
         )
     }
+
+    console.log(user)
 
     return (
         <div className='min-h-screen px-0 py-0'>
@@ -258,7 +260,7 @@ const Dashboard = () => {
                 <DailyPrepEncouragement
                     userId={profile?._id || ""}
                     onAddPrepLog={() => setIsPrepLogModalOpen(true)}
-                    className="mb-8"
+                    className='mb-8'
                 />
 
                 <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
@@ -324,7 +326,7 @@ const Dashboard = () => {
                                                 "_blank"
                                             )
                                         }
-                                        className='text-primary hover:bg-primary/10 p-0 h-auto font-normal justify-start'>
+                                        className='text-primary hover:bg-primary p-1 h-auto font-normal justify-start'>
                                         <ExternalLink className='h-4 w-4 mr-2' />
                                         View LinkedIn Profile
                                     </Button>
@@ -347,14 +349,17 @@ const Dashboard = () => {
                                             ? "Hide User Details"
                                             : "Show User Details"}
                                     </button>
-                                    <div className="flex gap-1">
+                                    <div className='flex gap-1'>
                                         <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onClick={() => setIsEditOnboardingModalOpen(true)}
-                                            className="text-primary hover:bg-primary/10 p-1 h-auto"
-                                        >
-                                            <Edit className="w-4 h-4" />
+                                            variant='ghost'
+                                            size='sm'
+                                            onClick={() =>
+                                                setIsEditOnboardingModalOpen(
+                                                    true
+                                                )
+                                            }
+                                            className='text-primary hover:bg-primary/10 p-1 h-auto'>
+                                            <Edit className='w-4 h-4' />
                                         </Button>
                                     </div>
                                 </div>
@@ -495,10 +500,11 @@ const Dashboard = () => {
                                         navigator.clipboard.writeText(
                                             journeyUrl
                                         )
-                                        // You could add a toast notification here
-                                        alert(
-                                            "Journey URL copied to clipboard!"
-                                        )
+                                        toast({
+                                            title: "Journey URL copied to clipboard!",
+                                            description:
+                                                "Share your journey with your friends and family!"
+                                        })
                                     }}
                                     className='w-full border-primary/30 text-primary hover:bg-primary/10'>
                                     <Share2 className='w-4 h-4 mr-2' />
@@ -558,7 +564,9 @@ const Dashboard = () => {
                             showCelebration(15)
 
                             // Trigger stats refresh
-                            window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
+                            window.dispatchEvent(
+                                new CustomEvent("prep-stats-refetch")
+                            )
 
                             setTimeout(() => {
                                 window.dispatchEvent(
@@ -578,14 +586,19 @@ const Dashboard = () => {
                             // Refresh the profile data to get updated onboarding details
                             try {
                                 const res = await fetch(
-                                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/user?email=${user.email}`
+                                    `${
+                                        import.meta.env.VITE_TBE_WEBAPP_API_URL
+                                    }/api/v1/user?email=${user.email}`
                                 )
                                 const result = await res.json()
                                 if (result.status) {
                                     setProfile(result.data)
                                 }
                             } catch (error) {
-                                console.error("Failed to refresh profile:", error)
+                                console.error(
+                                    "Failed to refresh profile:",
+                                    error
+                                )
                             }
                             toast({
                                 title: "Success!",

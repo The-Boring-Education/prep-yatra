@@ -18,14 +18,14 @@ import {
     InterviewCategory
 } from "@/types/onboarding"
 import { useToast } from "@/hooks/use-toast"
-import { useAuth } from "@/contexts/AuthContext"
+import { useAuth } from "@/contexts/useAuth"
 
 interface EditOnboardingModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onUpdate: (data: OnboardingData) => void;
-    currentData?: any;
-    userId: string;
+    isOpen: boolean
+    onClose: () => void
+    onUpdate: (data: OnboardingData) => void
+    currentData?: any
+    userId: string
 }
 
 const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
@@ -88,11 +88,10 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         setFormData((prev) => ({
             ...prev,
             [field]: (prev[field] as unknown[]).includes(value)
-                ? (prev[field] as unknown[]).filter(item => item !== value)
+                ? (prev[field] as unknown[]).filter((item) => item !== value)
                 : [...(prev[field] as unknown[]), value]
-        }));
-    };
-    
+        }))
+    }
 
     const handleSubmit = async () => {
         if (
@@ -116,24 +115,29 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 username: formData.username,
                 goal: formData.goal,
                 targetCompanies: formData.targetCompanies,
-                preferredCategories: formData.preferredCategories,
-            };
-            
-            const response = await fetch(`${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/prepyatra/onboarding`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestBody),
-            });
-            
-            const result = await response.json();
-            
+                preferredCategories: formData.preferredCategories
+            }
+
+            const response = await fetch(
+                `${
+                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                }/api/v1/prepyatra/onboarding`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(requestBody)
+                }
+            )
+
+            const result = await response.json()
+
             if (result.status) {
                 toast({
                     title: "Success!",
-                    description: "Onboarding details updated successfully.",
-                });
+                    description: "Onboarding details updated successfully."
+                })
                 // Use response data if available, otherwise use form data
                 if (result.data?.prepYatraUser) {
                     const updatedData = {

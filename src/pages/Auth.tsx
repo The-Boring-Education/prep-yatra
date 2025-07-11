@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import { useGoogleLogin } from "@react-oauth/google"
-import { useAuth } from "@/contexts/AuthContext"
+import { useAuth } from "@/contexts/useAuth"
 import InstallButton from "@/components/InstallButton"
 
 const Auth = () => {

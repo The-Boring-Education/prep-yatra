@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "@/hooks/use-toast"
 import { OnboardingData } from "@/types/onboarding"
-import { useAuth } from "@/contexts/AuthContext"
+import { useAuth } from "@/contexts/useAuth"
 
 // Debug function to help identify issues
 const debugOnboardingConfig = () => {
@@ -164,7 +164,7 @@ export function useOnboarding() {
         if (!user || !centralUserId) return
 
         // Validate form data before submission
-        if ( !formData.workDomain) {
+        if (!formData.workDomain) {
             toast({
                 title: "Validation Error",
                 description: "Please fill in your work experience and domain.",
