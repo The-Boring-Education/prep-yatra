@@ -62,7 +62,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 experienceLevel: currentData.experienceLevel || "fresher",
                 goal: currentData.goal || "6Months",
                 targetCompanies: currentData.targetCompanies || [],
-                preferredCategories: currentData.interviewCategories || []
+                preferredCategories: currentData.preferredCategories || []
             })
         } else {
             // Set default values for new users
@@ -266,7 +266,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                     {/* Interview Categories */}
                     <div className='space-y-3'>
                         <h3 className='text-lg font-semibold text-white'>
-                            Interview Category 📚
+                            Focus Areas 📚
                         </h3>
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
                             {INTERVIEW_CATEGORIES.map((category) => (
@@ -314,7 +314,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                         <Button
                             onClick={onClose}
                             variant='outline'
-                            className='flex-1 border-gray-600 text-black hover:bg-gray-800 hover:text-white'>
+                            className='flex-1 border-gray-600 text-gray-300 hover:bg-gray-800'>
                             Cancel
                         </Button>
                     </div>

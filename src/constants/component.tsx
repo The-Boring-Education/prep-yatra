@@ -53,7 +53,7 @@ const links: NavbarDropdownLink[] = [
   {
     name: "Explore Courses",
     href: "https://www.theboringeducation.com/shiksha",
-    description: "Learn Tech with Courses",
+    description: "Find courses on The Boring Education",
   },
   {
     name: "Tech Yatra",
@@ -65,13 +65,7 @@ const links: NavbarDropdownLink[] = [
     href: "https://resumeyatra.netlify.app/",
     description: "Fix Your Resume",
   },
-  {
-    name: "DSA Yatra",
-    href: "https://dsa-yatra.lovable.app",
-    description: "Start DSA Journey",
-  },
 ];
-
 
 
 export { socialLinks, productLinks, CONFETTI_COLORS, links }

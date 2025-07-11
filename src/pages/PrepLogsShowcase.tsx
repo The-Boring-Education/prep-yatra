@@ -17,7 +17,7 @@ import {
     Users,
     Rocket
 } from "lucide-react"
-import { usePrepStats } from "@/hooks/use-prep-stats"
+import { usePrepLogs } from "@/hooks/use-prep-logs"
 import { useIntersectionObserver } from "@/hooks/use-mobile"
 import Navigation from "@/components/Navigation"
 import Footer from "@/components/Footer"
@@ -27,14 +27,14 @@ const PrepLogsShowcase = () => {
     const navigate = useNavigate()
 
     const {
-        stats,
+        logs,
         loading,
         error,
         totalTimeSpent,
         totalLogs,
-        currentStreak,
-        weeklyLogs
-    } = usePrepStats(userId || "")
+        streak,
+        recentActivity
+    } = usePrepLogs(userId || "")
 
     const heroRef = useRef<HTMLDivElement>(null)
     const statsRef = useRef<HTMLDivElement>(null)
@@ -130,9 +130,9 @@ const PrepLogsShowcase = () => {
                     <div className='mb-8'>
                         <Badge className='bg-primary/20 text-primary border-primary/30 mb-4 animate-pulse'>
                             <Flame className='w-4 h-4 mr-2' />
-                            {currentStreak > 0
-                                ? `${currentStreak} Day${
-                                      currentStreak > 1 ? "s" : ""
+                            {streak > 0
+                                ? `${streak} Day${
+                                      streak > 1 ? "s" : ""
                                   } Streak!`
                                 : "Starting Journey"}
                         </Badge>
@@ -220,7 +220,7 @@ const PrepLogsShowcase = () => {
                             </CardHeader>
                             <CardContent className='text-center'>
                                 <div className='text-3xl font-bold text-primary mb-2'>
-                                    {currentStreak}
+                                    {streak}
                                 </div>
                                 <p className='text-gray-300 text-sm'>
                                     consecutive days
@@ -239,7 +239,7 @@ const PrepLogsShowcase = () => {
                             </CardHeader>
                             <CardContent className='text-center'>
                                 <div className='text-3xl font-bold text-primary mb-2'>
-                                    {weeklyLogs.length}
+                                    {recentActivity.length}
                                 </div>
                                 <p className='text-gray-300 text-sm'>
                                     sessions this week
@@ -260,7 +260,7 @@ const PrepLogsShowcase = () => {
                                 <div className='text-3xl font-bold text-primary mb-2'>
                                     {totalLogs > 0
                                         ? Math.round(
-                                              (weeklyLogs.length / 7) * 100
+                                              (recentActivity.length / 7) * 100
                                           )
                                         : 0}
                                     %
@@ -316,7 +316,7 @@ const PrepLogsShowcase = () => {
                         </p>
                     </div>
 
-                    {weeklyLogs.length === 0 ? (
+                    {logs.length === 0 ? (
                         <div className='text-center py-16'>
                             <div className='w-24 h-24 bg-gray-700/50 rounded-full mx-auto mb-6 flex items-center justify-center'>
                                 <BookOpen className='w-12 h-12 text-gray-400' />
@@ -332,7 +332,7 @@ const PrepLogsShowcase = () => {
                         </div>
                     ) : (
                         <div className='grid gap-6 md:grid-cols-2 lg:grid-cols-3'>
-                            {weeklyLogs.map((log, index) => (
+                            {logs.map((log, index) => (
                                 <Card
                                     key={log._id}
                                     className={`glass-dark border-primary/20 hover:border-primary/40 transition-all duration-500 hover:scale-105 ${

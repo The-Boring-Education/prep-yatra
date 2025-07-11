@@ -19,7 +19,6 @@ interface AddRecruiterModalProps {
     isOpen: boolean
     onClose: () => void
     onContactAdded: () => void
-    onContactUpdated?: () => void
     editContact?: RecruiterContact | null
     mongoUserId: string
 }
@@ -28,7 +27,6 @@ const AddRecruiterModal = ({
     isOpen,
     onClose,
     onContactAdded,
-    onContactUpdated,
     editContact,
     mongoUserId
 }: AddRecruiterModalProps) => {
@@ -130,11 +128,7 @@ const AddRecruiterModal = ({
                 } successfully!`
             })
 
-            if (editContact && onContactUpdated) {
-                onContactUpdated()
-            } else if (!editContact && onContactAdded) {
-                onContactAdded()
-            }
+            onContactAdded()
             onClose()
         } catch (err) {
             console.error(err)
