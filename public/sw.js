@@ -1,13 +1,13 @@
-const CACHE_NAME = "prep-yatra-v1"
-const STATIC_CACHE = "prep-yatra-static-v1"
-const DYNAMIC_CACHE = "prep-yatra-dynamic-v1"
+// Use timestamp to force cache invalidation on each deployment
+const CACHE_VERSION = Date.now().toString()
+const CACHE_NAME = `prep-yatra-${CACHE_VERSION}`
+const STATIC_CACHE = `prep-yatra-static-${CACHE_VERSION}`
+const DYNAMIC_CACHE = `prep-yatra-dynamic-${CACHE_VERSION}`
 
 // Files to cache immediately
 const STATIC_FILES = [
     "/",
     "/index.html",
-    "/static/js/bundle.js",
-    "/static/css/main.css",
     "/manifest.json",
     "/favicon.ico"
 ]
@@ -20,6 +20,7 @@ self.addEventListener("install", (event) => {
             return cache.addAll(STATIC_FILES)
         })
     )
+    self.skipWaiting(); // <--- Ensures immediate activation
 })
 
 // Activate event - clean up old caches
@@ -28,15 +29,14 @@ self.addEventListener("activate", (event) => {
         caches.keys().then((cacheNames) => {
             return Promise.all(
                 cacheNames.map((cacheName) => {
-                    if (
-                        cacheName !== STATIC_CACHE &&
-                        cacheName !== DYNAMIC_CACHE
-                    ) {
+                    if (!cacheName.includes(CACHE_VERSION)) {
                         console.log("Deleting old cache:", cacheName)
                         return caches.delete(cacheName)
                     }
                 })
             )
+        }).then(() => {
+            self.clients.claim() // <--- Ensures new SW takes control immediately
         })
     )
 })
@@ -47,6 +47,11 @@ self.addEventListener("fetch", (event) => {
 
     // Skip non-GET requests
     if (request.method !== "GET") {
+        return
+    }
+
+    // Skip non-HTTP(s) requests (like chrome-extension://)
+    if (!request.url.startsWith("http")) {
         return
     }
 
