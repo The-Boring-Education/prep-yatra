@@ -17,15 +17,19 @@ export interface GamificationLevel {
     minPoints: number
     maxPoints: number
 }
-
 const LEVELS: GamificationLevel[] = [
-    { level: 1, name: "Beginner", minPoints: 0, maxPoints: 49 },
-    { level: 2, name: "Explorer", minPoints: 50, maxPoints: 149 },
-    { level: 3, name: "Learner", minPoints: 150, maxPoints: 299 },
-    { level: 4, name: "Achiever", minPoints: 300, maxPoints: 599 },
-    { level: 5, name: "Master", minPoints: 600, maxPoints: 999 },
-    { level: 6, name: "Legend", minPoints: 1000, maxPoints: Infinity }
-]
+    { level: 1, name: "Noob", minPoints: 0, maxPoints: 499 },
+    { level: 2, name: "Coder", minPoints: 500, maxPoints: 999 },
+    { level: 3, name: "Debugger", minPoints: 1000, maxPoints: 1999 },
+    { level: 4, name: "Ninja", minPoints: 2000, maxPoints: 2999 },
+    { level: 5, name: "Squasher", minPoints: 3000, maxPoints: 4499 },
+    { level: 6, name: "Hacker", minPoints: 4500, maxPoints: 5999 },
+    { level: 7, name: "Wizard", minPoints: 6000, maxPoints: 7499 },
+    { level: 8, name: "Guru", minPoints: 7500, maxPoints: 8999 },
+    { level: 9, name: "Architect", minPoints: 9000, maxPoints: 9999 },
+    { level: 10, name: "Legend", minPoints: 10000, maxPoints: Infinity },
+  ];
+  
 
 export function useGamification(userId?: string) {
     const [data, setData] = useState<{ points: number; actions: unknown[] } | null>(null)

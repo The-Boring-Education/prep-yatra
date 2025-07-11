@@ -14,6 +14,7 @@ import {
     AlertDialogAction
 } from "@/components/ui/alert-dialog"
 import { toast } from "@/components/ui/use-toast"
+import { prepLogsService } from "@/services/prep-logs"
 
 type PrepLog = {
     _id: string
@@ -46,17 +47,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
         setIsDeleting(true)
 
         try {
-            const res = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/prep-log?prepLogId=${deleteId}`,
-                {
-                    method: "DELETE"
-                }
-            )
-            const result = await res.json()
-
-            if (!result.status) throw new Error(result.message)
+            await prepLogsService.delete(deleteId)
 
             toast({
                 title: "Log deleted",

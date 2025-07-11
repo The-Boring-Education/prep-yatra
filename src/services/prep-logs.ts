@@ -61,6 +61,10 @@ export const prepLogsService = {
                 throw new Error("Failed to create prep log")
             }
 
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
+            }, 500)
+
             return result.data
         } catch (error) {
             console.error("Error creating prep log:", error)
@@ -100,6 +104,10 @@ export const prepLogsService = {
                 throw new Error("Failed to update prep log")
             }
 
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
+            }, 500)
+
             return result.data
         } catch (error) {
             console.error("Error updating prep log:", error)
@@ -130,6 +138,10 @@ export const prepLogsService = {
             if (!result.status) {
                 throw new Error("Failed to delete prep log")
             }
+
+            setTimeout(() => {
+                window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
+            }, 500)
         } catch (error) {
             console.error("Error deleting prep log:", error)
             throw error
