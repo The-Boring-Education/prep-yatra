@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "@/hooks/use-toast"
 import { OnboardingData } from "@/types/onboarding"
-import { useAuth } from "@/contexts/AuthContext"
+import { useAuth } from "@/contexts/useAuth"
 
 // Debug function to help identify issues
 const debugOnboardingConfig = () => {
@@ -26,7 +26,6 @@ export function useOnboarding() {
 
     const [formData, setFormData] = useState<OnboardingData>({
         linkedInUrl: "",
-        workExperience: "",
         workDomain: "",
         name: "",
         username: "",
@@ -131,7 +130,7 @@ export function useOnboarding() {
     const isStepValid = () => {
         switch (currentStep) {
             case 1:
-                return formData.workExperience && formData.workDomain
+                return formData.workDomain
             case 2:
                 return formData.name.trim() && formData.username.trim()
             case 3:
@@ -165,7 +164,7 @@ export function useOnboarding() {
         if (!user || !centralUserId) return
 
         // Validate form data before submission
-        if (!formData.workExperience || !formData.workDomain) {
+        if (!formData.workDomain) {
             toast({
                 title: "Validation Error",
                 description: "Please fill in your work experience and domain.",
@@ -229,7 +228,6 @@ export function useOnboarding() {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify({
-                            workExperience: parseInt(formData.workExperience),
                             workDomain: formData.workDomain,
                             linkedInUrl: formData.linkedInUrl
                         })
@@ -265,6 +263,7 @@ export function useOnboarding() {
                     name: user.name,
                     email: user.email,
                     username: formData.username,
+                    experienceLevel: formData.experienceLevel,
                     goal: formData.goal,
                     targetCompanies: formData.targetCompanies,
                     preferredCategories: formData.preferredCategories

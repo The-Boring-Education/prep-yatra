@@ -28,21 +28,7 @@ const StepProfile: React.FC<Props> = ({ formData, handleInputChange }) => (
         className='mt-2 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400'
       />
     </div>
-    {/* Work Experience */}
-    <div>
-      <Label htmlFor='workExperience' className='text-white font-medium'>
-        Work Experience (Years) *
-      </Label>
-      <Input
-        id='workExperience'
-        type='number'
-        placeholder='e.g. 2'
-        value={formData.workExperience}
-        onChange={(e) => handleInputChange('workExperience', e.target.value)}
-        className='mt-2 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400'
-        required
-      />
-    </div>
+
     {/* Work Domain */}
     <div>
       <Label className='text-white font-medium mb-4 block'>Work Domain *</Label>

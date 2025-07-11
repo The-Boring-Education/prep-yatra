@@ -18,14 +18,14 @@ import {
     InterviewCategory
 } from "@/types/onboarding"
 import { useToast } from "@/hooks/use-toast"
-import { useAuth } from "@/contexts/AuthContext"
+import { useAuth } from "@/contexts/useAuth"
 
 interface EditOnboardingModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onUpdate: (data: OnboardingData) => void;
-    currentData?: any;
-    userId: string;
+    isOpen: boolean
+    onClose: () => void
+    onUpdate: (data: OnboardingData) => void
+    currentData?: any
+    userId: string
 }
 
 const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
@@ -39,7 +39,6 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
     const { user } = useAuth()
     const [formData, setFormData] = useState<OnboardingData>({
         linkedInUrl: "",
-        workExperience: "",
         workDomain: "",
         name: "",
         username: "",
@@ -54,7 +53,6 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         if (currentData) {
             setFormData({
                 linkedInUrl: currentData.linkedInUrl || "",
-                workExperience: currentData.workExperience || "",
                 workDomain: currentData.workDomain || "",
                 name: currentData.name || user?.name || "",
                 username:
@@ -62,13 +60,12 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 experienceLevel: currentData.experienceLevel || "fresher",
                 goal: currentData.goal || "6Months",
                 targetCompanies: currentData.targetCompanies || [],
-                preferredCategories: currentData.preferredCategories || []
+                preferredCategories: currentData.interviewCategories || []
             })
         } else {
             // Set default values for new users
             setFormData({
                 linkedInUrl: "",
-                workExperience: "",
                 workDomain: "",
                 name: user?.name || "",
                 username: user?.email?.split("@")[0] || "",
@@ -91,11 +88,10 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         setFormData((prev) => ({
             ...prev,
             [field]: (prev[field] as unknown[]).includes(value)
-                ? (prev[field] as unknown[]).filter(item => item !== value)
+                ? (prev[field] as unknown[]).filter((item) => item !== value)
                 : [...(prev[field] as unknown[]), value]
-        }));
-    };
-    
+        }))
+    }
 
     const handleSubmit = async () => {
         if (
@@ -119,24 +115,29 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 username: formData.username,
                 goal: formData.goal,
                 targetCompanies: formData.targetCompanies,
-                preferredCategories: formData.preferredCategories,
-            };
-            
-            const response = await fetch(`${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/prepyatra/onboarding`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(requestBody),
-            });
-            
-            const result = await response.json();
-            
+                preferredCategories: formData.preferredCategories
+            }
+
+            const response = await fetch(
+                `${
+                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                }/api/v1/prepyatra/onboarding`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(requestBody)
+                }
+            )
+
+            const result = await response.json()
+
             if (result.status) {
                 toast({
                     title: "Success!",
-                    description: "Onboarding details updated successfully.",
-                });
+                    description: "Onboarding details updated successfully."
+                })
                 // Use response data if available, otherwise use form data
                 if (result.data?.prepYatraUser) {
                     const updatedData = {
@@ -266,7 +267,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                     {/* Interview Categories */}
                     <div className='space-y-3'>
                         <h3 className='text-lg font-semibold text-white'>
-                            Focus Areas 📚
+                            Interview Category 📚
                         </h3>
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
                             {INTERVIEW_CATEGORIES.map((category) => (
@@ -314,7 +315,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                         <Button
                             onClick={onClose}
                             variant='outline'
-                            className='flex-1 border-gray-600 text-gray-300 hover:bg-gray-800'>
+                            className='flex-1 border-gray-600 text-black hover:bg-gray-800 hover:text-white'>
                             Cancel
                         </Button>
                     </div>

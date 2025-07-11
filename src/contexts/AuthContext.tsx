@@ -1,10 +1,4 @@
-import React, {
-    createContext,
-    useContext,
-    useEffect,
-    useState,
-    ReactNode
-} from "react"
+import React, { createContext, useEffect, useState, ReactNode } from "react"
 import { useNavigate } from "react-router-dom"
 
 export interface GoogleUser {
@@ -31,21 +25,13 @@ export interface AuthContextType {
     checkAuth: () => Promise<void>
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-export const useAuth = () => {
-    const context = useContext(AuthContext)
-    if (context === undefined) {
-        throw new Error("useAuth must be used within an AuthProvider")
-    }
-    return context
-}
+export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 interface AuthProviderProps {
     children: ReactNode
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
+const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
     const navigate = useNavigate()
@@ -197,3 +183,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
+
+export default AuthProvider
