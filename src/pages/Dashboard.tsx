@@ -20,6 +20,8 @@ import Footer from "@/components/Footer"
 import InstallButton from "@/components/InstallButton"
 import { useGamificationContext } from "@/contexts/GamificationContext"
 import { useToast } from "@/hooks/use-toast"
+import DailyPrepEncouragement from "@/components/DailyPrepEncouragement"
+import { usePrepStats } from "@/hooks/use-prep-stats"
 
 // Lazy load heavy components
 const AddRecruiterModal = lazy(() => import("@/components/AddRecruiterModal"))
@@ -212,7 +214,11 @@ const Dashboard = () => {
             .slice(0, 2)
     }
 
-    const totalTimeSpent = prepLogs.reduce(
+    // Use stats API for more accurate calculations
+    const { totalTimeSpent: statsTotalTimeSpent, totalLogs: statsTotalLogs } = usePrepStats(profile?._id || "")
+    
+    // Fallback to simple calculation if stats API fails
+    const totalTimeSpent = statsTotalTimeSpent || prepLogs.reduce(
         (acc, log) => acc + (log.timeSpent || 0),
         0
     )
@@ -247,6 +253,13 @@ const Dashboard = () => {
                         </p>
                     </div>
                 </div>
+
+                {/* Daily Prep Encouragement Section */}
+                <DailyPrepEncouragement
+                    userId={profile?._id || ""}
+                    onAddPrepLog={() => setIsPrepLogModalOpen(true)}
+                    className="mb-8"
+                />
 
                 <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
                     {/* Enhanced Profile Section */}
@@ -455,7 +468,7 @@ const Dashboard = () => {
                         <div className='space-y-4'>
                             <div className='text-center'>
                                 <div className='text-3xl font-bold text-primary mb-1'>
-                                    {prepLogs.length}
+                                    {statsTotalLogs || prepLogs.length}
                                 </div>
                                 <p className='text-gray-300 text-sm'>
                                     Total Logs
@@ -543,6 +556,9 @@ const Dashboard = () => {
                         onLogAdded={() => {
                             fetchPrepLogs(profile._id)
                             showCelebration(15)
+
+                            // Trigger stats refresh
+                            window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
 
                             setTimeout(() => {
                                 window.dispatchEvent(
