@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
+import { prepLogsService } from "@/services/prep-logs"
 
 interface AddPrepLogModalProps {
     isOpen: boolean
@@ -75,28 +76,22 @@ const AddPrepLogModal = ({
         setLoading(true)
 
         try {
-            const payload = {
-                title,
-                description,
-                timeSpent: Number(timeSpent),
-                ...(editLog
-                    ? { prepLogId: editLog._id }
-                    : { userId: mongoUserId })
+            if (editLog) {
+                // Update existing log
+                await prepLogsService.update(editLog._id, {
+                    title,
+                    description,
+                    timeSpent: Number(timeSpent)
+                })
+            } else {
+                // Create new log
+                await prepLogsService.create({
+                    title,
+                    description,
+                    timeSpent: Number(timeSpent),
+                    userId: mongoUserId
+                })
             }
-
-            const res = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/prep-log`,
-                {
-                    method: editLog ? "PUT" : "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                }
-            )
-
-            const result = await res.json()
-            if (!result.status) throw new Error(result.message)
 
             toast({
                 title: "Success",
