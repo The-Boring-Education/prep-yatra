@@ -32,10 +32,6 @@
                     "value": "camera=(), microphone=(), geolocation=(), payment=(self)"
                 },
                 {
-                    "key": "Content-Security-Policy",
-                    "value": "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https:; connect-src 'self' https: wss: ws:; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' data: https:; frame-src https:; object-src 'none'"
-                },
-                {
                     "key": "Cross-Origin-Opener-Policy",
                     "value": "same-origin-allow-popups"
                 }
