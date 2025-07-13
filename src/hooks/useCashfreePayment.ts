@@ -1,100 +1,109 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from "react"
 
 declare global {
-  interface Window {
-    Cashfree: any;
-    CFPaymentSDK?: any;
-  }
+    interface Window {
+        Cashfree: any
+        CFPaymentSDK?: any
+    }
 }
 
-const isProductionEnv = process.env.NODE_ENV === 'production';
+const isProductionEnv = process.env.NODE_ENV === "production"
 
-
-const CASHFREE_SCRIPT_URL = 'https://sdk.cashfree.com/js/v3/cashfree.js';
+const CASHFREE_SCRIPT_URL = "https://sdk.cashfree.com/js/v3/cashfree.js"
 
 const useCashfreePayment = () => {
-  const [isCashfreeLoaded, setIsCashfreeLoaded] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+    const [isCashfreeLoaded, setIsCashfreeLoaded] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
-  const loadCashfreeSDK = useCallback(() => {
-    const script = document.createElement('script');
-    script.src = CASHFREE_SCRIPT_URL;
-    script.async = true;
+    const loadCashfreeSDK = useCallback(() => {
+        // Check if script already exists to avoid duplicate loading
+        if (document.querySelector(`script[src="${CASHFREE_SCRIPT_URL}"]`)) {
+            if (window.Cashfree || window.CFPaymentSDK) {
+                setIsCashfreeLoaded(true)
+            }
+            return
+        }
 
-    script.onload = () => {
-      if (window.Cashfree || window.CFPaymentSDK) {
-        setIsCashfreeLoaded(true);
-      } else {
-        setError(
-          'Payment gateway initialization failed. Please refresh the page.'
-        );
-      }
-    };
+        const script = document.createElement("script")
+        script.src = CASHFREE_SCRIPT_URL
+        script.async = true
+        script.crossOrigin = "anonymous"
+        script.referrerPolicy = "strict-origin-when-cross-origin"
 
-    script.onerror = () => {
-      setError('Failed to load payment gateway. Please try again.');
-      setIsCashfreeLoaded(false);
-    };
+        script.onload = () => {
+            if (window.Cashfree || window.CFPaymentSDK) {
+                setIsCashfreeLoaded(true)
+            } else {
+                setError(
+                    "Payment gateway initialization failed. Please refresh the page."
+                )
+            }
+        }
 
-    document.body.appendChild(script);
-  }, []);
+        script.onerror = () => {
+            setError("Failed to load payment gateway. Please try again.")
+            setIsCashfreeLoaded(false)
+        }
 
-  const cleanupCashfreeSDK = () => {
-    const script = document.querySelector(
-      `script[src="${CASHFREE_SCRIPT_URL}"]`
-    );
-    if (script) {
-      document.body.removeChild(script);
-    }
-  };
+        document.body.appendChild(script)
+    }, [])
 
-  useEffect(() => {
-    if (!window.Cashfree && !window.CFPaymentSDK) {
-      loadCashfreeSDK();
-    } else {
-      setIsCashfreeLoaded(true);
-    }
-
-    return cleanupCashfreeSDK;
-  }, [loadCashfreeSDK]);
-
-  const launchPayment = async (
-    paymentSessionId: string,
-    onSuccess?: (data: any) => void,
-    onFailure?: (data: any) => void,
-    onClose?: () => void
-  ) => {
-    const PaymentSDK = window.Cashfree || window.CFPaymentSDK;
-    if (!PaymentSDK) {
-      throw new Error(
-        'Payment gateway is not available. Please refresh the page and try again.'
-      );
+    const cleanupCashfreeSDK = () => {
+        const script = document.querySelector(
+            `script[src="${CASHFREE_SCRIPT_URL}"]`
+        )
+        if (script) {
+            document.body.removeChild(script)
+        }
     }
 
-    let mode = 'sandbox';
-    if (isProductionEnv) {
-      mode = 'production';
+    useEffect(() => {
+        if (!window.Cashfree && !window.CFPaymentSDK) {
+            loadCashfreeSDK()
+        } else {
+            setIsCashfreeLoaded(true)
+        }
+
+        return cleanupCashfreeSDK
+    }, [loadCashfreeSDK])
+
+    const launchPayment = async (
+        paymentSessionId: string,
+        onSuccess?: (data: any) => void,
+        onFailure?: (data: any) => void,
+        onClose?: () => void
+    ) => {
+        const PaymentSDK = window.Cashfree || window.CFPaymentSDK
+        if (!PaymentSDK) {
+            throw new Error(
+                "Payment gateway is not available. Please refresh the page and try again."
+            )
+        }
+
+        let mode = "sandbox"
+        if (isProductionEnv) {
+            mode = "production"
+        }
+
+        const cashfree = new PaymentSDK({
+            mode
+        })
+
+        await cashfree.checkout({
+            paymentSessionId,
+            returnUrl: window.location.href,
+            redirectTarget: "_self",
+            onSuccess,
+            onFailure,
+            onClose
+        })
     }
 
-    const cashfree = new PaymentSDK({
-      mode,
-    });
+    return {
+        isCashfreeLoaded,
+        error,
+        launchPayment
+    }
+}
 
-    await cashfree.checkout({
-      paymentSessionId,
-      returnUrl: window.location.href,
-      redirectTarget: '_self',
-      onSuccess,
-      onFailure,
-      onClose,
-    });
-  };
-
-  return {
-    isCashfreeLoaded,
-    error,
-    launchPayment,
-  };
-};
-
-export default useCashfreePayment;
+export default useCashfreePayment
