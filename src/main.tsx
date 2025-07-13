@@ -4,23 +4,26 @@ import App from "./App.tsx"
 import "./index.css"
 // Global beforeinstallprompt event caching
 window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    (window as any).deferredBeforeInstallPrompt = e;
-  });
-  
+    e.preventDefault()
+    ;(
+        window as Window & { deferredBeforeInstallPrompt?: Event }
+    ).deferredBeforeInstallPrompt = e
+})
+
 // Register service worker for caching and offline support
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker
-            .register("/sw.js")
-            .then((registration) => {
-                console.log("SW registered: ", registration)
-            })
-            .catch((registrationError) => {
-                console.log("SW registration failed: ", registrationError)
-            })
-    })
-}
+// Temporarily disabled for Vercel migration - enable after confirming routing works
+// if ("serviceWorker" in navigator) {
+//     window.addEventListener("load", () => {
+//         navigator.serviceWorker
+//             .register("/sw.js")
+//             .then((registration) => {
+//                 console.log("SW registered: ", registration)
+//             })
+//             .catch((registrationError) => {
+//                 console.log("SW registration failed: ", registrationError)
+//             })
+//     })
+// }
 
 // Performance monitoring
 if (import.meta.env.PROD) {
