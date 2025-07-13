@@ -3,7 +3,7 @@
     "trailingSlash": false,
     "rewrites": [
         {
-            "source": "/((?!.*\\.).*)",
+            "source": "/(.*)",
             "destination": "/index.html"
         }
     ],
