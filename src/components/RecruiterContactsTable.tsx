@@ -98,7 +98,7 @@ const RecruiterContactsTable = ({
                 description: "Recruiter deleted successfully"
             })
 
-            if (onContactDeleted) onContactDeleted();
+            if (onContactDeleted) onContactDeleted()
         } catch (error) {
             toast({
                 title: "Error",
@@ -138,7 +138,7 @@ const RecruiterContactsTable = ({
                 description: "Status updated successfully"
             })
 
-            if (onContactUpdated) onContactUpdated();
+            if (onContactUpdated) onContactUpdated()
         } catch (error) {
             toast({
                 title: "Error",
@@ -179,7 +179,7 @@ const RecruiterContactsTable = ({
                 description: "Date updated successfully"
             })
 
-            if (onContactUpdated) onContactUpdated();
+            if (onContactUpdated) onContactUpdated()
         } catch (error) {
             toast({
                 title: "Error",
@@ -329,7 +329,7 @@ const RecruiterContactsTable = ({
                                             <option value='Rejected'>
                                                 Rejected
                                             </option>
-                                            <option value='Rejected'>
+                                            <option value='Not Interested'>
                                                 Not Interested
                                             </option>
                                         </select>
