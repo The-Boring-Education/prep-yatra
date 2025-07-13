@@ -5,12 +5,7 @@ const STATIC_CACHE = `prep-yatra-static-${CACHE_VERSION}`
 const DYNAMIC_CACHE = `prep-yatra-dynamic-${CACHE_VERSION}`
 
 // Files to cache immediately
-const STATIC_FILES = [
-    "/",
-    "/index.html",
-    "/manifest.json",
-    "/favicon.ico"
-]
+const STATIC_FILES = ["/", "/index.html", "/manifest.json", "/favicon.ico"]
 
 // Install event - cache static files
 self.addEventListener("install", (event) => {
@@ -20,24 +15,27 @@ self.addEventListener("install", (event) => {
             return cache.addAll(STATIC_FILES)
         })
     )
-    self.skipWaiting(); // <--- Ensures immediate activation
+    self.skipWaiting() // <--- Ensures immediate activation
 })
 
 // Activate event - clean up old caches
 self.addEventListener("activate", (event) => {
     event.waitUntil(
-        caches.keys().then((cacheNames) => {
-            return Promise.all(
-                cacheNames.map((cacheName) => {
-                    if (!cacheName.includes(CACHE_VERSION)) {
-                        console.log("Deleting old cache:", cacheName)
-                        return caches.delete(cacheName)
-                    }
-                })
-            )
-        }).then(() => {
-            self.clients.claim() // <--- Ensures new SW takes control immediately
-        })
+        caches
+            .keys()
+            .then((cacheNames) => {
+                return Promise.all(
+                    cacheNames.map((cacheName) => {
+                        if (!cacheName.includes(CACHE_VERSION)) {
+                            console.log("Deleting old cache:", cacheName)
+                            return caches.delete(cacheName)
+                        }
+                    })
+                )
+            })
+            .then(() => {
+                self.clients.claim() // <--- Ensures new SW takes control immediately
+            })
     )
 })
 
@@ -132,8 +130,13 @@ async function doBackgroundSync() {
 
 // Push notification handling
 self.addEventListener("push", (event) => {
+    // Only handle push notifications if the app is focused or the user has explicitly opted in
+    if (!event.data) {
+        return
+    }
+
     const options = {
-        body: event.data ? event.data.text() : "No payload",
+        body: event.data.text(),
         icon: "/favicon.ico",
         badge: "/favicon.ico",
         vibrate: [100, 50, 100],
