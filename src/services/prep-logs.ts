@@ -72,19 +72,17 @@ export const prepLogsService = {
         }
     },
 
-    async update(
-        id: string,
-        data: {
-            title?: string
-            description?: string
-            timeSpent?: number
-        }
-    ): Promise<PrepLog> {
+    async update(data: {
+        title?: string
+        description?: string
+        timeSpent?: number
+        prepLogId: string
+    }): Promise<PrepLog> {
         try {
             const response = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/prep-log?prepLogId=${id}`,
+                }/api/v1/prepyatra/prep-log`,
                 {
                     method: "PUT",
                     headers: {
