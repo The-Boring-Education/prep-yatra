@@ -10,20 +10,7 @@ window.addEventListener("beforeinstallprompt", (e) => {
     ).deferredBeforeInstallPrompt = e
 })
 
-// Register service worker for caching and offline support
-// Temporarily disabled for Vercel migration - enable after confirming routing works
-// if ("serviceWorker" in navigator) {
-//     window.addEventListener("load", () => {
-//         navigator.serviceWorker
-//             .register("/sw.js")
-//             .then((registration) => {
-//                 console.log("SW registered: ", registration)
-//             })
-//             .catch((registrationError) => {
-//                 console.log("SW registration failed: ", registrationError)
-//             })
-//     })
-// }
+// Service worker removed - using PWA install prompt only
 
 // Performance monitoring
 if (import.meta.env.PROD) {
