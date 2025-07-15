@@ -86,12 +86,10 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             if (data?.data?.prepYatra?.pyOnboarded) {
                 navigate("/dashboard")
-            } else {
-                navigate("/onboarding")
-            }
+            } // else do nothing, let global logic handle onboarding
         } catch (error) {
             console.error("Error checking user onboarding:", error)
-            navigate("/onboarding")
+            // Do not navigate to /onboarding on error
         }
     }
 
