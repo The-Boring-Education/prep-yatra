@@ -83,7 +83,7 @@ const RecruiterContactsTable = ({
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/recruiter?recruiterId=${recruiterId}`,
+                }/prepyatra/recruiter?recruiterId=${recruiterId}`,
                 {
                     method: "DELETE"
                 }
@@ -116,7 +116,7 @@ const RecruiterContactsTable = ({
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/recruiter`,
+                }/prepyatra/recruiter`,
                 {
                     method: "PUT",
                     headers: {
@@ -157,7 +157,7 @@ const RecruiterContactsTable = ({
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/recruiter`,
+                }/prepyatra/recruiter`,
                 {
                     method: "PUT",
                     headers: {

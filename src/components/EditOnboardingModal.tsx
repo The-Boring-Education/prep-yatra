@@ -121,7 +121,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
             const response = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/onboarding`,
+                }/prepyatra/onboarding`,
                 {
                     method: "POST",
                     headers: {

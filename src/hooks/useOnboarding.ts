@@ -48,9 +48,9 @@ export function useOnboarding() {
             try {
                 console.log("Checking user in central DB:", user.email)
                 const res = await fetch(
-                    `${
-                        import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/user?email=${user.email}`
+                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?email=${
+                        user.email
+                    }`
                 )
 
                 if (!res.ok) {
@@ -223,7 +223,7 @@ export function useOnboarding() {
                 const step1Response = await fetch(
                     `${
                         import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/user/onbording?userId=${centralUserId}`,
+                    }/user/onbording?userId=${centralUserId}`,
                     {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
@@ -274,7 +274,7 @@ export function useOnboarding() {
                 const prepYatraResponse = await fetch(
                     `${
                         import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/prepyatra/onboarding`,
+                    }/prepyatra/onboarding`,
                     {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },

@@ -4,16 +4,13 @@ const API_BASE_URL = import.meta.env.VITE_TBE_WEBAPP_API_URL
 
 export const recruitersService = {
     async create(data: CreateRecruiterContact): Promise<RecruiterContact> {
-        const response = await fetch(
-            `${API_BASE_URL}/api/v1/prepyatra/recruiter`,
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data)
-            }
-        )
+        const response = await fetch(`${API_BASE_URL}/prepyatra/recruiter`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data)
+        })
 
         const result = await response.json()
         if (!result.status) throw new Error(result.message)
@@ -24,16 +21,13 @@ export const recruitersService = {
         id: string,
         data: Partial<CreateRecruiterContact>
     ): Promise<RecruiterContact> {
-        const response = await fetch(
-            `${API_BASE_URL}/api/v1/prepyatra/recruiter`,
-            {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ recruiterId: id, ...data })
-            }
-        )
+        const response = await fetch(`${API_BASE_URL}/prepyatra/recruiter`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ recruiterId: id, ...data })
+        })
 
         const result = await response.json()
         if (!result.status) throw new Error(result.message)
@@ -42,7 +36,7 @@ export const recruitersService = {
 
     async delete(id: string): Promise<void> {
         const response = await fetch(
-            `${API_BASE_URL}/api/v1/prepyatra/recruiter/${id}`,
+            `${API_BASE_URL}/prepyatra/recruiter/${id}`,
             {
                 method: "DELETE",
                 headers: {
@@ -57,7 +51,7 @@ export const recruitersService = {
 
     async getById(id: string): Promise<RecruiterContact> {
         const response = await fetch(
-            `${API_BASE_URL}/api/v1/prepyatra/recruiter/${id}`
+            `${API_BASE_URL}/prepyatra/recruiter/${id}`
         )
         const result = await response.json()
         if (!result.status) throw new Error(result.message)
@@ -65,9 +59,7 @@ export const recruitersService = {
     },
 
     async getAll(): Promise<RecruiterContact[]> {
-        const response = await fetch(
-            `${API_BASE_URL}/api/v1/prepyatra/recruiter`
-        )
+        const response = await fetch(`${API_BASE_URL}/prepyatra/recruiter`)
         const result = await response.json()
         if (!result.status) throw new Error(result.message)
         return result.data || []
@@ -77,7 +69,7 @@ export const recruitersService = {
         status: RecruiterContact["applicationStatus"]
     ): Promise<RecruiterContact[]> {
         const response = await fetch(
-            `${API_BASE_URL}/api/v1/prepyatra/recruiter?status=${status}`
+            `${API_BASE_URL}/prepyatra/recruiter?status=${status}`
         )
         const result = await response.json()
         if (!result.status) throw new Error(result.message)

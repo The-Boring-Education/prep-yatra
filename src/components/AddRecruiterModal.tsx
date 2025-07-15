@@ -56,8 +56,7 @@ const AddRecruiterModal = ({
                 phone: editContact.phone || "",
                 company: editContact.company || "",
                 appliedPosition: editContact.appliedPosition || "",
-                applicationStatus:
-                    editContact.applicationStatus || "Screening",
+                applicationStatus: editContact.applicationStatus || "Screening",
                 follow_up_date: editContact.follow_up_date || "",
                 last_interview_date: editContact.last_interview_date || "",
                 link: editContact.link || "",
@@ -105,7 +104,7 @@ const AddRecruiterModal = ({
             const response = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/recruiter`,
+                }/prepyatra/recruiter`,
                 {
                     method: editContact ? "PUT" : "POST",
                     headers: {

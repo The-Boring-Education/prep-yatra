@@ -78,10 +78,11 @@ const AddPrepLogModal = ({
         try {
             if (editLog) {
                 // Update existing log
-                await prepLogsService.update(editLog._id, {
+                await prepLogsService.update({
                     title,
                     description,
-                    timeSpent: Number(timeSpent)
+                    timeSpent: Number(timeSpent),
+                    prepLogId: editLog._id
                 })
             } else {
                 // Create new log
