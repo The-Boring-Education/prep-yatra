@@ -94,7 +94,7 @@ const Dashboard = () => {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/recruiter?userId=${userId}`
+                }/prepyatra/recruiter?userId=${userId}`
             )
             const result = await res.json()
             if (!result.status) throw new Error(result.message)
@@ -126,7 +126,7 @@ const Dashboard = () => {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/prep-log?userId=${userId}`
+                }/prepyatra/prep-log?userId=${userId}`
             )
             const result = await res.json()
             if (!result.status) throw new Error(result.message)
@@ -156,9 +156,9 @@ const Dashboard = () => {
 
             try {
                 const res = await fetch(
-                    `${
-                        import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/user?email=${user.email}`
+                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?email=${
+                        user.email
+                    }`
                 )
                 const result = await res.json()
                 const profileData = result.data
@@ -588,7 +588,7 @@ const Dashboard = () => {
                                 const res = await fetch(
                                     `${
                                         import.meta.env.VITE_TBE_WEBAPP_API_URL
-                                    }/api/v1/user?email=${user.email}`
+                                    }/user?email=${user.email}`
                                 )
                                 const result = await res.json()
                                 if (result.status) {
