@@ -57,9 +57,11 @@ type Profile = {
     username: string
     userName?: string
     createdAt: string
+    linkedInUrl?: string
+    githubUrl?: string
+    leetCodeUrl?: string
     prepYatra: {
         workExperience: number
-        linkedInUrl?: string
         pyOnboarded: boolean
         goal?: string
         targetCompanies?: string[]
@@ -315,20 +317,54 @@ const Dashboard = () => {
                                 </span>
                             </div>
 
-                            {profile?.prepYatra.linkedInUrl && (
+                            {profile?.linkedInUrl && (
                                 <div className='flex items-center gap-2'>
                                     <Button
                                         variant='ghost'
                                         size='sm'
                                         onClick={() =>
                                             window.open(
-                                                profile.prepYatra.linkedInUrl,
+                                                profile.linkedInUrl,
                                                 "_blank"
                                             )
                                         }
                                         className='text-primary hover:bg-primary p-1 h-auto font-normal justify-start'>
                                         <ExternalLink className='h-4 w-4 mr-2' />
                                         View LinkedIn Profile
+                                    </Button>
+                                </div>
+                            )}
+                            {profile?.leetCodeUrl && (
+                                <div className='flex items-center gap-2'>
+                                    <Button
+                                        variant='ghost'
+                                        size='sm'
+                                        onClick={() =>
+                                            window.open(
+                                                profile.leetCodeUrl,
+                                                "_blank"
+                                            )
+                                        }
+                                        className='text-primary hover:bg-primary p-1 h-auto font-normal justify-start'>
+                                        <ExternalLink className='h-4 w-4 mr-2' />
+                                        View LeetCode Profile
+                                    </Button>
+                                </div>
+                            )}
+                            {profile?.githubUrl && (
+                                <div className='flex items-center gap-2'>
+                                    <Button
+                                        variant='ghost'
+                                        size='sm'
+                                        onClick={() =>
+                                            window.open(
+                                                profile.githubUrl,
+                                                "_blank"
+                                            )
+                                        }
+                                        className='text-primary hover:bg-primary p-1 h-auto font-normal justify-start'>
+                                        <ExternalLink className='h-4 w-4 mr-2' />
+                                        View Github Profile
                                     </Button>
                                 </div>
                             )}
