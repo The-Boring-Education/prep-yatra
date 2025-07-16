@@ -11,6 +11,8 @@ export type InterviewCategory =
 
 export interface OnboardingData {
   linkedInUrl: string;
+  githubUrl?: string;
+  leetCodeUrl?: string;
   workDomain: string;
   name: string;
   username: string;
