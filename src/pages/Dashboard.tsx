@@ -73,6 +73,12 @@ type Profile = {
     }
 }
 
+// Helper to ensure URL has protocol
+function withProtocol(url: string | undefined) {
+    if (!url) return '';
+    return url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+}
+
 const Dashboard = () => {
     const navigate = useNavigate()
     const { user, signOut } = useAuth()
@@ -324,7 +330,7 @@ const Dashboard = () => {
                                         size='sm'
                                         onClick={() =>
                                             window.open(
-                                                profile.linkedInUrl,
+                                                withProtocol(profile.linkedInUrl),
                                                 "_blank"
                                             )
                                         }
@@ -341,7 +347,7 @@ const Dashboard = () => {
                                         size='sm'
                                         onClick={() =>
                                             window.open(
-                                                profile.leetCodeUrl,
+                                                withProtocol(profile.leetCodeUrl),
                                                 "_blank"
                                             )
                                         }
@@ -358,7 +364,7 @@ const Dashboard = () => {
                                         size='sm'
                                         onClick={() =>
                                             window.open(
-                                                profile.githubUrl,
+                                                withProtocol(profile.githubUrl),
                                                 "_blank"
                                             )
                                         }
@@ -642,7 +648,18 @@ const Dashboard = () => {
                                     "Onboarding details updated successfully."
                             })
                         }}
-                        currentData={onboardingDetails}
+                        currentData={{
+                            ...profile,
+                            linkedInUrl: profile?.linkedInUrl || "",
+                            githubUrl: profile?.githubUrl || "",
+                            leetCodeUrl: profile?.leetCodeUrl || "",
+                            name: profile?.name || "",
+                            username: profile?.username || "",
+                            experienceLevel: profile?.prepYatra?.experienceLevel || "fresher",
+                            goal: profile?.prepYatra?.goal || "6Months",
+                            targetCompanies: profile?.prepYatra?.targetCompanies || [],
+                            interviewCategories: profile?.prepYatra?.preferences?.interviewCategories || []
+                        }}
                         userId={profile._id}
                     />
                 </Suspense>
