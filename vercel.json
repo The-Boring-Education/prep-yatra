@@ -3,7 +3,7 @@
     "trailingSlash": false,
     "rewrites": [
         {
-            "source": "/(.*)",
+            "source": "/((?!api|_next|_vercel|.*\\..*).*)",
             "destination": "/index.html"
         }
     ],
@@ -34,19 +34,6 @@
                 {
                     "key": "Cross-Origin-Opener-Policy",
                     "value": "same-origin-allow-popups"
-                },
-                {
-                    "key": "Cache-Control",
-                    "value": "public, max-age=0, must-revalidate"
-                }
-            ]
-        },
-        {
-            "source": "/index.html",
-            "headers": [
-                {
-                    "key": "Cache-Control",
-                    "value": "public, max-age=0, must-revalidate"
                 }
             ]
         }

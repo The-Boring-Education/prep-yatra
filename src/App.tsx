@@ -127,8 +127,7 @@ const SPAFallbackHandler = () => {
                 sessionStorage.removeItem("directAccessPath")
 
                 // Navigate to the intended path
-                const url = new URL(directAccessPath, window.location.origin)
-                navigate(url.pathname + url.search + url.hash)
+                navigate(directAccessPath)
                 return
             }
 
