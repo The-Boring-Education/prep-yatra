@@ -48,21 +48,6 @@
 
   <!-- Sitemap -->
   <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
-
-  <!-- SPA Routing Fallback Script -->
-  <script>
-    // Handle SPA routing for direct URL access
-    (function () {
-      // Check if this is a direct access to a route
-      var path = window.location.pathname
-      var isDirectAccess = path !== '/' && !path.startsWith('/api') && !path.includes('.')
-
-      if (isDirectAccess) {
-        // Store the intended path for the React app to handle
-        sessionStorage.setItem('directAccessPath', path + window.location.search + window.location.hash)
-      }
-    })();
-  </script>
 </head>
 
 <body>

@@ -111,43 +111,6 @@ const CacheManager = () => {
     return null
 }
 
-// SPA Fallback Handler
-const SPAFallbackHandler = () => {
-    const location = useLocation()
-    const navigate = useNavigate()
-
-    useEffect(() => {
-        // Handle direct URL access for SPA
-        const handleDirectAccess = () => {
-            // Check if there's a stored direct access path
-            const directAccessPath = sessionStorage.getItem("directAccessPath")
-
-            if (directAccessPath && location.pathname === "/") {
-                // Clear the stored path
-                sessionStorage.removeItem("directAccessPath")
-
-                // Navigate to the intended path
-                navigate(directAccessPath)
-                return
-            }
-
-            // If we're accessing a route directly and it's not the root
-            if (
-                location.pathname !== "/" &&
-                !location.pathname.startsWith("/api")
-            ) {
-                // Ensure the route is properly handled by React Router
-                // This is a safety check for direct URL access
-                console.log("Direct access detected:", location.pathname)
-            }
-        }
-
-        handleDirectAccess()
-    }, [location.pathname, navigate])
-
-    return null
-}
-
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -222,7 +185,6 @@ const AppContent = () => {
     return (
         <ChunkErrorBoundary>
             <Suspense fallback={<PageLoader />}>
-                <SPAFallbackHandler />
                 <Routes>
                     {/* Public Routes */}
                     <Route
