@@ -78,6 +78,37 @@ export default defineConfig(({ mode }) => ({
                     const facadeModuleId = chunkInfo.facadeModuleId
                         ? chunkInfo.facadeModuleId.split("/").pop()
                         : "chunk"
+
+                    // Ensure consistent chunk naming for better caching
+                    if (
+                        facadeModuleId &&
+                        facadeModuleId.includes("Onboarding") &&
+                        !facadeModuleId.includes("EditOnboarding")
+                    ) {
+                        return `js/Onboarding-[hash].js`
+                    }
+                    if (
+                        facadeModuleId &&
+                        facadeModuleId.includes("EditOnboarding")
+                    ) {
+                        return `js/EditOnboarding-[hash].js`
+                    }
+                    if (
+                        facadeModuleId &&
+                        facadeModuleId.includes("Dashboard")
+                    ) {
+                        return `js/Dashboard-[hash].js`
+                    }
+                    if (facadeModuleId && facadeModuleId.includes("Index")) {
+                        return `js/Index-[hash].js`
+                    }
+                    if (facadeModuleId && facadeModuleId.includes("Auth")) {
+                        return `js/Auth-[hash].js`
+                    }
+                    if (facadeModuleId && facadeModuleId.includes("NotFound")) {
+                        return `js/NotFound-[hash].js`
+                    }
+
                     return `js/[name]-[hash].js`
                 },
                 entryFileNames: "js/[name]-[hash].js",

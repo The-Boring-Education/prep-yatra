@@ -30,6 +30,57 @@ const PageLoader = () => (
     </div>
 )
 
+// Error boundary component for chunk loading failures
+const ChunkErrorBoundary = ({ children }: { children: React.ReactNode }) => {
+    const [hasError, setHasError] = React.useState(false)
+
+    React.useEffect(() => {
+        const handleChunkError = (event: ErrorEvent) => {
+            if (
+                event.message.includes(
+                    "Failed to fetch dynamically imported module"
+                )
+            ) {
+                console.error("Chunk loading failed:", event)
+                setHasError(true)
+
+                // Clear cache and reload after a short delay
+                setTimeout(() => {
+                    if ("caches" in window) {
+                        caches.keys().then((names) => {
+                            names.forEach((name) => {
+                                caches.delete(name)
+                            })
+                        })
+                    }
+                    window.location.reload()
+                }, 2000)
+            }
+        }
+
+        window.addEventListener("error", handleChunkError)
+        return () => window.removeEventListener("error", handleChunkError)
+    }, [])
+
+    if (hasError) {
+        return (
+            <div className='flex items-center justify-center min-h-screen'>
+                <div className='text-center'>
+                    <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4'></div>
+                    <p className='text-gray-600 dark:text-gray-300'>
+                        Loading new version...
+                    </p>
+                    <p className='text-sm text-gray-500 dark:text-gray-400 mt-2'>
+                        Please wait while we update the application
+                    </p>
+                </div>
+            </div>
+        )
+    }
+
+    return <>{children}</>
+}
+
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -83,8 +134,11 @@ const AppContent = () => {
                             redirect: `${window.location.origin}/dashboard`
                         })
                         // If token is available, add it
-                        if ((user as any).token) {
-                            params.append("token", (user as any).token)
+                        if ((user as { token?: string }).token) {
+                            params.append(
+                                "token",
+                                (user as { token?: string }).token
+                            )
                         }
                         window.location.href = `${onboardingBaseUrl}/?${params.toString()}`
                         return
@@ -99,69 +153,71 @@ const AppContent = () => {
     }, [isAuthenticated, user, loading, location.pathname, navigate])
 
     return (
-        <Suspense fallback={<PageLoader />}>
-            <Routes>
-                {/* Public Routes */}
-                <Route
-                    path='/'
-                    element={
-                        <PublicRoute>
-                            <Index />
-                        </PublicRoute>
-                    }
-                />
-                <Route
-                    path='/auth'
-                    element={
-                        <PublicRoute>
-                            <Auth />
-                        </PublicRoute>
-                    }
-                />
-                <Route
-                    path='/journey/:userId'
-                    element={
-                        <PublicRoute>
-                            <PrepLogsShowcase />
-                        </PublicRoute>
-                    }
-                />
-                {/* Protected Routes */}
-                <Route
-                    path='/onboarding'
-                    element={
-                        <ProtectedRoute>
-                            <Onboarding />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path='/dashboard'
-                    element={
-                        <ProtectedRoute requireOnboarding={true}>
-                            <Dashboard />
-                        </ProtectedRoute>
-                    }
-                />
-                <Route
-                    path='/pricing'
-                    element={
-                        <ProtectedRoute requireOnboarding={true}>
-                            <PricingPage />
-                        </ProtectedRoute>
-                    }
-                />
-                {/* 404 Route */}
-                <Route
-                    path='*'
-                    element={
-                        <PublicRoute>
-                            <NotFound />
-                        </PublicRoute>
-                    }
-                />
-            </Routes>
-        </Suspense>
+        <ChunkErrorBoundary>
+            <Suspense fallback={<PageLoader />}>
+                <Routes>
+                    {/* Public Routes */}
+                    <Route
+                        path='/'
+                        element={
+                            <PublicRoute>
+                                <Index />
+                            </PublicRoute>
+                        }
+                    />
+                    <Route
+                        path='/auth'
+                        element={
+                            <PublicRoute>
+                                <Auth />
+                            </PublicRoute>
+                        }
+                    />
+                    <Route
+                        path='/journey/:userId'
+                        element={
+                            <PublicRoute>
+                                <PrepLogsShowcase />
+                            </PublicRoute>
+                        }
+                    />
+                    {/* Protected Routes */}
+                    <Route
+                        path='/onboarding'
+                        element={
+                            <ProtectedRoute>
+                                <Onboarding />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path='/dashboard'
+                        element={
+                            <ProtectedRoute requireOnboarding={true}>
+                                <Dashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path='/pricing'
+                        element={
+                            <ProtectedRoute requireOnboarding={true}>
+                                <PricingPage />
+                            </ProtectedRoute>
+                        }
+                    />
+                    {/* 404 Route */}
+                    <Route
+                        path='*'
+                        element={
+                            <PublicRoute>
+                                <NotFound />
+                            </PublicRoute>
+                        }
+                    />
+                </Routes>
+            </Suspense>
+        </ChunkErrorBoundary>
     )
 }
 
