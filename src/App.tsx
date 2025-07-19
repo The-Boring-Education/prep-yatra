@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react"
+import React, { Suspense, lazy, useEffect } from "react"
 import { Toaster } from "@/components/ui/toaster"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
@@ -11,7 +11,6 @@ import PublicRoute from "@/components/PublicRoute"
 import ProtectedRoute from "@/components/ProtectedRoute"
 import PricingPage from "./pages/Pricing"
 import { useUser } from "@/hooks/use-user"
-import { useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
 // Lazy load page components for code splitting
@@ -79,6 +78,32 @@ const ChunkErrorBoundary = ({ children }: { children: React.ReactNode }) => {
     }
 
     return <>{children}</>
+}
+
+// Cache clearing component
+const CacheManager = () => {
+    useEffect(() => {
+        // Check if we need to clear cache (e.g., after deployment)
+        const lastDeployTime = localStorage.getItem("lastDeployTime")
+        const currentTime = Date.now()
+
+        // If no last deploy time or it's been more than 1 hour, clear cache
+        if (
+            !lastDeployTime ||
+            currentTime - parseInt(lastDeployTime) > 3600000
+        ) {
+            if ("caches" in window) {
+                caches.keys().then((names) => {
+                    names.forEach((name) => {
+                        caches.delete(name)
+                    })
+                })
+            }
+            localStorage.setItem("lastDeployTime", currentTime.toString())
+        }
+    }, [])
+
+    return null
 }
 
 const queryClient = new QueryClient({
@@ -230,6 +255,7 @@ const App: React.FC = () => {
                     <Toaster />
                     <Sonner />
                     <BrowserRouter>
+                        <CacheManager />
                         <AuthProvider>
                             <GamificationProvider>
                                 <AppContent />
