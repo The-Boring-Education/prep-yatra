@@ -3,7 +3,7 @@
     "trailingSlash": false,
     "rewrites": [
         {
-            "source": "/((?!api|_next|_vercel|.*\\..*).*)",
+            "source": "/(.*)",
             "destination": "/index.html"
         }
     ],
