@@ -3,7 +3,13 @@ import { Toaster } from "@/components/ui/toaster"
 import { Toaster as Sonner } from "@/components/ui/sonner"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import {
+    BrowserRouter,
+    Routes,
+    Route,
+    useLocation,
+    useNavigate
+} from "react-router-dom"
 import { GoogleOAuthProvider } from "@react-oauth/google"
 import { GamificationProvider } from "@/contexts/GamificationContext"
 import AuthProvider from "@/contexts/AuthContext"
@@ -11,7 +17,6 @@ import PublicRoute from "@/components/PublicRoute"
 import ProtectedRoute from "@/components/ProtectedRoute"
 import PricingPage from "./pages/Pricing"
 import { useUser } from "@/hooks/use-user"
-import { useLocation, useNavigate } from "react-router-dom"
 
 // Lazy load page components for code splitting
 const Index = lazy(() => import("./pages/Index"))
@@ -106,6 +111,44 @@ const CacheManager = () => {
     return null
 }
 
+// SPA Fallback Handler
+const SPAFallbackHandler = () => {
+    const location = useLocation()
+    const navigate = useNavigate()
+
+    useEffect(() => {
+        // Handle direct URL access for SPA
+        const handleDirectAccess = () => {
+            // Check if there's a stored direct access path
+            const directAccessPath = sessionStorage.getItem("directAccessPath")
+
+            if (directAccessPath && location.pathname === "/") {
+                // Clear the stored path
+                sessionStorage.removeItem("directAccessPath")
+
+                // Navigate to the intended path
+                const url = new URL(directAccessPath, window.location.origin)
+                navigate(url.pathname + url.search + url.hash)
+                return
+            }
+
+            // If we're accessing a route directly and it's not the root
+            if (
+                location.pathname !== "/" &&
+                !location.pathname.startsWith("/api")
+            ) {
+                // Ensure the route is properly handled by React Router
+                // This is a safety check for direct URL access
+                console.log("Direct access detected:", location.pathname)
+            }
+        }
+
+        handleDirectAccess()
+    }, [location.pathname, navigate])
+
+    return null
+}
+
 const queryClient = new QueryClient({
     defaultOptions: {
         queries: {
@@ -180,6 +223,7 @@ const AppContent = () => {
     return (
         <ChunkErrorBoundary>
             <Suspense fallback={<PageLoader />}>
+                <SPAFallbackHandler />
                 <Routes>
                     {/* Public Routes */}
                     <Route
