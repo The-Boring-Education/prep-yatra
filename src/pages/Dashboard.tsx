@@ -57,9 +57,11 @@ type Profile = {
     username: string
     userName?: string
     createdAt: string
+    linkedInUrl?: string
+    githubUrl?: string
+    leetCodeUrl?: string
     prepYatra: {
         workExperience: number
-        linkedInUrl?: string
         pyOnboarded: boolean
         goal?: string
         targetCompanies?: string[]
@@ -69,6 +71,12 @@ type Profile = {
             focusAreas: string[]
         }
     }
+}
+
+// Helper to ensure URL has protocol
+function withProtocol(url: string | undefined) {
+    if (!url) return '';
+    return url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
 }
 
 const Dashboard = () => {
@@ -94,7 +102,7 @@ const Dashboard = () => {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/recruiter?userId=${userId}`
+                }/prepyatra/recruiter?userId=${userId}`
             )
             const result = await res.json()
             if (!result.status) throw new Error(result.message)
@@ -126,7 +134,7 @@ const Dashboard = () => {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/prep-log?userId=${userId}`
+                }/prepyatra/prep-log?userId=${userId}`
             )
             const result = await res.json()
             if (!result.status) throw new Error(result.message)
@@ -156,9 +164,9 @@ const Dashboard = () => {
 
             try {
                 const res = await fetch(
-                    `${
-                        import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/user?email=${user.email}`
+                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?email=${
+                        user.email
+                    }`
                 )
                 const result = await res.json()
                 const profileData = result.data
@@ -315,20 +323,54 @@ const Dashboard = () => {
                                 </span>
                             </div>
 
-                            {profile?.prepYatra.linkedInUrl && (
+                            {profile?.linkedInUrl && (
                                 <div className='flex items-center gap-2'>
                                     <Button
                                         variant='ghost'
                                         size='sm'
                                         onClick={() =>
                                             window.open(
-                                                profile.prepYatra.linkedInUrl,
+                                                withProtocol(profile.linkedInUrl),
                                                 "_blank"
                                             )
                                         }
                                         className='text-primary hover:bg-primary p-1 h-auto font-normal justify-start'>
                                         <ExternalLink className='h-4 w-4 mr-2' />
                                         View LinkedIn Profile
+                                    </Button>
+                                </div>
+                            )}
+                            {profile?.leetCodeUrl && (
+                                <div className='flex items-center gap-2'>
+                                    <Button
+                                        variant='ghost'
+                                        size='sm'
+                                        onClick={() =>
+                                            window.open(
+                                                withProtocol(profile.leetCodeUrl),
+                                                "_blank"
+                                            )
+                                        }
+                                        className='text-primary hover:bg-primary p-1 h-auto font-normal justify-start'>
+                                        <ExternalLink className='h-4 w-4 mr-2' />
+                                        View LeetCode Profile
+                                    </Button>
+                                </div>
+                            )}
+                            {profile?.githubUrl && (
+                                <div className='flex items-center gap-2'>
+                                    <Button
+                                        variant='ghost'
+                                        size='sm'
+                                        onClick={() =>
+                                            window.open(
+                                                withProtocol(profile.githubUrl),
+                                                "_blank"
+                                            )
+                                        }
+                                        className='text-primary hover:bg-primary p-1 h-auto font-normal justify-start'>
+                                        <ExternalLink className='h-4 w-4 mr-2' />
+                                        View Github Profile
                                     </Button>
                                 </div>
                             )}
@@ -588,7 +630,7 @@ const Dashboard = () => {
                                 const res = await fetch(
                                     `${
                                         import.meta.env.VITE_TBE_WEBAPP_API_URL
-                                    }/api/v1/user?email=${user.email}`
+                                    }/user?email=${user.email}`
                                 )
                                 const result = await res.json()
                                 if (result.status) {
@@ -606,7 +648,18 @@ const Dashboard = () => {
                                     "Onboarding details updated successfully."
                             })
                         }}
-                        currentData={onboardingDetails}
+                        currentData={{
+                            ...profile,
+                            linkedInUrl: profile?.linkedInUrl || "",
+                            githubUrl: profile?.githubUrl || "",
+                            leetCodeUrl: profile?.leetCodeUrl || "",
+                            name: profile?.name || "",
+                            username: profile?.username || "",
+                            experienceLevel: profile?.prepYatra?.experienceLevel || "fresher",
+                            goal: profile?.prepYatra?.goal || "6Months",
+                            targetCompanies: profile?.prepYatra?.targetCompanies || [],
+                            interviewCategories: profile?.prepYatra?.preferences?.interviewCategories || []
+                        }}
                         userId={profile._id}
                     />
                 </Suspense>

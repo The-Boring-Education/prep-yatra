@@ -27,12 +27,14 @@ const LEVELS: GamificationLevel[] = [
     { level: 7, name: "Wizard", minPoints: 6000, maxPoints: 7499 },
     { level: 8, name: "Guru", minPoints: 7500, maxPoints: 8999 },
     { level: 9, name: "Architect", minPoints: 9000, maxPoints: 9999 },
-    { level: 10, name: "Legend", minPoints: 10000, maxPoints: Infinity },
-  ];
-  
+    { level: 10, name: "Legend", minPoints: 10000, maxPoints: Infinity }
+]
 
 export function useGamification(userId?: string) {
-    const [data, setData] = useState<{ points: number; actions: unknown[] } | null>(null)
+    const [data, setData] = useState<{
+        points: number
+        actions: unknown[]
+    } | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
 
@@ -42,12 +44,23 @@ export function useGamification(userId?: string) {
         setLoading(true)
         setError(null)
         try {
-            const res = await fetch(`${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/gamification?userId=${userId}`)
+            const res = await fetch(
+                `${
+                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                }/gamification?userId=${userId}`
+            )
             const result = await res.json()
-            if (!result.success) throw new Error(result.message || "Failed to fetch gamification data")
+            if (!result.success)
+                throw new Error(
+                    result.message || "Failed to fetch gamification data"
+                )
             setData(result.data)
         } catch (err) {
-            setError(err instanceof Error ? err.message : "Failed to fetch gamification data")
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Failed to fetch gamification data"
+            )
         } finally {
             setLoading(false)
         }
@@ -58,33 +71,44 @@ export function useGamification(userId?: string) {
         // Listen for global refetch event
         const handleRefetch = () => fetchGamificationData()
         window.addEventListener("gamification-refetch", handleRefetch)
-        return () => window.removeEventListener("gamification-refetch", handleRefetch)
+        return () =>
+            window.removeEventListener("gamification-refetch", handleRefetch)
     }, [fetchGamificationData])
 
     // Calculate current level based on points
     const getCurrentLevel = (): GamificationLevel => {
         if (!data?.points) return LEVELS[0]
-        
-        return LEVELS.find(level => 
-            data.points >= level.minPoints && data.points <= level.maxPoints
-        ) || LEVELS[0]
+
+        return (
+            LEVELS.find(
+                (level) =>
+                    data.points >= level.minPoints &&
+                    data.points <= level.maxPoints
+            ) || LEVELS[0]
+        )
     }
 
     // Calculate progress to next level
     const getProgressToNextLevel = () => {
         if (!data?.points) return 0
-        
+
         const currentLevel = getCurrentLevel()
         const pointsInCurrentLevel = data.points - currentLevel.minPoints
-        const pointsNeededForLevel = currentLevel.maxPoints - currentLevel.minPoints
-        
-        return Math.min((pointsInCurrentLevel / pointsNeededForLevel) * 100, 100)
+        const pointsNeededForLevel =
+            currentLevel.maxPoints - currentLevel.minPoints
+
+        return Math.min(
+            (pointsInCurrentLevel / pointsNeededForLevel) * 100,
+            100
+        )
     }
 
     // Get next level info
     const getNextLevel = (): GamificationLevel | null => {
         const currentLevel = getCurrentLevel()
-        const nextLevelIndex = LEVELS.findIndex(level => level.level === currentLevel.level + 1)
+        const nextLevelIndex = LEVELS.findIndex(
+            (level) => level.level === currentLevel.level + 1
+        )
         return nextLevelIndex >= 0 ? LEVELS[nextLevelIndex] : null
     }
 
@@ -111,6 +135,6 @@ export function useGamification(userId?: string) {
         nextLevel: nextLevel?.level || null,
         nextLevelName: nextLevel?.name || null,
         percentageProgress: progressToNextLevel,
-        pointsNeededForNextLevel,
+        pointsNeededForNextLevel
     }
-} 
+}

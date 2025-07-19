@@ -31,17 +31,39 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
                         const res = await fetch(
                             `${
                                 import.meta.env.VITE_TBE_WEBAPP_API_URL
-                            }/api/v1/user?email=${user.email}`
+                            }/user?email=${user.email}`
                         )
                         const data = await res.json()
 
                         if (!data?.data?.prepYatra?.pyOnboarded) {
-                            navigate("/onboarding")
+                            // Redirect to external onboarding app
+                            const onboardingBaseUrl = import.meta.env
+                                .VITE_ONBOARDING_APP_URL
+                            const params = new URLSearchParams({
+                                userId: user.id || "",
+                                from: "prepyatra",
+                                redirect: `${window.location.origin}/dashboard`
+                            })
+                            if ((user as any).token) {
+                                params.append("token", (user as any).token)
+                            }
+                            window.location.href = `${onboardingBaseUrl}/?${params.toString()}`
                             return
                         }
                     } catch (error) {
                         console.error("Error checking onboarding:", error)
-                        navigate("/onboarding")
+                        // On error, also redirect to external onboarding app
+                        const onboardingBaseUrl = import.meta.env
+                            .VITE_ONBOARDING_APP_URL
+                        const params = new URLSearchParams({
+                            userId: user.id || "",
+                            from: "prepyatra",
+                            redirect: `${window.location.origin}/dashboard`
+                        })
+                        if ((user as any).token) {
+                            params.append("token", (user as any).token)
+                        }
+                        window.location.href = `${onboardingBaseUrl}/?${params.toString()}`
                         return
                     }
                 }

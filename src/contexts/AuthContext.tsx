@@ -41,7 +41,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     ): Promise<User> => {
         try {
             const res = await fetch(
-                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/api/v1/user`,
+                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -80,18 +80,16 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/user?email=${userEmail}`
+                }/user?email=${userEmail}`
             )
             const data = await res.json()
 
             if (data?.data?.prepYatra?.pyOnboarded) {
                 navigate("/dashboard")
-            } else {
-                navigate("/onboarding")
-            }
+            } // else do nothing, let global logic handle onboarding
         } catch (error) {
             console.error("Error checking user onboarding:", error)
-            navigate("/onboarding")
+            // Do not navigate to /onboarding on error
         }
     }
 
@@ -147,9 +145,9 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
                 // Verify with backend
                 const res = await fetch(
-                    `${
-                        import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/api/v1/user?email=${userData.email}`
+                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?email=${
+                        userData.email
+                    }`
                 )
                 const data = await res.json()
 

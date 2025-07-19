@@ -19,6 +19,7 @@ import {
 } from "@/types/onboarding"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/contexts/useAuth"
+import { ExternalLink } from "lucide-react"
 
 interface EditOnboardingModalProps {
     isOpen: boolean
@@ -53,6 +54,8 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         if (currentData) {
             setFormData({
                 linkedInUrl: currentData.linkedInUrl || "",
+                githubUrl: currentData.githubUrl || "",
+                leetCodeUrl: currentData.leetCodeUrl || "",
                 workDomain: currentData.workDomain || "",
                 name: currentData.name || user?.name || "",
                 username:
@@ -66,7 +69,9 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
             // Set default values for new users
             setFormData({
                 linkedInUrl: "",
-                workDomain: "",
+                githubUrl: "",
+                leetCodeUrl: "",
+                workDomain:"",
                 name: user?.name || "",
                 username: user?.email?.split("@")[0] || "",
                 experienceLevel: "fresher",
@@ -115,13 +120,16 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 username: formData.username,
                 goal: formData.goal,
                 targetCompanies: formData.targetCompanies,
-                preferredCategories: formData.preferredCategories
+                preferredCategories: formData.preferredCategories,
+                linkedInUrl: formData.linkedInUrl,
+                githubUrl: formData.githubUrl,
+                leetCodeUrl: formData.leetCodeUrl
             }
 
             const response = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/prepyatra/onboarding`,
+                }/prepyatra/onboarding`,
                 {
                     method: "POST",
                     headers: {
@@ -183,6 +191,54 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 </DialogHeader>
 
                 <div className='space-y-6'>
+                    {/* Social Links Section */}
+                    <div className='space-y-3'>
+                        <h3 className='text-lg font-semibold text-white'>
+                            Social Links
+                        </h3>
+                        <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
+                            {/* LinkedIn */}
+                            <div>
+                                <label htmlFor='linkedInUrl' className='block text-xs font-medium text-gray-400 mb-1'>
+                                    LinkedIn URL
+                                </label>
+                                <input
+                                    id='linkedInUrl'
+                                    type='url'
+                                    value={formData.linkedInUrl}
+                                    onChange={e => handleInputChange('linkedInUrl', e.target.value)}
+                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
+                                />
+                            </div>
+                            {/* GitHub */}
+                            <div>
+                                <label htmlFor='githubUrl' className='block text-xs font-medium text-gray-400 mb-1'>
+                                    GitHub URL
+                                </label>
+                                <input
+                                    id='githubUrl'
+                                    type='url'
+                                    value={formData.githubUrl || ''}
+                                    onChange={e => handleInputChange('githubUrl', e.target.value)}
+                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
+                                />
+                            </div>
+                            {/* LeetCode */}
+                            <div>
+                                <label htmlFor='leetCodeUrl' className='block text-xs font-medium text-gray-400 mb-1'>
+                                    LeetCode URL
+                                </label>
+                                <input
+                                    id='leetCodeUrl'
+                                    type='url'
+                                    value={formData.leetCodeUrl || ''}
+                                    onChange={e => handleInputChange('leetCodeUrl', e.target.value)}
+                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
+                                />
+                            </div>
+                        </div>
+                    </div>
+
                     {/* Goal Selection */}
                     <div className='space-y-3'>
                         <h3 className='text-lg font-semibold text-white'>

@@ -168,7 +168,7 @@ const PricingPage: React.FC = () => {
             const res = await fetch(
                 `${
                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/api/v1/payment/create-order`,
+                }/payment/create-order`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -202,7 +202,7 @@ const PricingPage: React.FC = () => {
                             const subRes = await fetch(
                                 `${
                                     import.meta.env.VITE_TBE_WEBAPP_API_URL
-                                }/api/v1/prepyatra/subscription`,
+                                }/prepyatra/subscription`,
                                 {
                                     method: "POST",
                                     headers: {
