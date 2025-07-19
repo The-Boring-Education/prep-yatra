@@ -20,7 +20,9 @@
         "preview": "vite preview",
         "sitemap": "node scripts/generate-sitemap.js",
         "update-browserslist": "npx update-browserslist-db@latest",
-        "test-build": "bash scripts/test-build.sh"
+        "test-build": "bash scripts/test-build.sh",
+        "deploy": "bash scripts/deploy.sh",
+        "clear-cache": "node scripts/clear-cache.js"
     },
     "dependencies": {
         "@hookform/resolvers": "^3.9.0",

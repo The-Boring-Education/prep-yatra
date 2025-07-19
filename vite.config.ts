@@ -78,9 +78,43 @@ export default defineConfig(({ mode }) => ({
                     const facadeModuleId = chunkInfo.facadeModuleId
                         ? chunkInfo.facadeModuleId.split("/").pop()
                         : "chunk"
-                    return `js/[name]-[hash].js`
+
+                    // Add timestamp for cache busting
+                    const timestamp = Date.now()
+
+                    // Ensure consistent chunk naming for better caching
+                    if (
+                        facadeModuleId &&
+                        facadeModuleId.includes("Onboarding") &&
+                        !facadeModuleId.includes("EditOnboarding")
+                    ) {
+                        return `js/Onboarding-${timestamp}-[hash].js`
+                    }
+                    if (
+                        facadeModuleId &&
+                        facadeModuleId.includes("EditOnboarding")
+                    ) {
+                        return `js/EditOnboarding-${timestamp}-[hash].js`
+                    }
+                    if (
+                        facadeModuleId &&
+                        facadeModuleId.includes("Dashboard")
+                    ) {
+                        return `js/Dashboard-${timestamp}-[hash].js`
+                    }
+                    if (facadeModuleId && facadeModuleId.includes("Index")) {
+                        return `js/Index-${timestamp}-[hash].js`
+                    }
+                    if (facadeModuleId && facadeModuleId.includes("Auth")) {
+                        return `js/Auth-${timestamp}-[hash].js`
+                    }
+                    if (facadeModuleId && facadeModuleId.includes("NotFound")) {
+                        return `js/NotFound-${timestamp}-[hash].js`
+                    }
+
+                    return `js/[name]-${timestamp}-[hash].js`
                 },
-                entryFileNames: "js/[name]-[hash].js",
+                entryFileNames: `js/[name]-${Date.now()}-[hash].js`,
                 assetFileNames: (assetInfo) => {
                     const info = assetInfo.name?.split(".") || []
                     const ext = info[info.length - 1]
