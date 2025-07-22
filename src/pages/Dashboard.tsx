@@ -22,6 +22,7 @@ import { useGamificationContext } from "@/contexts/GamificationContext"
 import { useToast } from "@/hooks/use-toast"
 import DailyPrepEncouragement from "@/components/DailyPrepEncouragement"
 import { usePrepStats } from "@/hooks/use-prep-stats"
+import BuildYourStack from "@/components/BuildYourStack"
 
 // Lazy load heavy components
 const AddRecruiterModal = lazy(() => import("@/components/AddRecruiterModal"))
@@ -60,6 +61,8 @@ type Profile = {
     linkedInUrl?: string
     githubUrl?: string
     leetCodeUrl?: string
+    userSkills?: string[]
+    userSkillsLastUpdated?: string
     prepYatra: {
         workExperience: number
         pyOnboarded: boolean
@@ -141,6 +144,21 @@ const Dashboard = () => {
             setPrepLogs(result.data)
         } catch (err) {
             console.error("Failed to fetch prep logs:", err)
+        }
+    }
+
+    // Add this function to refetch the user profile
+    const refetchProfile = async () => {
+        try {
+            const res = await fetch(
+                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?email=${user.email}`
+            )
+            const result = await res.json()
+            if (result.status) {
+                setProfile(result.data)
+            }
+        } catch (error) {
+            // handle error
         }
     }
 
@@ -272,6 +290,15 @@ const Dashboard = () => {
                 />
 
                 <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
+                    {/* Build Your Stack Section */}
+                    <div className='md:col-span-2 lg:col-span-3'>
+                        <BuildYourStack
+                            userId={profile?._id || ""}
+                            userSkills={profile?.userSkills || []}
+                            onSkillsUpdated={refetchProfile}
+                            lastUpdated={profile?.userSkillsLastUpdated || null}
+                        />
+                    </div>
                     {/* Enhanced Profile Section */}
                     <div className='glass-dark rounded-2xl p-6'>
                         <h3 className='text-xl font-bold text-white mb-6 flex items-center gap-2'>
