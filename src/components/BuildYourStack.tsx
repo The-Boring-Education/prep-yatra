@@ -8,12 +8,11 @@ interface BuildYourStackProps {
     userId: string
     userSkills: string[]
     onSkillsUpdated?: () => void
-    lastUpdated?: string; // Added lastUpdated prop
+    lastUpdated?: string;
 }
 
 const API_URL = import.meta.env.VITE_TBE_WEBAPP_API_URL;
 
-// Helper to check if last update is older than 60 days
 function isOlderThan60Days(dateString: string | undefined) {
     if (!dateString) return true;
     const last = new Date(dateString);
@@ -59,8 +58,7 @@ const BuildYourStack: React.FC<BuildYourStackProps> = ({ userId, userSkills, onS
             inputRef.current?.focus()
         }
     }
-
-    // Determine if warning should be shown
+        
     const showWarning = (skills.length === 0) || isOlderThan60Days(lastUpdated);
 
     return (
