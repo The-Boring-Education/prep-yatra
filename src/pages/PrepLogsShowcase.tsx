@@ -21,10 +21,14 @@ import { usePrepStats } from "@/hooks/use-prep-stats"
 import { useIntersectionObserver } from "@/hooks/use-mobile"
 import Navigation from "@/components/Navigation"
 import Footer from "@/components/Footer"
+import UserSkillsShowcase from "@/components/UserSkillsShowcase"
+import { useState } from "react"
 
 const PrepLogsShowcase = () => {
     const { userId } = useParams<{ userId: string }>()
     const navigate = useNavigate()
+    const [profile, setProfile] = useState<any>(null)
+    const [profileLoading, setProfileLoading] = useState(true)
 
     const {
         stats,
@@ -71,7 +75,26 @@ const PrepLogsShowcase = () => {
         navigate("/auth")
     }
 
-    if (loading) {
+    useEffect(() => {
+        const fetchProfile = async () => {
+            if (!userId) return
+            setProfileLoading(true)
+            try {
+                const res = await fetch(`${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?userId=${userId}`)
+                const result = await res.json()
+                if (result.status) {
+                    setProfile(result.data)
+                }
+            } catch (err) {
+                // ignore for now
+            } finally {
+                setProfileLoading(false)
+            }
+        }
+        fetchProfile()
+    }, [userId])
+
+    if (loading || profileLoading) {
         return (
             <div className='min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900'>
                 <Navigation />
@@ -149,7 +172,16 @@ const PrepLogsShowcase = () => {
                             represents a step towards success.
                         </p>
                     </div>
-
+                    {/* Public Skills Showcase */}
+                    {profile && (
+                        <div className="max-w-2xl mx-auto mb-8">
+                            <UserSkillsShowcase
+                                userSkills={profile.userSkills || []}
+                                lastUpdated={profile.userSkillsLastUpdated || null}
+                                title="Skills Showcase"
+                            />
+                        </div>
+                    )}
                     {/* Quick Stats */}
                     <div className='grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto'>
                         <div className='glass rounded-2xl p-6 transform hover:scale-105 transition-all duration-300'>
