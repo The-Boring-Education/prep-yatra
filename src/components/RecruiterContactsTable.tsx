@@ -60,6 +60,17 @@ const RecruiterContactsTable = ({
     const [editingContact, setEditingContact] =
         useState<RecruiterContact | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [hideInactiveContacts, setHideInactiveContacts] = useState(false)
+
+
+    const visibleContacts = hideInactiveContacts
+    ? contacts.filter(
+          (c) =>
+              c.applicationStatus !== 'Rejected' &&
+              c.applicationStatus !== 'Not Interested'
+      )
+    : contacts
+
 
     const getStatusColor = (status?: string) => {
         switch (status) {
@@ -235,17 +246,27 @@ const RecruiterContactsTable = ({
     return (
         <>
             <div className='glass-dark rounded-2xl p-6'>
-                <div className='flex justify-between items-center mb-6'>
-                    <h3 className='text-xl font-bold text-white'>
-                        Your Recruiter Network
-                    </h3>
-                    <Badge
-                        variant='secondary'
-                        className='bg-primary/20 text-primary'>
-                        {contacts.length} Contact
-                        {contacts.length !== 1 ? "s" : ""}
-                    </Badge>
-                </div>
+            <div className='flex justify-between items-center mb-6'>
+            <h3 className='text-xl font-bold text-white'>
+                Your Recruiter Network
+            </h3>
+
+            <div className="flex items-center gap-8">
+                <Button
+                onClick={() => setHideInactiveContacts((prev) => !prev)}
+                variant="default"
+                >
+                {hideInactiveContacts ? 'Show All Contacts' : 'Hide Inactive Contacts'}
+                </Button>
+
+                <Badge
+                variant='secondary'
+                className='bg-primary/20 text-primary'>
+                {visibleContacts.length} Contact
+                {visibleContacts.length !== 1 ? "s" : ""}
+                </Badge>
+            </div>
+            </div>
 
                 <div className='overflow-x-auto'>
                     <Table>
@@ -278,7 +299,7 @@ const RecruiterContactsTable = ({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {contacts.map((contact) => (
+                        {visibleContacts.map((contact) => (
                                 <TableRow
                                     key={contact._id}
                                     className='border-primary/10 hover:bg-primary/5 transition-colors'>
