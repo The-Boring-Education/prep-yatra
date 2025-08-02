@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename)
 
 // Configuration
 const DOMAIN =
-    process.env.SITE_URL || "https://prepyatra.theboringeducation.com"
+    process.env.WEBAPP_BASE_URL || "https://prepyatra.theboringeducation.com"
 const OUTPUT_PATH = path.join(__dirname, "../public/sitemap.xml")
 
 // Define your routes with their properties
