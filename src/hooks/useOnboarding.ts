@@ -223,7 +223,7 @@ export function useOnboarding() {
                 const step1Response = await fetch(
                     `${
                         import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/user/onbording?userId=${centralUserId}`,
+                    }/user/onboarding?userId=${centralUserId}`,
                     {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
