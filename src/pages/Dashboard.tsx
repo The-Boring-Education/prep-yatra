@@ -1,48 +1,62 @@
-import { useEffect, useState, lazy, Suspense } from "react"
-import { useNavigate } from "react-router-dom"
+import React, { useState, useEffect, Suspense, lazy } from "react"
+import { useRouter } from "next/router"
+import { useAuth } from "@/contexts/useAuth"
+import { useGamificationContext } from "@/contexts/GamificationContext"
+import { usePrepLogs } from "@/hooks/use-prep-logs"
+import { useUser } from "@/hooks/use-user"
 import { Button } from "@/components/ui/button"
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle
+} from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { toast } from "sonner"
 import {
-    ExternalLink,
     Calendar,
-    Award,
-    Share2,
-    ChevronDown,
-    ChevronUp,
-    Edit,
-    RefreshCw
+    ExternalLink,
+    Github,
+    Linkedin,
+    MessageSquare,
+    Plus,
+    Settings,
+    Users
 } from "lucide-react"
-import { RecruiterContact } from "@/types/recruiters"
-import { useAuth } from "@/contexts/useAuth"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
-import InstallButton from "@/components/InstallButton"
-import { useGamificationContext } from "@/contexts/GamificationContext"
-import { useToast } from "@/hooks/use-toast"
-import DailyPrepEncouragement from "@/components/DailyPrepEncouragement"
-import { usePrepStats } from "@/hooks/use-prep-stats"
-import BuildYourStack from "@/components/BuildYourStack"
 
-// Lazy load heavy components
+// Lazy load components for better performance
+const Navbar = lazy(() => import("@/components/Navbar"))
+const AddPrepLogModal = lazy(() => import("@/components/AddPrepLogModal"))
+const PrepLogsList = lazy(() => import("@/components/PrepLogsList"))
 const AddRecruiterModal = lazy(() => import("@/components/AddRecruiterModal"))
 const RecruiterContactsTable = lazy(
     () => import("@/components/RecruiterContactsTable")
 )
-const AddPrepLogModal = lazy(() => import("@/components/AddPrepLogModal"))
-const PrepLogList = lazy(() => import("@/components/PrepLogsList"))
-const PrepLogCard = lazy(() => import("@/components/PrepLogsList"))
 const EditOnboardingModal = lazy(
     () => import("@/components/EditOnboardingModal")
 )
+const GamificationDisplay = lazy(
+    () => import("@/components/GamificationDisplay")
+)
+const BuildYourStack = lazy(() => import("@/components/BuildYourStack"))
+const DailyPrepEncouragement = lazy(
+    () => import("@/components/DailyPrepEncouragement")
+)
+const AddSkillsModal = lazy(() => import("@/components/AddSkillsModal"))
+const UserSkillsShowcase = lazy(() => import("@/components/UserSkillsShowcase"))
 
 // Loading component for Suspense fallback
 const ComponentLoader = () => (
-    <div className='flex items-center justify-center p-4'>
-        <div className='animate-spin rounded-full h-6 w-6 border-b-2 border-primary'></div>
+    <div className='flex items-center justify-center h-32'>
+        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
     </div>
 )
 
+// Type definitions (same as original)
 type PrepLog = {
     _id: string
     userId: string
@@ -76,623 +90,460 @@ type Profile = {
     }
 }
 
-// Helper to ensure URL has protocol
+// Utility function to add protocol to URLs
 function withProtocol(url: string | undefined) {
-    if (!url) return '';
-    return url.startsWith('http://') || url.startsWith('https://') ? url : `https://${url}`;
+    if (!url) return undefined
+    return url.startsWith("http") ? url : `https://${url}`
 }
 
 const Dashboard = () => {
-    const navigate = useNavigate()
-    const { user, signOut } = useAuth()
-    const { showCelebration } = useGamificationContext()
-    const { toast } = useToast()
-    const [profile, setProfile] = useState<Profile | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [recruiterContacts, setRecruiterContacts] = useState<
-        RecruiterContact[]
-    >([])
-    const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
-    const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-    const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
-
-    const [showDetails, setShowDetails] = useState(false)
+    // State management
+    const [isAddPrepLogModalOpen, setIsAddPrepLogModalOpen] = useState(false)
+    const [isAddRecruiterModalOpen, setIsAddRecruiterModalOpen] =
+        useState(false)
     const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] =
         useState(false)
+    const [isAddSkillsModalOpen, setIsAddSkillsModalOpen] = useState(false)
+    const [recruiterContacts, setRecruiterContacts] = useState([])
+    const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
+    const [profile, setProfile] = useState<Profile | null>(null)
+    const [loading, setLoading] = useState(true)
 
+    // Hooks
+    const router = useRouter()
+    const { user, signOut } = useAuth()
+    const { showCelebration } = useGamificationContext()
+    const {
+        logs,
+        loading: prepLogsLoading,
+        refetch: refetchPrepLogs
+    } = usePrepLogs(user?.id || "")
+
+    // Fetch recruiter contacts
     const fetchRecruiterContacts = async (userId: string) => {
         try {
-            const res = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/prepyatra/recruiter?userId=${userId}`
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user/recruiter-contacts?user=${userId}`
             )
-            const result = await res.json()
-            if (!result.status) throw new Error(result.message)
-
-            const typedData: RecruiterContact[] = result.data.map((item) => ({
-                _id: item._id,
-                recruiterName: item.recruiterName,
-                email: item.email || "",
-                phone: item.phone || "",
-                company: item.company || "",
-                appliedPosition: item.appliedPosition || "",
-                applicationStatus:
-                    item.applicationStatus || "Screening in Process",
-                follow_up_date: item.follow_up_date || "",
-                last_interview_date: item.last_interview_date || "",
-                comments: item.comments || "",
-                link: item.link || "",
-                createdAt: item.createdAt
-            }))
-
-            setRecruiterContacts(typedData)
+            if (response.ok) {
+                const data = await response.json()
+                setRecruiterContacts(data.data || [])
+            }
         } catch (error) {
             console.error("Error fetching recruiter contacts:", error)
         }
     }
 
+    // Fetch prep logs
     const fetchPrepLogs = async (userId: string) => {
         try {
-            const res = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/prepyatra/prep-log?userId=${userId}`
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prep-logs?userId=${userId}`
             )
-            const result = await res.json()
-            if (!result.status) throw new Error(result.message)
-            setPrepLogs(result.data)
-        } catch (err) {
-            console.error("Failed to fetch prep logs:", err)
-        }
-    }
-
-    // Add this function to refetch the user profile
-    const refetchProfile = async () => {
-        try {
-            const res = await fetch(
-                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?email=${user.email}`
-            )
-            const result = await res.json()
-            if (result.status) {
-                setProfile(result.data)
+            if (response.ok) {
+                const data = await response.json()
+                setPrepLogs(data.data || [])
             }
         } catch (error) {
-            // handle error
+            console.error("Error fetching prep logs:", error)
         }
     }
 
-    // Onboarding details are now available in profile.prepYatra
-    const onboardingDetails = profile?.prepYatra
-        ? {
-              goal: profile.prepYatra.goal,
-              targetCompanies: profile.prepYatra.targetCompanies || [],
-              interviewCategories:
-                  profile.prepYatra.preferences?.interviewCategories || [],
-              focusAreas: profile.prepYatra.preferences?.focusAreas || []
-          }
-        : null
+    // Fetch profile data
+    const refetchProfile = async () => {
+        if (!user?.email) return
 
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?email=${user.email}`
+            )
+            if (response.ok) {
+                const data = await response.json()
+                setProfile(data.data)
+            }
+        } catch (error) {
+            console.error("Error fetching profile:", error)
+        }
+    }
+
+    // Initialize data on component mount
     useEffect(() => {
-        const checkAuthAndProfile = async () => {
-            if (!user) {
-                navigate("/auth")
+        const initializeData = async () => {
+            if (!user?.id) {
+                setLoading(false)
                 return
             }
 
             try {
-                const res = await fetch(
-                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?email=${
-                        user.email
-                    }`
-                )
-                const result = await res.json()
-                const profileData = result.data
-
-                if (!profileData?.prepYatra.pyOnboarded) {
-                    navigate("/onboarding")
-                    return
-                }
-
-                setProfile(profileData)
-                await fetchRecruiterContacts(profileData._id)
-                await fetchPrepLogs(profileData._id)
-            } catch (err) {
-                console.error("Failed to fetch profile:", err)
+                await Promise.all([
+                    fetchRecruiterContacts(user.id),
+                    fetchPrepLogs(user.id),
+                    refetchProfile()
+                ])
+            } catch (error) {
+                console.error("Error initializing dashboard data:", error)
             } finally {
                 setLoading(false)
             }
         }
 
+        const checkAuthAndProfile = async () => {
+            if (!user?.id) {
+                router.push("/auth")
+                return
+            }
+
+            // Check if user is onboarded
+            try {
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?email=${user.email}`
+                )
+                const data = await response.json()
+
+                if (!data?.data?.prepYatra?.pyOnboarded) {
+                    router.push("/onboarding")
+                    return
+                }
+
+                initializeData()
+            } catch (error) {
+                console.error("Error checking onboarding status:", error)
+                initializeData()
+            }
+        }
+
         checkAuthAndProfile()
-    }, [navigate, user])
+    }, [user, router])
 
+    // Event handlers
     const handleSignOut = async () => {
-        await signOut()
-    }
-
-    /**
-     * Handler for when a recruiter contact is added.
-     * Shows celebration, toast, and triggers gamification refetch.
-     */
-    const handleContactAdded = () => {
-        if (profile?._id) {
-            fetchRecruiterContacts(profile._id)
-            showCelebration(25)
-            setTimeout(() => {
-                window.dispatchEvent(new CustomEvent("gamification-refetch"))
-            }, 1000)
+        try {
+            await signOut()
+            router.push("/")
+        } catch (error) {
+            console.error("Error signing out:", error)
         }
     }
 
-    /**
-     * Handler for when a recruiter contact is updated.
-     * Only refreshes the data without celebration.
-     */
+    const handleContactAdded = () => {
+        if (user?.id) {
+            fetchRecruiterContacts(user.id)
+            showCelebration(5)
+            toast.success("Recruiter contact added successfully!")
+        }
+    }
+
+    const handleLogAdded = () => {
+        if (user?.id) {
+            fetchPrepLogs(user.id)
+            refetchPrepLogs()
+            showCelebration(10)
+            toast.success("Prep log added successfully!")
+        }
+    }
+
     const handleContactUpdated = () => {
-        if (profile?._id) {
-            fetchRecruiterContacts(profile._id)
+        if (user?.id) {
+            fetchRecruiterContacts(user.id)
         }
     }
 
     const getInitials = (name: string) => {
         return name
             .split(" ")
-            .map((word) => word.charAt(0))
+            .map((part) => part[0])
             .join("")
             .toUpperCase()
-            .slice(0, 2)
     }
-
-    // Use stats API for more accurate calculations
-    const { totalTimeSpent: statsTotalTimeSpent, totalLogs: statsTotalLogs } =
-        usePrepStats(profile?._id || "")
-
-    // Fallback to simple calculation if stats API fails
-    const totalTimeSpent =
-        statsTotalTimeSpent ||
-        prepLogs.reduce((acc, log) => acc + (log.timeSpent || 0), 0)
 
     if (loading) {
         return (
-            <div className='min-h-screen flex items-center justify-center'>
-                <div className='text-white'>Loading your dashboard...</div>
+            <div className='flex items-center justify-center min-h-screen'>
+                <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
             </div>
         )
     }
 
-    console.log(user)
-
     return (
-        <div className='min-h-screen px-0 py-0'>
-            <Navbar
-                username={profile?.name || "User"}
-                onSignOut={handleSignOut}
-                userId={profile?._id}
-            />
-            <div className='container mx-auto px-4 py-8'>
-                <div className='flex justify-between items-center mb-8'>
-                    <div>
-                        <h1 className='text-3xl font-bold text-white mb-2'>
-                            What are you Learning Today ?
-                        </h1>
-                        <p className='text-gray-300'>
-                            Remember Slow and Steady Wins !!
-                        </p>
-                    </div>
-                </div>
-
-                {/* Daily Prep Encouragement Section */}
-                <DailyPrepEncouragement
-                    userId={profile?._id || ""}
-                    onAddPrepLog={() => setIsPrepLogModalOpen(true)}
-                    className='mb-8'
+        <div className='min-h-screen bg-background'>
+            <Suspense fallback={<ComponentLoader />}>
+                <Navbar
+                    username={user?.name || ""}
+                    onSignOut={handleSignOut}
+                    userId={user?.id}
                 />
+            </Suspense>
 
-                <div className='grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8'>
-                    {/* Build Your Stack Section */}
-                    <div className='md:col-span-2 lg:col-span-3'>
-                        <BuildYourStack
-                            userId={profile?._id || ""}
-                            userSkills={profile?.userSkills || []}
-                            onSkillsUpdated={refetchProfile}
-                            lastUpdated={profile?.userSkillsLastUpdated || null}
-                        />
-                    </div>
-                    {/* Enhanced Profile Section */}
-                    <div className='glass-dark rounded-2xl p-6'>
-                        <h3 className='text-xl font-bold text-white mb-6 flex items-center gap-2'>
-                            👤 Your Profile
-                        </h3>
+            <main className='container mx-auto px-4 py-8'>
+                <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+                    {/* Profile Section */}
+                    <div className='lg:col-span-1'>
+                        <Card className='mb-6'>
+                            <CardHeader className='text-center'>
+                                <Avatar className='w-20 h-20 mx-auto mb-4'>
+                                    <AvatarImage
+                                        src={user?.picture}
+                                        alt={user?.name}
+                                    />
+                                    <AvatarFallback className='text-lg'>
+                                        {getInitials(user?.name || "")}
+                                    </AvatarFallback>
+                                </Avatar>
+                                <CardTitle className='text-xl'>
+                                    {profile?.name || user?.name}
+                                </CardTitle>
+                                <CardDescription>
+                                    @
+                                    {profile?.username ||
+                                        user?.name?.toLowerCase()}
+                                </CardDescription>
 
-                        <div className='flex items-center gap-4 mb-6'>
-                            <Avatar className='h-16 w-16 border-2 border-primary/30'>
-                                <AvatarImage
-                                    src={user?.picture}
-                                    alt={profile?.username || "User"}
-                                />
-                                <AvatarFallback className='bg-primary text-primary-foreground text-lg font-bold'>
-                                    {profile?.username
-                                        ? getInitials(profile.username)
-                                        : "U"}
-                                </AvatarFallback>
-                            </Avatar>
-
-                            <div className='flex-1'>
-                                <h4 className='text-lg font-bold text-white'>
-                                    {profile?.username}
-                                </h4>
-                                <p className='text-gray-300 text-sm'>
-                                    {user?.name || user?.email}
-                                </p>
-                            </div>
-                        </div>
-
-                        <div className='space-y-3'>
-                            <div className='flex items-center gap-2 text-gray-300'>
-                                <Award className='h-4 w-4 text-primary' />
-                                <span className='text-sm'>
-                                    <strong>Experience:</strong>{" "}
-                                    {profile?.prepYatra?.experienceLevel}
-                                </span>
-                            </div>
-
-                            <div className='flex items-center gap-2 text-gray-300'>
-                                <Calendar className='h-4 w-4 text-primary' />
-                                <span className='text-sm'>
-                                    <strong>Member since:</strong>{" "}
-                                    {new Date(
-                                        profile?.createdAt
-                                    ).toLocaleDateString("en-US", {
-                                        month: "short",
-                                        year: "numeric"
-                                    })}
-                                </span>
-                            </div>
-
-                            {profile?.linkedInUrl && (
-                                <div className='flex items-center gap-2'>
-                                    <Button
-                                        variant='ghost'
-                                        size='sm'
-                                        onClick={() =>
-                                            window.open(
-                                                withProtocol(profile.linkedInUrl),
-                                                "_blank"
-                                            )
-                                        }
-                                        className='text-primary hover:bg-primary p-1 h-auto font-normal justify-start'>
-                                        <ExternalLink className='h-4 w-4 mr-2' />
-                                        View LinkedIn Profile
-                                    </Button>
-                                </div>
-                            )}
-                            {profile?.leetCodeUrl && (
-                                <div className='flex items-center gap-2'>
-                                    <Button
-                                        variant='ghost'
-                                        size='sm'
-                                        onClick={() =>
-                                            window.open(
-                                                withProtocol(profile.leetCodeUrl),
-                                                "_blank"
-                                            )
-                                        }
-                                        className='text-primary hover:bg-primary p-1 h-auto font-normal justify-start'>
-                                        <ExternalLink className='h-4 w-4 mr-2' />
-                                        View LeetCode Profile
-                                    </Button>
-                                </div>
-                            )}
-                            {profile?.githubUrl && (
-                                <div className='flex items-center gap-2'>
-                                    <Button
-                                        variant='ghost'
-                                        size='sm'
-                                        onClick={() =>
-                                            window.open(
-                                                withProtocol(profile.githubUrl),
-                                                "_blank"
-                                            )
-                                        }
-                                        className='text-primary hover:bg-primary p-1 h-auto font-normal justify-start'>
-                                        <ExternalLink className='h-4 w-4 mr-2' />
-                                        View Github Profile
-                                    </Button>
-                                </div>
-                            )}
-                            {/* Onboarding Details Section */}
-                            <div className='mt-4'>
-                                <div className='flex items-center justify-between mb-2'>
-                                    <button
-                                        className='flex items-center text-primary hover:underline font-medium'
-                                        onClick={() =>
-                                            setShowDetails((v) => !v)
-                                        }>
-                                        {showDetails ? (
-                                            <ChevronUp className='w-4 h-4 mr-1' />
-                                        ) : (
-                                            <ChevronDown className='w-4 h-4 mr-1' />
-                                        )}
-                                        {showDetails
-                                            ? "Hide User Details"
-                                            : "Show User Details"}
-                                    </button>
-                                    <div className='flex gap-1'>
+                                {/* Social Links */}
+                                <div className='flex justify-center space-x-3 mt-4'>
+                                    {profile?.linkedInUrl && (
                                         <Button
-                                            variant='ghost'
+                                            variant='outline'
                                             size='sm'
-                                            onClick={() =>
-                                                setIsEditOnboardingModalOpen(
-                                                    true
-                                                )
-                                            }
-                                            className='text-primary hover:bg-primary/10 p-1 h-auto'>
-                                            <Edit className='w-4 h-4' />
+                                            asChild>
+                                            <a
+                                                href={withProtocol(
+                                                    profile.linkedInUrl
+                                                )}
+                                                target='_blank'
+                                                rel='noopener noreferrer'>
+                                                <Linkedin className='w-4 h-4' />
+                                            </a>
                                         </Button>
+                                    )}
+                                    {profile?.githubUrl && (
+                                        <Button
+                                            variant='outline'
+                                            size='sm'
+                                            asChild>
+                                            <a
+                                                href={withProtocol(
+                                                    profile.githubUrl
+                                                )}
+                                                target='_blank'
+                                                rel='noopener noreferrer'>
+                                                <Github className='w-4 h-4' />
+                                            </a>
+                                        </Button>
+                                    )}
+                                    {profile?.leetCodeUrl && (
+                                        <Button
+                                            variant='outline'
+                                            size='sm'
+                                            asChild>
+                                            <a
+                                                href={withProtocol(
+                                                    profile.leetCodeUrl
+                                                )}
+                                                target='_blank'
+                                                rel='noopener noreferrer'>
+                                                <ExternalLink className='w-4 h-4' />
+                                            </a>
+                                        </Button>
+                                    )}
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className='space-y-2'>
+                                    <div className='flex justify-between text-sm'>
+                                        <span className='text-muted-foreground'>
+                                            Experience:
+                                        </span>
+                                        <Badge variant='secondary'>
+                                            {profile?.prepYatra
+                                                ?.experienceLevel || "Not set"}
+                                        </Badge>
+                                    </div>
+                                    <div className='flex justify-between text-sm'>
+                                        <span className='text-muted-foreground'>
+                                            Goal:
+                                        </span>
+                                        <Badge variant='outline'>
+                                            {profile?.prepYatra?.goal ||
+                                                "Not set"}
+                                        </Badge>
+                                    </div>
+                                    <div className='flex justify-between text-sm'>
+                                        <span className='text-muted-foreground'>
+                                            Joined:
+                                        </span>
+                                        <span>
+                                            {new Date(
+                                                profile?.createdAt || ""
+                                            ).toLocaleDateString()}
+                                        </span>
                                     </div>
                                 </div>
 
-                                {showDetails && (
-                                    <div className='mt-3 bg-gray-800/60 rounded-lg p-4 border border-gray-700'>
-                                        <div className='border-b border-gray-700 mb-3 pb-2'>
-                                            <span className='uppercase tracking-wide text-xs text-primary font-semibold'>
-                                                Your Details
-                                            </span>
-                                        </div>
-                                        {onboardingDetails ? (
-                                            <div className='space-y-2'>
-                                                <div>
-                                                    <span className='font-semibold text-white text-sm'>
-                                                        Goal:
-                                                    </span>
-                                                    <span className='ml-2 text-gray-300 text-base'>
-                                                        {onboardingDetails.goal}
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <span className='font-semibold text-white text-sm'>
-                                                        Target Companies:
-                                                    </span>
-                                                    <span className='ml-2 text-gray-300 text-base'>
-                                                        {onboardingDetails.targetCompanies?.join(
-                                                            ", "
-                                                        ) || "N/A"}
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <span className='font-semibold text-white text-sm'>
-                                                        Interview Categories:
-                                                    </span>
-                                                    <span className='ml-2 text-gray-300 text-base'>
-                                                        {onboardingDetails.interviewCategories?.join(
-                                                            ", "
-                                                        ) || "N/A"}
-                                                    </span>
-                                                </div>
-                                                <div>
-                                                    <span className='font-semibold text-white text-sm'>
-                                                        Focus Areas:
-                                                    </span>
-                                                    <span className='ml-2 text-gray-300 text-base'>
-                                                        {onboardingDetails.focusAreas?.join(
-                                                            ", "
-                                                        ) || "N/A"}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className='text-center py-4'>
-                                                <p className='text-gray-400 text-sm'>
-                                                    No user details found.
-                                                </p>
-                                                <p className='text-gray-500 text-xs mt-1'>
-                                                    Click the edit button to add
-                                                    your preferences.
-                                                </p>
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* Recruiter Contacts Section */}
-                    <div className='glass-dark rounded-2xl p-6'>
-                        <h3 className='text-xl font-bold text-white mb-4 flex items-center gap-2'>
-                            📞 Recruiter Network
-                        </h3>
-                        <div className='space-y-4'>
-                            <div className='text-center'>
-                                <div className='text-3xl font-bold text-primary mb-1'>
-                                    {recruiterContacts.length}
-                                </div>
-                                <p className='text-gray-300 text-sm'>
-                                    Active Contacts
-                                </p>
-                            </div>
-
-                            <Button
-                                onClick={() => setIsAddModalOpen(true)}
-                                className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
-                                Add New Contact
-                            </Button>
-
-                            {recruiterContacts.length > 0 && (
-                                <div className='text-center pt-2'>
-                                    <p className='text-gray-400 text-sm'>
-                                        Last contact added{" "}
-                                        {recruiterContacts[0]?.createdAt
-                                            ? new Date(
-                                                  recruiterContacts[0].createdAt
-                                              ).toLocaleDateString()
-                                            : "No contacts yet"}
-                                    </p>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Prep Logs Card */}
-                    <div className='glass-dark rounded-2xl p-6'>
-                        <h3 className='text-xl font-bold text-white mb-4 flex items-center gap-2'>
-                            📝 Prep Logs
-                        </h3>
-                        <div className='space-y-4'>
-                            <div className='text-center'>
-                                <div className='text-3xl font-bold text-primary mb-1'>
-                                    {statsTotalLogs || prepLogs.length}
-                                </div>
-                                <p className='text-gray-300 text-sm'>
-                                    Total Logs
-                                </p>
-                            </div>
-                            <div className='text-center'>
-                                <div className='text-lg text-gray-300'>
-                                    ⏱️ Total Time Spent:{" "}
-                                    <span className='text-primary font-semibold'>
-                                        {totalTimeSpent} hrs
-                                    </span>
-                                </div>
-                            </div>
-                            <div className='space-y-2'>
-                                <Button
-                                    onClick={() => setIsPrepLogModalOpen(true)}
-                                    className='w-full bg-primary text-primary-foreground hover:bg-primary/90'>
-                                    + Add Prep Log
-                                </Button>
                                 <Button
                                     variant='outline'
-                                    onClick={() => {
-                                        const journeyUrl = `${window.location.origin}/journey/${profile._id}`
-                                        navigator.clipboard.writeText(
-                                            journeyUrl
-                                        )
-                                        toast({
-                                            title: "Journey URL copied to clipboard!",
-                                            description:
-                                                "Share your journey with your friends and family!"
-                                        })
-                                    }}
-                                    className='w-full border-primary/30 text-primary hover:bg-primary/10'>
-                                    <Share2 className='w-4 h-4 mr-2' />
-                                    Share Journey
+                                    className='w-full mt-4'
+                                    onClick={() =>
+                                        setIsEditOnboardingModalOpen(true)
+                                    }>
+                                    <Settings className='w-4 h-4 mr-2' />
+                                    Edit Profile
                                 </Button>
-                            </div>
-                            {prepLogs.length > 0 && (
-                                <div className='text-center pt-2'>
-                                    <p className='text-gray-400 text-sm'>
-                                        Last log added{" "}
-                                        {new Date(
-                                            prepLogs[0]?.createdAt
-                                        ).toLocaleDateString()}
-                                    </p>
+                            </CardContent>
+                        </Card>
+
+                        {/* Gamification Display */}
+                        <Suspense fallback={<ComponentLoader />}>
+                            <GamificationDisplay userId={user?.id || ""} />
+                        </Suspense>
+
+                        {/* Skills Section */}
+                        <Card className='mt-6'>
+                            <CardHeader>
+                                <CardTitle className='text-lg'>
+                                    Skills
+                                </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <Suspense fallback={<ComponentLoader />}>
+                                    <UserSkillsShowcase
+                                        userSkills={profile?.userSkills || []}
+                                        lastUpdated={
+                                            profile?.userSkillsLastUpdated
+                                        }
+                                    />
+                                </Suspense>
+                                <Button
+                                    variant='outline'
+                                    size='sm'
+                                    className='w-full mt-3'
+                                    onClick={() =>
+                                        setIsAddSkillsModalOpen(true)
+                                    }>
+                                    <Plus className='w-4 h-4 mr-2' />
+                                    Update Skills
+                                </Button>
+                            </CardContent>
+                        </Card>
+                    </div>
+
+                    {/* Main Content */}
+                    <div className='lg:col-span-2'>
+                        {/* Daily Encouragement */}
+                        <Suspense fallback={<ComponentLoader />}>
+                            <DailyPrepEncouragement
+                                userId={user?.id || ""}
+                                onAddPrepLog={() =>
+                                    setIsAddPrepLogModalOpen(true)
+                                }
+                                className='mb-6'
+                            />
+                        </Suspense>
+
+                        {/* Tabs for different sections */}
+                        <Tabs defaultValue='prep-logs' className='w-full'>
+                            <TabsList className='grid w-full grid-cols-2'>
+                                <TabsTrigger value='prep-logs'>
+                                    Prep Logs
+                                </TabsTrigger>
+                                <TabsTrigger value='recruiters'>
+                                    Recruiters
+                                </TabsTrigger>
+                            </TabsList>
+
+                            <TabsContent
+                                value='prep-logs'
+                                className='space-y-4'>
+                                <div className='flex justify-between items-center'>
+                                    <h2 className='text-2xl font-bold'>
+                                        Preparation Logs
+                                    </h2>
+                                    <Button
+                                        onClick={() =>
+                                            setIsAddPrepLogModalOpen(true)
+                                        }>
+                                        <Plus className='w-4 h-4 mr-2' />
+                                        Add Log
+                                    </Button>
                                 </div>
-                            )}
-                        </div>
+
+                                <Suspense fallback={<ComponentLoader />}>
+                                    <PrepLogsList
+                                        logs={logs}
+                                        onLogUpdated={handleLogAdded}
+                                        mongoUserId={user?.id || ""}
+                                    />
+                                </Suspense>
+                            </TabsContent>
+
+                            <TabsContent
+                                value='recruiters'
+                                className='space-y-4'>
+                                <div className='flex justify-between items-center'>
+                                    <h2 className='text-2xl font-bold'>
+                                        Recruiter Contacts
+                                    </h2>
+                                    <Button
+                                        onClick={() =>
+                                            setIsAddRecruiterModalOpen(true)
+                                        }>
+                                        <Plus className='w-4 h-4 mr-2' />
+                                        Add Contact
+                                    </Button>
+                                </div>
+
+                                <Suspense fallback={<ComponentLoader />}>
+                                    <RecruiterContactsTable
+                                        contacts={recruiterContacts}
+                                        onContactAdded={handleContactAdded}
+                                        onContactUpdated={handleContactUpdated}
+                                        mongoUserId={user?.id}
+                                    />
+                                </Suspense>
+                            </TabsContent>
+                        </Tabs>
                     </div>
                 </div>
+            </main>
 
-                {/* Recruiter Contacts Table */}
-                <Suspense fallback={<ComponentLoader />}>
-                    <RecruiterContactsTable
-                        contacts={recruiterContacts}
-                        onContactAdded={handleContactAdded}
-                        onContactUpdated={handleContactUpdated}
-                        onContactDeleted={() =>
-                            fetchRecruiterContacts(profile._id)
-                        }
-                        mongoUserId={profile._id}
-                    />
-                </Suspense>
+            {/* Modals */}
+            <Suspense fallback={null}>
+                <AddPrepLogModal
+                    isOpen={isAddPrepLogModalOpen}
+                    onClose={() => setIsAddPrepLogModalOpen(false)}
+                    onLogAdded={handleLogAdded}
+                    mongoUserId={user?.id || ""}
+                />
+            </Suspense>
 
-                <Suspense fallback={<ComponentLoader />}>
-                    <PrepLogCard
-                        logs={prepLogs}
-                        onLogUpdated={() => fetchPrepLogs(profile._id)}
-                        mongoUserId={profile._id}
-                    />
-                </Suspense>
+            <Suspense fallback={null}>
+                <AddRecruiterModal
+                    isOpen={isAddRecruiterModalOpen}
+                    onClose={() => setIsAddRecruiterModalOpen(false)}
+                    onContactAdded={handleContactAdded}
+                    mongoUserId={user?.id || ""}
+                />
+            </Suspense>
 
-                <Suspense fallback={<ComponentLoader />}>
-                    <AddRecruiterModal
-                        isOpen={isAddModalOpen}
-                        onClose={() => setIsAddModalOpen(false)}
-                        onContactAdded={handleContactAdded}
-                        mongoUserId={profile._id}
-                    />
-                </Suspense>
+            <Suspense fallback={null}>
+                <EditOnboardingModal
+                    isOpen={isEditOnboardingModalOpen}
+                    onClose={() => setIsEditOnboardingModalOpen(false)}
+                    onUpdate={refetchProfile}
+                    currentData={profile}
+                    userId={user?.id || ""}
+                />
+            </Suspense>
 
-                <Suspense fallback={<ComponentLoader />}>
-                    <AddPrepLogModal
-                        isOpen={isPrepLogModalOpen}
-                        onClose={() => setIsPrepLogModalOpen(false)}
-                        onLogAdded={() => {
-                            fetchPrepLogs(profile._id)
-                            showCelebration(15)
-
-                            // Trigger stats refresh
-                            window.dispatchEvent(
-                                new CustomEvent("prep-stats-refetch")
-                            )
-
-                            setTimeout(() => {
-                                window.dispatchEvent(
-                                    new CustomEvent("gamification-refetch")
-                                )
-                            }, 1000)
-                        }}
-                        mongoUserId={profile._id}
-                    />
-                </Suspense>
-
-                <Suspense fallback={<ComponentLoader />}>
-                    <EditOnboardingModal
-                        isOpen={isEditOnboardingModalOpen}
-                        onClose={() => setIsEditOnboardingModalOpen(false)}
-                        onUpdate={async (updatedData) => {
-                            // Refresh the profile data to get updated onboarding details
-                            try {
-                                const res = await fetch(
-                                    `${
-                                        import.meta.env.VITE_TBE_WEBAPP_API_URL
-                                    }/user?email=${user.email}`
-                                )
-                                const result = await res.json()
-                                if (result.status) {
-                                    setProfile(result.data)
-                                }
-                            } catch (error) {
-                                console.error(
-                                    "Failed to refresh profile:",
-                                    error
-                                )
-                            }
-                            toast({
-                                title: "Success!",
-                                description:
-                                    "Onboarding details updated successfully."
-                            })
-                        }}
-                        currentData={{
-                            ...profile,
-                            linkedInUrl: profile?.linkedInUrl || "",
-                            githubUrl: profile?.githubUrl || "",
-                            leetCodeUrl: profile?.leetCodeUrl || "",
-                            name: profile?.name || "",
-                            username: profile?.username || "",
-                            experienceLevel: profile?.prepYatra?.experienceLevel || "fresher",
-                            goal: profile?.prepYatra?.goal || "6Months",
-                            targetCompanies: profile?.prepYatra?.targetCompanies || [],
-                            interviewCategories: profile?.prepYatra?.preferences?.interviewCategories || []
-                        }}
-                        userId={profile._id}
-                    />
-                </Suspense>
-            </div>
-            <Footer />
-            <InstallButton />
+            <Suspense fallback={null}>
+                <AddSkillsModal
+                    isOpen={isAddSkillsModalOpen}
+                    onClose={() => setIsAddSkillsModalOpen(false)}
+                    userId={user?.id || ""}
+                    userSkills={profile?.userSkills || []}
+                    lastUpdated={profile?.userSkillsLastUpdated}
+                    onSkillsUpdated={refetchProfile}
+                />
+            </Suspense>
         </div>
     )
 }

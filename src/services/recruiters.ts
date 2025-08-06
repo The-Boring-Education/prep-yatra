@@ -1,6 +1,6 @@
 import { CreateRecruiterContact, RecruiterContact } from "@/types/recruiters"
 
-const API_BASE_URL = import.meta.env.VITE_TBE_WEBAPP_API_URL
+const API_BASE_URL = process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
 
 export const recruitersService = {
     async create(data: CreateRecruiterContact): Promise<RecruiterContact> {

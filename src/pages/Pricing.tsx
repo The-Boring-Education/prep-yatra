@@ -1,6 +1,13 @@
-import React, { useState } from "react"
-import { useUser } from "@/hooks/use-user" // Adjust path if needed
+import React, { useEffect, useState } from "react"
+import { useRouter } from "next/router"
+import { useAuth } from "@/contexts/useAuth"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Check, Star, Zap, Crown } from "lucide-react"
 import useCashfreePayment from "@/hooks/useCashfreePayment"
+import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
 
 interface PricingPlan {
     id: string
@@ -16,459 +23,263 @@ interface PricingPlan {
 }
 
 const PricingPage: React.FC = () => {
-    const [selectedPlan, setSelectedPlan] = useState<string>("")
+    const router = useRouter()
+    const { user, signOut } = useAuth()
+    const { launchPayment, isCashfreeLoaded } = useCashfreePayment()
     const [loading, setLoading] = useState(false)
-    const user = useUser() // Get user info
-    const {
-        isCashfreeLoaded,
-        error: sdkError,
-        launchPayment
-    } = useCashfreePayment()
 
     const plans: PricingPlan[] = [
         {
-            id: "1months",
-            name: "1 Months Access",
+            id: "free",
+            name: "Free Plan",
+            price: 0,
+            duration: "Forever",
+            description: "Perfect for getting started with interview preparation",
+            buttonText: "Current Plan",
+            features: [
+                "Track unlimited preparation logs",
+                "Basic recruiter contact management",
+                "Personal dashboard with stats",
+                "Basic gamification features",
+                "Progress tracking"
+            ]
+        },
+        {
+            id: "pro_monthly",
+            name: "Pro Monthly",
             price: 199,
-            duration: "1 months",
-            description: "Perfect for quick interview preparation",
-            buttonText: "Start 1-Month Plan",
-            features: [
-                "✅ Complete Interview Question Bank",
-                "✅ MNC Interview Prep (DSA + System Design + Tech)",
-                "✅ MERN Stack Interview Prep",
-                "✅ College Placement Prep + Aptitude",
-                "✅ System Design Resources & Case Studies",
-                "✅ Resume Building Workshop Access",
-                "✅ Job Application Strategy Workshop",
-                "✅ Personalized Question Prioritization",
-                "✅ Company-Specific Question Filtering",
-                "✅ Progress Tracking & Analytics"
-            ],
-            comingSoon: [
-                "🔄 Auto Cold Email Generation",
-                "🔄 LinkedIn Progress Auto-posting"
-            ]
-        },
-        {
-            id: "3months",
-            name: "3 Months Access",
-            price: 499,
-            duration: "3 months",
-            description: "Perfect for quick interview preparation",
-            buttonText: "Start 3-Month Plan",
-            features: [
-                "✅ Complete Interview Question Bank",
-                "✅ MNC Interview Prep (DSA + System Design + Tech)",
-                "✅ MERN Stack Interview Prep",
-                "✅ College Placement Prep + Aptitude",
-                "✅ System Design Resources & Case Studies",
-                "✅ Resume Building Workshop Access",
-                "✅ Job Application Strategy Workshop",
-                "✅ Personalized Question Prioritization",
-                "✅ Company-Specific Question Filtering",
-                "✅ Progress Tracking & Analytics"
-            ],
-            comingSoon: [
-                "🔄 Auto Cold Email Generation",
-                "🔄 LinkedIn Progress Auto-posting"
-            ]
-        },
-        {
-            id: "6months",
-            name: "6 Months Access",
-            price: 999,
-            duration: "6 months",
+            duration: "per month",
             popular: true,
-            savings: "Save ₹100",
-            description: "Most popular choice for comprehensive preparation",
-            buttonText: "Start 6-Month Plan",
+            description: "Enhanced features for serious interview preparation",
+            buttonText: "Upgrade to Pro",
             features: [
-                "✅ Everything in 3-Month Plan",
-                "✅ Extended preparation timeline",
-                "✅ Advanced System Design Deep Dives",
-                "✅ Mock Interview Question Sets",
-                "✅ Industry-Specific Preparation Tracks",
-                "✅ Priority Email Support",
-                "✅ Exclusive Career Guidance Sessions",
-                "✅ Salary Negotiation Masterclass"
+                "Everything in Free Plan",
+                "Advanced analytics and insights",
+                "Custom interview preparation roadmaps",
+                "Priority support",
+                "Advanced recruiter CRM features",
+                "Interview scheduling integration",
+                "Performance analytics dashboard"
             ],
             comingSoon: [
-                "🔄 Auto Cold Email Generation",
-                "🔄 LinkedIn Progress Auto-posting",
-                "🔄 AI-Powered Interview Simulator"
+                "AI-powered interview question recommendations",
+                "Mock interview scheduling",
+                "Progress sharing with mentors"
             ]
         },
         {
-            id: "lifetime",
-            name: "Lifetime Access",
+            id: "pro_yearly",
+            name: "Pro Yearly",
             price: 1999,
-            duration: "lifetime",
-            savings: "Best Value - Save ₹200",
-            description: "One-time payment, lifetime access to everything",
-            buttonText: "Get Lifetime Access",
+            duration: "per year",
+            savings: "Save ₹389",
+            description: "Best value for long-term interview preparation",
+            buttonText: "Upgrade to Pro Yearly",
             features: [
-                "✅ Everything in 5-Month Plan",
-                "✅ Lifetime access to all current & future content",
-                "✅ Auto Cold Email Generation (Coming Soon)",
-                "✅ LinkedIn Progress Auto-posting (Coming Soon)",
-                "✅ Future Feature Access Included",
-                "✅ Premium Community Access",
-                "✅ 1-on-1 Career Mentorship Session",
-                "✅ Custom Interview Preparation Roadmap",
-                "✅ Exclusive Job Referral Network Access",
-                "✅ White-label Resume Templates"
+                "Everything in Pro Monthly",
+                "2 months free (₹389 savings)",
+                "Priority customer support",
+                "Early access to new features",
+                "Advanced reporting features",
+                "Export data capabilities"
+            ],
+            comingSoon: [
+                "1-on-1 mentorship sessions",
+                "Custom company-specific prep guides",
+                "Interview performance predictions"
             ]
         }
     ]
 
-    const interviewCategories = [
-        {
-            title: "MNC Interview Prep",
-            description: "DSA + System Design + General Tech Questions",
-            icon: "🏢"
-        },
-        {
-            title: "MERN Stack Interview Prep",
-            description:
-                "JS + React + Node + DSA + System Design + General Tech",
-            icon: "⚛️"
-        },
-        {
-            title: "College Placement Prep",
-            description: "DSA + Basic System Design + General Tech + Aptitude",
-            icon: "🎓"
-        },
-        {
-            title: "Remote Job Interview Prep",
-            description: "Remote-specific questions + Communication skills",
-            icon: "🌍"
+    useEffect(() => {
+        if (!user) {
+            router.push("/auth")
         }
-    ]
-
-    const planTypeMap: Record<string, string> = {
-        "1months": "Monthly",
-        "3months": "Quarterly",
-        "6months": "HalfYearly",
-        lifetime: "Lifetime"
-    }
+    }, [user, router])
 
     const handleSelectPlan = async (planId: string) => {
-        setSelectedPlan(planId)
-        setLoading(true)
+        if (planId === "free") {
+            return // Already on free plan
+        }
 
-        const plan = plans.find((p) => p.id === planId)
-        if (!plan || !user) {
-            setLoading(false)
-            alert("User info or plan not found.")
+        if (!user?.id) {
+            router.push("/auth")
             return
         }
 
+        setLoading(true)
+
         try {
-            const res = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/payment/create-order`,
+            // Create payment session
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/payments/create-session`,
                 {
                     method: "POST",
-                    headers: { "Content-Type": "application/json" },
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
                     body: JSON.stringify({
-                        userId: user.userId,
-                        productId: plan.id,
-                        productType: "PREPYATRA",
-                        amount: plan.price,
-                        customerName: user.userName,
-                        customerEmail: user.userEmail
+                        planId,
+                        userId: user.id,
+                        userEmail: user.email,
+                        userName: user.name
                     })
                 }
             )
 
-            const data = await res.json()
-            if (data.status && data.data?.paymentSessionId) {
-                if (!isCashfreeLoaded) {
-                    alert("Payment gateway is not ready. Please try again.")
-                    setLoading(false)
-                    return
-                }
-                await launchPayment(
-                    data.data.paymentSessionId,
-                    async (successData) => {
-                        try {
-                            const planType = planTypeMap[plan.id]
-                            const duration =
-                                plan.id === "lifetime"
-                                    ? 999
-                                    : parseInt(plan.duration)
-                            const subRes = await fetch(
-                                `${
-                                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                                }/prepyatra/subscription`,
-                                {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json"
-                                    },
-                                    body: JSON.stringify({
-                                        userId: user.userId,
-                                        type: planType,
-                                        amount: plan.price,
-                                        duration
-                                    })
-                                }
-                            )
-                            const subData = await subRes.json()
-                            if (subData.status) {
-                                alert("Subscription activated! 🎉")
-                                setTimeout(() => window.location.reload(), 2000)
-                            } else {
-                                alert(
-                                    "Payment succeeded, but subscription activation failed: " +
-                                        subData.message
-                                )
-                            }
-                        } catch (err) {
-                            alert(
-                                "Payment succeeded, but subscription activation failed."
-                            )
-                        }
+            if (!response.ok) {
+                throw new Error("Failed to create payment session")
+            }
+
+            const { paymentSessionId } = await response.json()
+
+            // Launch Cashfree payment
+            if (isCashfreeLoaded) {
+                launchPayment(
+                    paymentSessionId,
+                    (data) => {
+                        console.log("Payment successful:", data)
+                        router.push("/dashboard?payment=success")
                     },
-                    (failureData) => {
-                        alert("Payment failed. Please try again.")
-                        setLoading(false)
+                    (data) => {
+                        console.error("Payment failed:", data)
+                        router.push("/pricing?payment=failed")
                     },
                     () => {
-                        setLoading(false)
+                        console.log("Payment dialog closed")
                     }
                 )
-            } else {
-                alert(data.message || "Failed to create order.")
-                setLoading(false)
             }
-        } catch (err) {
-            alert("Error initiating payment.")
+        } catch (error) {
+            console.error("Error creating payment session:", error)
+        } finally {
             setLoading(false)
         }
     }
 
+    const handleSignOut = async () => {
+        try {
+            await signOut()
+            router.push("/")
+        } catch (error) {
+            console.error("Error signing out:", error)
+        }
+    }
+
     return (
-        <div className='min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50'>
-            {/* Header */}
-            <div className='container mx-auto px-4 pt-8 pb-16'>
-                <div className='text-center mb-12'>
-                    <h1 className='text-4xl md:text-5xl font-bold text-gray-900 mb-4'>
-                        PrepYatra
-                        <span className='text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600'>
-                            {" "}
-                            Interview Mastery
-                        </span>
+        <div className="min-h-screen bg-background">
+            <Navbar 
+                username={user?.name || ""} 
+                onSignOut={handleSignOut} 
+                userId={user?.id} 
+            />
+
+            <main className="container mx-auto px-4 py-16">
+                <div className="text-center mb-16">
+                    <h1 className="text-4xl font-bold mb-4">
+                        Choose Your <span className="text-primary">PrepYatra</span> Plan
                     </h1>
-                    <p className='text-xl text-gray-600 max-w-3xl mx-auto mb-6'>
-                        Complete Interview Preparation Bundle with Personalized
-                        Experience
+                    <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+                        Accelerate your interview preparation with our premium features. 
+                        Start for free and upgrade when you're ready.
                     </p>
-                    <div className='inline-block bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-semibold'>
-                        🎉 Prep Logs & Recruiter Contact Management - Always
-                        FREE!
-                    </div>
                 </div>
 
-                {/* Interview Categories */}
-                <div className='mb-16'>
-                    <h2 className='text-2xl font-bold text-center text-gray-900 mb-8'>
-                        What You'll Get Access To
-                    </h2>
-                    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6'>
-                        {interviewCategories.map((category, index) => (
-                            <div
-                                key={index}
-                                className='bg-white rounded-xl p-6 border border-gray-200 shadow-sm hover:shadow-md transition-shadow'>
-                                <div className='text-3xl mb-3'>
-                                    {category.icon}
+                <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+                    {plans.map((plan) => (
+                        <Card 
+                            key={plan.id} 
+                            className={`relative ${
+                                plan.popular 
+                                    ? "border-primary shadow-lg scale-105" 
+                                    : "border-border"
+                            }`}
+                        >
+                            {plan.popular && (
+                                <Badge 
+                                    className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-primary text-primary-foreground"
+                                >
+                                    <Star className="w-3 h-3 mr-1" />
+                                    Most Popular
+                                </Badge>
+                            )}
+                            
+                            <CardHeader className="text-center">
+                                <div className="flex justify-center mb-4">
+                                    {plan.id === "free" && <Zap className="w-8 h-8 text-blue-500" />}
+                                    {plan.id === "pro_monthly" && <Star className="w-8 h-8 text-primary" />}
+                                    {plan.id === "pro_yearly" && <Crown className="w-8 h-8 text-yellow-500" />}
                                 </div>
-                                <h3 className='font-semibold text-gray-900 mb-2'>
-                                    {category.title}
-                                </h3>
-                                <p className='text-gray-600 text-sm'>
-                                    {category.description}
-                                </p>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* Pricing Plans */}
-                <div className='mb-16'>
-                    <h2 className='text-2xl font-bold text-center text-gray-900 mb-8'>
-                        Choose Your Preparation Journey
-                    </h2>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto'>
-                        {plans.map((plan) => (
-                            <div
-                                key={plan.id}
-                                className={`bg-white rounded-2xl p-8 border-2 transition-all duration-300 hover:shadow-lg ${
-                                    plan.popular
-                                        ? "border-purple-500 shadow-xl scale-105"
-                                        : "border-gray-200 hover:border-purple-300"
-                                }`}>
-                                {plan.popular && (
-                                    <div className='bg-gradient-to-r from-purple-500 to-blue-500 text-white px-4 py-1 rounded-full text-sm font-semibold text-center mb-4'>
-                                        Most Popular
-                                    </div>
-                                )}
-
-                                <div className='text-center mb-6'>
-                                    <h3 className='text-xl font-bold text-gray-900 mb-2'>
-                                        {plan.name}
-                                    </h3>
-                                    <div className='text-3xl font-bold text-gray-900 mb-1'>
-                                        ₹{plan.price}
-                                    </div>
-                                    <div className='text-gray-600 text-sm mb-2'>
-                                        for {plan.duration}
-                                    </div>
+                                
+                                <CardTitle className="text-2xl">{plan.name}</CardTitle>
+                                <CardDescription className="text-sm">
+                                    {plan.description}
+                                </CardDescription>
+                                
+                                <div className="mt-4">
+                                    <span className="text-4xl font-bold">₹{plan.price}</span>
+                                    <span className="text-muted-foreground">/{plan.duration}</span>
                                     {plan.savings && (
-                                        <div className='text-green-600 font-semibold text-sm'>
+                                        <div className="text-sm text-green-600 font-medium mt-1">
                                             {plan.savings}
                                         </div>
                                     )}
-                                    <p className='text-gray-600 text-sm mt-2'>
-                                        {plan.description}
-                                    </p>
                                 </div>
-
-                                <div className='space-y-3 mb-8'>
-                                    {plan.features.map((feature, index) => (
-                                        <div
-                                            key={index}
-                                            className='flex items-start space-x-2'>
-                                            <span className='text-sm'>
-                                                {feature}
-                                            </span>
-                                        </div>
-                                    ))}
-                                    {plan.comingSoon &&
-                                        plan.comingSoon.map(
-                                            (feature, index) => (
-                                                <div
-                                                    key={index}
-                                                    className='flex items-start space-x-2 opacity-70'>
-                                                    <span className='text-sm text-orange-600'>
-                                                        {feature}
-                                                    </span>
-                                                </div>
-                                            )
-                                        )}
-                                </div>
-
-                                <button
+                            </CardHeader>
+                            
+                            <CardContent className="space-y-4">
+                                <Button 
+                                    className={`w-full ${
+                                        plan.popular 
+                                            ? "bg-primary hover:bg-primary/90" 
+                                            : "bg-secondary hover:bg-secondary/80"
+                                    }`}
                                     onClick={() => handleSelectPlan(plan.id)}
-                                    disabled={loading}
-                                    className={`w-full py-3 px-6 rounded-xl font-semibold transition-all duration-300 ${
-                                        plan.popular
-                                            ? "bg-gradient-to-r from-purple-500 to-blue-500 text-white hover:from-purple-600 hover:to-blue-600"
-                                            : "bg-gray-900 text-white hover:bg-gray-800"
-                                    } ${
-                                        loading
-                                            ? "opacity-50 cursor-not-allowed"
-                                            : ""
-                                    }`}>
-                                    {loading && selectedPlan === plan.id
-                                        ? "Redirecting..."
-                                        : plan.buttonText}
-                                </button>
-                            </div>
-                        ))}
-                    </div>
+                                    disabled={loading || (plan.id === "free")}
+                                >
+                                    {loading ? "Processing..." : plan.buttonText}
+                                </Button>
+                                
+                                <div className="space-y-3">
+                                    <h4 className="font-semibold text-sm">What's included:</h4>
+                                    <ul className="space-y-2 text-sm">
+                                        {plan.features.map((feature, index) => (
+                                            <li key={index} className="flex items-start">
+                                                <Check className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                                                <span>{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    
+                                    {plan.comingSoon && plan.comingSoon.length > 0 && (
+                                        <>
+                                            <h4 className="font-semibold text-sm text-primary pt-3">
+                                                Coming Soon:
+                                            </h4>
+                                            <ul className="space-y-2 text-sm">
+                                                {plan.comingSoon.map((feature, index) => (
+                                                    <li key={index} className="flex items-start">
+                                                        <Zap className="w-4 h-4 text-primary mr-2 mt-0.5 flex-shrink-0" />
+                                                        <span className="text-muted-foreground">{feature}</span>
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        </>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
                 </div>
 
-                {/* Value Proposition */}
-                <div className='bg-white rounded-2xl p-8 border border-gray-200 shadow-sm mb-16'>
-                    <h2 className='text-2xl font-bold text-center text-gray-900 mb-8'>
-                        Why Choose PrepYatra Interview Prep?
-                    </h2>
-                    <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
-                        <div className='text-center'>
-                            <div className='w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-                                <span className='text-2xl'>🎯</span>
-                            </div>
-                            <h3 className='font-semibold text-gray-900 mb-2'>
-                                Personalized Experience
-                            </h3>
-                            <p className='text-gray-600 text-sm'>
-                                Questions tailored to your target companies
-                                (Startup, MNC, FAANG) and timeline goals.
-                            </p>
-                        </div>
-                        <div className='text-center'>
-                            <div className='w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-                                <span className='text-2xl'>📊</span>
-                            </div>
-                            <h3 className='font-semibold text-gray-900 mb-2'>
-                                Progress Tracking
-                            </h3>
-                            <p className='text-gray-600 text-sm'>
-                                Track your preparation progress and get insights
-                                on areas to focus on.
-                            </p>
-                        </div>
-                        <div className='text-center'>
-                            <div className='w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4'>
-                                <span className='text-2xl'>🚀</span>
-                            </div>
-                            <h3 className='font-semibold text-gray-900 mb-2'>
-                                Complete Package
-                            </h3>
-                            <p className='text-gray-600 text-sm'>
-                                From technical questions to resume building and
-                                job application strategies.
-                            </p>
-                        </div>
-                    </div>
+                <div className="text-center mt-16">
+                    <p className="text-muted-foreground">
+                        Have questions? <a href="mailto:support@theboringeducation.com" className="text-primary hover:underline">Contact our support team</a>
+                    </p>
                 </div>
+            </main>
 
-                {/* FAQ */}
-                <div className='max-w-4xl mx-auto'>
-                    <h2 className='text-2xl font-bold text-center text-gray-900 mb-8'>
-                        Frequently Asked Questions
-                    </h2>
-                    <div className='space-y-4'>
-                        <details className='bg-white rounded-lg p-6 border border-gray-200'>
-                            <summary className='font-semibold text-gray-900 cursor-pointer'>
-                                What's the difference between the plans?
-                            </summary>
-                            <p className='text-gray-600 mt-2'>
-                                All plans include the same core content. The
-                                main differences are the access duration and
-                                some exclusive features like extended workshops
-                                and priority support for longer plans.
-                            </p>
-                        </details>
-                        <details className='bg-white rounded-lg p-6 border border-gray-200'>
-                            <summary className='font-semibold text-gray-900 cursor-pointer'>
-                                Can I access TBE webapp interview sheets with
-                                this subscription?
-                            </summary>
-                            <p className='text-gray-600 mt-2'>
-                                Yes! Your PrepYatra subscription gives you
-                                seamless access to all interview sheets on the
-                                TBE webapp, customized based on your
-                                preferences.
-                            </p>
-                        </details>
-                        <details className='bg-white rounded-lg p-6 border border-gray-200'>
-                            <summary className='font-semibold text-gray-900 cursor-pointer'>
-                                What about the free features?
-                            </summary>
-                            <p className='text-gray-600 mt-2'>
-                                Prep Logs and Recruiter Contact Management will
-                                always remain free. These help you track your
-                                preparation and manage your job applications at
-                                no cost.
-                            </p>
-                        </details>
-                    </div>
-                </div>
-            </div>
+            <Footer />
         </div>
     )
 }

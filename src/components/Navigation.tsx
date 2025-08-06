@@ -1,10 +1,10 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/router"
 
 const Navigation = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const navigate = useNavigate()
+    const router = useRouter()
 
     const scrollToWaitlist = () => {
         const waitlistSection = document.getElementById("waitlist")
@@ -12,7 +12,7 @@ const Navigation = () => {
     }
 
     const handleGetStarted = () => {
-        navigate("/auth")
+        router.push("/auth")
     }
 
     return (

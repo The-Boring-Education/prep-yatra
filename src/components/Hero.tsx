@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/router"
 
 const Hero = () => {
-    const navigate = useNavigate()
+    const router = useRouter()
 
     const scrollToWaitlist = () => {
         const waitlistSection = document.getElementById("waitlist")
@@ -10,7 +10,7 @@ const Hero = () => {
     }
 
     const handleGetStarted = () => {
-        navigate("/auth")
+        router.push("/auth")
     }
 
     return (

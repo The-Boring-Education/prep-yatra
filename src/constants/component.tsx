@@ -72,6 +72,4 @@ const links: NavbarDropdownLink[] = [
   },
 ];
 
-
-
 export { socialLinks, productLinks, CONFETTI_COLORS, links }

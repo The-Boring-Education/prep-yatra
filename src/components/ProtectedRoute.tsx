@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect } from "react"
-import { useNavigate, useLocation } from "react-router-dom"
+import { useRouter } from "next/router"
 import { useAuth } from "@/contexts/useAuth"
 
 interface ProtectedRouteProps {
@@ -12,15 +12,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     requireOnboarding = false
 }) => {
     const { user, loading } = useAuth()
-    const navigate = useNavigate()
-    const location = useLocation()
+    const router = useRouter()
 
     useEffect(() => {
         if (!loading) {
             if (!user) {
                 // Store the intended destination for after login
-                localStorage.setItem("redirectAfterLogin", location.pathname)
-                navigate("/auth")
+                localStorage.setItem("redirectAfterLogin", router.pathname)
+                router.push("/auth")
                 return
             }
 
@@ -29,16 +28,14 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
                 const checkOnboarding = async () => {
                     try {
                         const res = await fetch(
-                            `${
-                                import.meta.env.VITE_TBE_WEBAPP_API_URL
-                            }/user?email=${user.email}`
+                            `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?email=${user.email}`
                         )
                         const data = await res.json()
 
                         if (!data?.data?.prepYatra?.pyOnboarded) {
                             // Redirect to external onboarding app
-                            const onboardingBaseUrl = import.meta.env
-                                .VITE_ONBOARDING_APP_URL
+                            const onboardingBaseUrl =
+                                process.env.NEXT_PUBLIC_ONBOARDING_APP_URL
                             const params = new URLSearchParams({
                                 userId: user.id || "",
                                 from: "prepyatra",
@@ -53,8 +50,8 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
                     } catch (error) {
                         console.error("Error checking onboarding:", error)
                         // On error, also redirect to external onboarding app
-                        const onboardingBaseUrl = import.meta.env
-                            .VITE_ONBOARDING_APP_URL
+                        const onboardingBaseUrl =
+                            process.env.NEXT_PUBLIC_ONBOARDING_APP_URL
                         const params = new URLSearchParams({
                             userId: user.id || "",
                             from: "prepyatra",
@@ -71,7 +68,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
                 checkOnboarding()
             }
         }
-    }, [user, loading, navigate, location.pathname, requireOnboarding])
+    }, [user, loading, router, requireOnboarding])
 
     if (loading) {
         return (

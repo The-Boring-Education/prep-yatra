@@ -23,7 +23,7 @@ function isOlderThan60Days(dateString: string | undefined) {
   return diff > 60 * 24 * 60 * 60 * 1000; // 60 days in ms
 }
 
-const API_URL = import.meta.env.VITE_TBE_WEBAPP_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL;
 
 const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
   isOpen,

@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, ReactNode } from "react"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/router"
 
 export interface GoogleUser {
     sub: string
@@ -34,14 +34,14 @@ interface AuthProviderProps {
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
-    const navigate = useNavigate()
+    const router = useRouter()
 
     const createUserInWebapp = async (
         googleUser: GoogleUser
     ): Promise<User> => {
         try {
             const res = await fetch(
-                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -79,13 +79,13 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         try {
             const res = await fetch(
                 `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
                 }/user?email=${userEmail}`
             )
             const data = await res.json()
 
             if (data?.data?.prepYatra?.pyOnboarded) {
-                navigate("/dashboard")
+                router.push("/dashboard")
             } // else do nothing, let global logic handle onboarding
         } catch (error) {
             console.error("Error checking user onboarding:", error)
@@ -108,7 +108,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const redirectUrl = localStorage.getItem("redirectAfterLogin")
             if (redirectUrl) {
                 localStorage.removeItem("redirectAfterLogin")
-                navigate(redirectUrl)
+                router.push(redirectUrl)
                 return
             }
 
@@ -127,7 +127,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(null)
             // Clear any stored auth data
             localStorage.removeItem("auth_user")
-            navigate("/auth")
+            router.push("/auth")
         } catch (error) {
             console.error("Error signing out:", error)
         }
@@ -145,7 +145,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
                 // Verify with backend
                 const res = await fetch(
-                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?email=${
+                    `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?email=${
                         userData.email
                     }`
                 )

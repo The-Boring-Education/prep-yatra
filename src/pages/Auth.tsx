@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/router"
 import { Button } from "@/components/ui/button"
 import { useGoogleLogin } from "@react-oauth/google"
 import { useAuth } from "@/contexts/useAuth"
 import InstallButton from "@/components/InstallButton"
 
 const Auth = () => {
-    const navigate = useNavigate()
+    const router = useRouter()
     const { signIn, loading } = useAuth()
 
     const login = useGoogleLogin({
