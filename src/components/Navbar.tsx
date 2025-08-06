@@ -15,14 +15,14 @@ const Navbar: React.FC<NavbarProps> = ({ username, onSignOut, userId }) => {
                 <span className='text-3xl font-bold text-primary'>
                     PrepYatra
                 </span>
-                <span className='text-xs text-white'>
+                <span className='text-xs text-black'>
                     By The Boring Education
                 </span>
             </div>
             <div className='flex items-center gap-4'>
                 <NavbarDropdownLinks />
                 {userId && <GamificationDisplay userId={userId} />}
-                <span className='text-white font-medium hidden sm:inline'>
+                <span className='text-black font-medium hidden sm:inline'>
                     Hello {capitalize(username)}
                 </span>
                 <Button

@@ -2,7 +2,11 @@ import { useEffect, useState } from "react"
 import { CelebrationAnimationProps } from "@/interfaces/components"
 import { CONFETTI_COLORS } from "@/constants"
 
-const CelebrationAnimation = ({ show, pointsEarned = 0, onComplete }: CelebrationAnimationProps) => {
+const CelebrationAnimation = ({
+    show,
+    pointsEarned = 0,
+    onComplete
+}: CelebrationAnimationProps) => {
     const [isVisible, setIsVisible] = useState(false)
 
     useEffect(() => {
@@ -19,41 +23,40 @@ const CelebrationAnimation = ({ show, pointsEarned = 0, onComplete }: Celebratio
     if (!isVisible) return null
 
     return (
-        <div className="fixed inset-0 z-[9999] pointer-events-none">
+        <div className='fixed inset-0 z-[9999] pointer-events-none'>
             {/* Confetti */}
-            <div className="absolute inset-0 overflow-hidden">
+            <div className='absolute inset-0 overflow-hidden'>
                 {[...Array(24)].map((_, i) => {
-                    const color = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)]
+                    const color =
+                        CONFETTI_COLORS[
+                            Math.floor(Math.random() * CONFETTI_COLORS.length)
+                        ]
                     return (
                         <div
                             key={i}
-                            className="absolute animate-bounce"
+                            className='absolute animate-bounce'
                             style={{
                                 left: `${Math.random() * 100}%`,
                                 top: `${Math.random() * 100}%`,
                                 animationDelay: `${Math.random() * 2}s`,
                                 animationDuration: `${1 + Math.random() * 2}s`
-                            }}
-                        >
-                        </div>
+                            }}></div>
                     )
                 })}
             </div>
 
             {/* Center celebration */}
-            <div className="absolute inset-0 flex items-center justify-center">
-                <div className="bg-black/80 rounded-2xl p-8 text-center animate-pulse">
-                    <div className="text-6xl mb-4">🎉</div>
-                    <div className="text-2xl font-bold text-white mb-2">
+            <div className='absolute inset-0 flex items-center justify-center'>
+                <div className='bg-black/80 rounded-2xl p-8 text-center animate-pulse'>
+                    <div className='text-6xl mb-4'>🎉</div>
+                    <div className='text-2xl font-bold text-black mb-2'>
                         +{pointsEarned} Points!
                     </div>
-                    <div className="text-gray-300">
-                        Great job! Keep it up!
-                    </div>
+                    <div className='text-gray'>Great job! Keep it up!</div>
                 </div>
             </div>
         </div>
     )
-} 
+}
 
-export default CelebrationAnimation;
+export default CelebrationAnimation

@@ -62,15 +62,13 @@ const RecruiterContactsTable = ({
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [hideInactiveContacts, setHideInactiveContacts] = useState(false)
 
-
     const visibleContacts = hideInactiveContacts
-    ? contacts.filter(
-          (c) =>
-              c.applicationStatus !== 'Rejected' &&
-              c.applicationStatus !== 'Not Interested'
-      )
-    : contacts
-
+        ? contacts.filter(
+              (c) =>
+                  c.applicationStatus !== "Rejected" &&
+                  c.applicationStatus !== "Not Interested"
+          )
+        : contacts
 
     const getStatusColor = (status?: string) => {
         switch (status) {
@@ -92,9 +90,7 @@ const RecruiterContactsTable = ({
     const handleDelete = async (recruiterId: string) => {
         try {
             const res = await fetch(
-                `${
-                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
-                }/prepyatra/recruiter?recruiterId=${recruiterId}`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/recruiter?recruiterId=${recruiterId}`,
                 {
                     method: "DELETE"
                 }
@@ -125,9 +121,7 @@ const RecruiterContactsTable = ({
     ) => {
         try {
             const res = await fetch(
-                `${
-                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
-                }/prepyatra/recruiter`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/recruiter`,
                 {
                     method: "PUT",
                     headers: {
@@ -166,9 +160,7 @@ const RecruiterContactsTable = ({
     ) => {
         try {
             const res = await fetch(
-                `${
-                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
-                }/prepyatra/recruiter`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/recruiter`,
                 {
                     method: "PUT",
                     headers: {
@@ -232,10 +224,10 @@ const RecruiterContactsTable = ({
         return (
             <div className='glass-dark rounded-2xl p-8 text-center'>
                 <div className='text-6xl mb-4'>📞</div>
-                <h3 className='text-xl font-bold text-white mb-2'>
+                <h3 className='text-xl font-bold text-black mb-2'>
                     No Contacts Yet
                 </h3>
-                <p className='text-gray-300'>
+                <p className='text-gray'>
                     Start building your recruiter network by adding your first
                     contact!
                 </p>
@@ -246,27 +238,30 @@ const RecruiterContactsTable = ({
     return (
         <>
             <div className='glass-dark rounded-2xl p-6'>
-            <div className='flex justify-between items-center mb-6'>
-            <h3 className='text-xl font-bold text-white'>
-                Your Recruiter Network
-            </h3>
+                <div className='flex justify-between items-center mb-6'>
+                    <h3 className='text-xl font-bold text-black'>
+                        Your Recruiter Network
+                    </h3>
 
-            <div className="flex items-center gap-8">
-                <Button
-                onClick={() => setHideInactiveContacts((prev) => !prev)}
-                variant="default"
-                >
-                {hideInactiveContacts ? 'Show All Contacts' : 'Hide Inactive Contacts'}
-                </Button>
+                    <div className='flex items-center gap-8'>
+                        <Button
+                            onClick={() =>
+                                setHideInactiveContacts((prev) => !prev)
+                            }
+                            variant='default'>
+                            {hideInactiveContacts
+                                ? "Show All Contacts"
+                                : "Hide Inactive Contacts"}
+                        </Button>
 
-                <Badge
-                variant='secondary'
-                className='bg-primary/20 text-primary'>
-                {visibleContacts.length} Contact
-                {visibleContacts.length !== 1 ? "s" : ""}
-                </Badge>
-            </div>
-            </div>
+                        <Badge
+                            variant='secondary'
+                            className='bg-primary/20 text-primary'>
+                            {visibleContacts.length} Contact
+                            {visibleContacts.length !== 1 ? "s" : ""}
+                        </Badge>
+                    </div>
+                </div>
 
                 <div className='overflow-x-auto'>
                     <Table>
@@ -299,14 +294,14 @@ const RecruiterContactsTable = ({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                        {visibleContacts.map((contact) => (
+                            {visibleContacts.map((contact) => (
                                 <TableRow
                                     key={contact._id}
                                     className='border-primary/10 hover:bg-primary/5 transition-colors'>
-                                    <TableCell className='text-white font-medium'>
+                                    <TableCell className='text-black font-medium'>
                                         {contact.recruiterName}
                                     </TableCell>
-                                    <TableCell className='text-gray-300'>
+                                    <TableCell className='text-gray'>
                                         <div className='flex flex-col gap-1'>
                                             {contact.email && (
                                                 <div className='text-sm'>
@@ -322,7 +317,7 @@ const RecruiterContactsTable = ({
                                     </TableCell>
                                     <TableCell>
                                         <select
-                                            className='w-[180px] bg-gray-800 border border-primary/20 text-white rounded-md px-2 py-1'
+                                            className='w-[180px] bg-gray-800 border border-primary/20 text-black rounded-md px-2 py-1'
                                             value={
                                                 contact.applicationStatus || ""
                                             }
@@ -371,7 +366,7 @@ const RecruiterContactsTable = ({
                                                     date
                                                 )
                                             }
-                                            className='bg-transparent border border-primary/20 rounded-md px-2 py-1 text-white w-[150px]'
+                                            className='bg-transparent border border-primary/20 rounded-md px-2 py-1 text-black w-[150px]'
                                             dateFormat='MMM d, yyyy'
                                             placeholderText='Select date'
                                             isClearable
@@ -394,19 +389,19 @@ const RecruiterContactsTable = ({
                                                     date
                                                 )
                                             }
-                                            className='bg-transparent border border-primary/20 rounded-md px-2 py-1 text-white w-[150px]'
+                                            className='bg-transparent border border-primary/20 rounded-md px-2 py-1 text-black w-[150px]'
                                             dateFormat='MMM d, yyyy'
                                             placeholderText='Select date'
                                             isClearable
                                             portalId='recruiter-datepicker-portal'
                                         />
                                     </TableCell>
-                                    <TableCell className='text-gray-300 max-w-xs'>
+                                    <TableCell className='text-gray max-w-xs'>
                                         <div className='line-clamp-2 whitespace-pre-line break-words'>
                                             {contact.company || "-"}
                                         </div>
                                     </TableCell>
-                                    <TableCell className='text-gray-300 max-w-xs'>
+                                    <TableCell className='text-gray max-w-xs'>
                                         <div className='line-clamp-2 whitespace-pre-line break-words'>
                                             {contact.comments || "-"}
                                         </div>
@@ -471,10 +466,10 @@ const RecruiterContactsTable = ({
                                                 </AlertDialogTrigger>
                                                 <AlertDialogContent className='bg-gray-800 border-primary/20'>
                                                     <AlertDialogHeader>
-                                                        <AlertDialogTitle className='text-white'>
+                                                        <AlertDialogTitle className='text-black'>
                                                             Delete Contact
                                                         </AlertDialogTitle>
-                                                        <AlertDialogDescription className='text-gray-300'>
+                                                        <AlertDialogDescription className='text-gray'>
                                                             Are you sure you
                                                             want to delete this
                                                             contact? This action
@@ -482,7 +477,7 @@ const RecruiterContactsTable = ({
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter>
-                                                        <AlertDialogCancel className='bg-gray-800 text-white border-gray-600'>
+                                                        <AlertDialogCancel className='bg-gray-800 text-black border-gray-600'>
                                                             Cancel
                                                         </AlertDialogCancel>
                                                         <AlertDialogAction
@@ -491,7 +486,7 @@ const RecruiterContactsTable = ({
                                                                     contact._id
                                                                 )
                                                             }
-                                                            className='bg-red-500 text-white hover:bg-red-600'>
+                                                            className='bg-red-500 text-black hover:bg-red-600'>
                                                             Delete
                                                         </AlertDialogAction>
                                                     </AlertDialogFooter>

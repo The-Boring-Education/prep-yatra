@@ -35,7 +35,7 @@ const Footer = () => {
                     <div className='w-full lg:w-1/2 flex flex-col lg:flex-row lg:justify-end gap-10'>
                         {/* Contribute Section */}
                         <div className='flex flex-col gap-2 w-full lg:w-auto'>
-                            <span className='text-gray-300 font-semibold text-sm mb-1 text-left'>
+                            <span className='text-gray-400 font-semibold text-sm mb-1 text-left'>
                                 Contribute
                             </span>
                             <div className='flex flex-col gap-2 items-start text-left lg:items-end lg:text-right'>
@@ -57,7 +57,7 @@ const Footer = () => {
 
                         {/* Products Section */}
                         <div className='flex flex-col gap-2 w-full lg:w-auto'>
-                            <span className='text-gray-300 font-semibold text-sm mb-1 text-left'>
+                            <span className='text-gray-400 font-semibold text-sm mb-1 text-left'>
                                 Our Products
                             </span>
                             <div className='flex flex-col gap-2 items-start text-left lg:items-end lg:text-right'>
@@ -77,7 +77,7 @@ const Footer = () => {
                 </div>
 
                 {/* Built with love - Center Bottom */}
-                <div className='flex justify-center pt-4 border-t border-white/10'>
+                <div className='flex justify-center py-4 border-t border-white/10'>
                     <p className='text-gray-400 text-center text-sm'>
                         Built with <span className='text-red-500'>❤️</span> by{" "}
                         <a

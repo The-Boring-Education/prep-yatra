@@ -70,14 +70,14 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
     if (logs.length === 0) {
         return (
             <div className='mt-8'>
-                <h2 className='text-2xl font-bold text-white mb-4'>
+                <h2 className='text-2xl font-bold text-black mb-4'>
                     📚 Your Prep Logs
                 </h2>
                 <div className='glass-dark rounded-2xl p-8 text-center'>
-                    <h3 className='text-xl font-bold text-white mb-2'>
+                    <h3 className='text-xl font-bold text-black mb-2'>
                         No PrepLogs Yet
                     </h3>
-                    <p className='text-gray-300'>
+                    <p className='text-gray'>
                         Start building your recruiter network by adding your
                         first contact!
                     </p>
@@ -89,7 +89,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
     return (
         <>
             <div className='mt-8'>
-                <h2 className='text-2xl font-bold text-white mb-4'>
+                <h2 className='text-2xl font-bold text-black mb-4'>
                     📚 Your Prep Logs
                 </h2>
 
@@ -99,7 +99,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                             key={log._id}
                             className='glass-dark border border-primary/20 hover:border-primary/40 transition-all'>
                             <CardHeader>
-                                <CardTitle className='text-white text-lg'>
+                                <CardTitle className='text-black text-lg'>
                                     {log.title}
                                 </CardTitle>
                                 <p className='text-sm text-gray-400'>
@@ -110,7 +110,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                 </p>
                             </CardHeader>
                             <CardContent>
-                                <p className='text-gray-300 mb-4'>
+                                <p className='text-gray mb-4'>
                                     {log.description || "No description"}
                                 </p>
                                 <div className='flex gap-2'>
@@ -136,21 +136,21 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                         </AlertDialogTrigger>
                                         <AlertDialogContent className='bg-gray-800 border-primary/20'>
                                             <AlertDialogHeader>
-                                                <AlertDialogTitle className='text-white'>
+                                                <AlertDialogTitle className='text-black'>
                                                     Delete Prep Log
                                                 </AlertDialogTitle>
-                                                <AlertDialogDescription className='text-gray-300'>
+                                                <AlertDialogDescription className='text-gray'>
                                                     Are you sure you want to
                                                     delete this prep log? This
                                                     action cannot be undone.
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
-                                                <AlertDialogCancel className='bg-muted border-primary/20 bg-gray-800 text-white '>
+                                                <AlertDialogCancel className='bg-muted border-primary/20 bg-gray-800 text-black '>
                                                     Cancel
                                                 </AlertDialogCancel>
                                                 <AlertDialogAction
-                                                    className='bg-red-600 text-white hover:bg-red-700'
+                                                    className='bg-red-600 text-black hover:bg-red-700'
                                                     onClick={handleDelete}
                                                     disabled={isDeleting}>
                                                     {isDeleting

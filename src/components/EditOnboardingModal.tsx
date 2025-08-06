@@ -71,7 +71,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 linkedInUrl: "",
                 githubUrl: "",
                 leetCodeUrl: "",
-                workDomain:"",
+                workDomain: "",
                 name: user?.name || "",
                 username: user?.email?.split("@")[0] || "",
                 experienceLevel: "fresher",
@@ -127,9 +127,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
             }
 
             const response = await fetch(
-                `${
-                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
-                }/prepyatra/onboarding`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/onboarding`,
                 {
                     method: "POST",
                     headers: {
@@ -185,7 +183,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-700'>
                 <DialogHeader>
-                    <DialogTitle className='text-white text-xl'>
+                    <DialogTitle className='text-black text-xl'>
                         Edit Onboarding Details
                     </DialogTitle>
                 </DialogHeader>
@@ -193,47 +191,68 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 <div className='space-y-6'>
                     {/* Social Links Section */}
                     <div className='space-y-3'>
-                        <h3 className='text-lg font-semibold text-white'>
+                        <h3 className='text-lg font-semibold text-black'>
                             Social Links
                         </h3>
                         <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
                             {/* LinkedIn */}
                             <div>
-                                <label htmlFor='linkedInUrl' className='block text-xs font-medium text-gray-400 mb-1'>
+                                <label
+                                    htmlFor='linkedInUrl'
+                                    className='block text-xs font-medium text-gray-400 mb-1'>
                                     LinkedIn URL
                                 </label>
                                 <input
                                     id='linkedInUrl'
                                     type='url'
                                     value={formData.linkedInUrl}
-                                    onChange={e => handleInputChange('linkedInUrl', e.target.value)}
-                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            "linkedInUrl",
+                                            e.target.value
+                                        )
+                                    }
+                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-black focus:border-primary focus:ring-primary transition-all outline-none'
                                 />
                             </div>
                             {/* GitHub */}
                             <div>
-                                <label htmlFor='githubUrl' className='block text-xs font-medium text-gray-400 mb-1'>
+                                <label
+                                    htmlFor='githubUrl'
+                                    className='block text-xs font-medium text-gray-400 mb-1'>
                                     GitHub URL
                                 </label>
                                 <input
                                     id='githubUrl'
                                     type='url'
-                                    value={formData.githubUrl || ''}
-                                    onChange={e => handleInputChange('githubUrl', e.target.value)}
-                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
+                                    value={formData.githubUrl || ""}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            "githubUrl",
+                                            e.target.value
+                                        )
+                                    }
+                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-black focus:border-primary focus:ring-primary transition-all outline-none'
                                 />
                             </div>
                             {/* LeetCode */}
                             <div>
-                                <label htmlFor='leetCodeUrl' className='block text-xs font-medium text-gray-400 mb-1'>
+                                <label
+                                    htmlFor='leetCodeUrl'
+                                    className='block text-xs font-medium text-gray-400 mb-1'>
                                     LeetCode URL
                                 </label>
                                 <input
                                     id='leetCodeUrl'
                                     type='url'
-                                    value={formData.leetCodeUrl || ''}
-                                    onChange={e => handleInputChange('leetCodeUrl', e.target.value)}
-                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
+                                    value={formData.leetCodeUrl || ""}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            "leetCodeUrl",
+                                            e.target.value
+                                        )
+                                    }
+                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-black focus:border-primary focus:ring-primary transition-all outline-none'
                                 />
                             </div>
                         </div>
@@ -241,7 +260,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
 
                     {/* Goal Selection */}
                     <div className='space-y-3'>
-                        <h3 className='text-lg font-semibold text-white'>
+                        <h3 className='text-lg font-semibold text-black'>
                             Goal Timeline 🎯
                         </h3>
                         <div className='space-y-2'>
@@ -258,7 +277,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                             : "border-gray-600 hover:border-gray-500 bg-gray-800/50"
                                     }`}>
                                     {goal.popular && (
-                                        <span className='absolute top-1 right-1 bg-orange-500 text-white text-xs px-2 py-1 rounded-full'>
+                                        <span className='absolute top-1 right-1 bg-orange-500 text-black text-xs px-2 py-1 rounded-full'>
                                             Popular
                                         </span>
                                     )}
@@ -267,10 +286,10 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                             {goal.icon}
                                         </span>
                                         <div>
-                                            <div className='font-medium text-white'>
+                                            <div className='font-medium text-black'>
                                                 {goal.label}
                                             </div>
-                                            <div className='text-sm text-gray-300'>
+                                            <div className='text-sm text-gray'>
                                                 {goal.description}
                                             </div>
                                         </div>
@@ -282,7 +301,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
 
                     {/* Target Companies */}
                     <div className='space-y-3'>
-                        <h3 className='text-lg font-semibold text-white'>
+                        <h3 className='text-lg font-semibold text-black'>
                             Target Companies 🏢
                         </h3>
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
@@ -306,10 +325,10 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                     <div className='text-xl mb-1'>
                                         {company.icon}
                                     </div>
-                                    <div className='font-medium text-white text-sm mb-1'>
+                                    <div className='font-medium text-black text-sm mb-1'>
                                         {company.label}
                                     </div>
-                                    <div className='text-xs text-gray-300'>
+                                    <div className='text-xs text-gray'>
                                         {company.description}
                                     </div>
                                 </button>
@@ -322,7 +341,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
 
                     {/* Interview Categories */}
                     <div className='space-y-3'>
-                        <h3 className='text-lg font-semibold text-white'>
+                        <h3 className='text-lg font-semibold text-black'>
                             Interview Category 📚
                         </h3>
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
@@ -346,10 +365,10 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                     <div className='text-xl mb-1'>
                                         {category.icon}
                                     </div>
-                                    <div className='font-medium text-white text-sm mb-1'>
+                                    <div className='font-medium text-black text-sm mb-1'>
                                         {category.label}
                                     </div>
-                                    <div className='text-xs text-gray-300'>
+                                    <div className='text-xs text-gray'>
                                         {category.description}
                                     </div>
                                 </button>
@@ -371,7 +390,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                         <Button
                             onClick={onClose}
                             variant='outline'
-                            className='flex-1 border-gray-600 text-black hover:bg-gray-800 hover:text-white'>
+                            className='flex-1 border-gray-600 text-black hover:bg-gray-800 hover:text-black'>
                             Cancel
                         </Button>
                     </div>

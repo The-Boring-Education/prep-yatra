@@ -28,7 +28,7 @@ const Hero = () => {
 
             <div className='container mx-auto text-center relative z-10'>
                 <div className='animate-fade-in'>
-                    <h1 className='text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight'>
+                    <h1 className='text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-6 leading-tight'>
                         Turn{" "}
                         <span className='text-primary animate-pulse'>
                             Hustle
@@ -40,7 +40,7 @@ const Hero = () => {
                         </span>
                     </h1>
 
-                    <p className='text-xl md:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto animate-slide-in-left'>
+                    <p className='text-xl md:text-2xl text-gray mb-8 max-w-4xl mx-auto animate-slide-in-left'>
                         The ultimate community platform for job hunters to store
                         recruiter contacts, share prep logs, and crowdsource
                         resources together.
@@ -75,10 +75,10 @@ const Hero = () => {
                                 />
                             </svg>
                         </div>
-                        <h3 className='text-white font-semibold mb-2'>
+                        <h3 className='text-black font-semibold mb-2'>
                             📞 Recruiter Network
                         </h3>
-                        <p className='text-gray-300 text-sm'>
+                        <p className='text-gray text-sm'>
                             Build and manage your professional recruiter
                             contacts database
                         </p>
@@ -101,10 +101,10 @@ const Hero = () => {
                                 />
                             </svg>
                         </div>
-                        <h3 className='text-white font-semibold mb-2'>
+                        <h3 className='text-black font-semibold mb-2'>
                             📝 Prep Logs
                         </h3>
-                        <p className='text-gray-300 text-sm'>
+                        <p className='text-gray text-sm'>
                             Track your interview preparation progress and
                             learnings
                         </p>
@@ -127,10 +127,10 @@ const Hero = () => {
                                 />
                             </svg>
                         </div>
-                        <h3 className='text-white font-semibold mb-2'>
+                        <h3 className='text-black font-semibold mb-2'>
                             🔄 Resource Sharing
                         </h3>
-                        <p className='text-gray-300 text-sm'>
+                        <p className='text-gray text-sm'>
                             Share and discover valuable job search resources
                             with the community
                         </p>

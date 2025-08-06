@@ -51,14 +51,14 @@ const Auth = () => {
                         <span className='block text-3xl font-bold text-primary'>
                             PrepYatra
                         </span>
-                        <span className='block text-sm text-gray-300 mt-1'>
+                        <span className='block text-sm text-gray mt-1'>
                             by The Boring Education
                         </span>
                     </div>
-                    <h1 className='text-2xl font-bold text-white mb-2'>
+                    <h1 className='text-2xl font-bold text-black mb-2'>
                         Welcome Back!
                     </h1>
-                    <p className='text-gray-300'>
+                    <p className='text-gray'>
                         Sign in to continue your journey
                     </p>
                 </div>

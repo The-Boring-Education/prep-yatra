@@ -20,15 +20,13 @@ const Navigation = () => {
             <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
                 <div className='flex items-center justify-between h-16'>
                     <div className='flex items-center'>
-                        <div className='flex-shrink-0'>
-                            <div className='text-center'>
-                                <span className='block text-2xl font-bold text-primary'>
-                                    PrepYatra
-                                </span>
-                                <span className='block text-xs text-gray-300 -mt-1'>
-                                    by The Boring Education
-                                </span>
-                            </div>
+                        <div className='text-left gap-2'>
+                            <span className='block text-2xl font-bold text-primary'>
+                                PrepYatra
+                            </span>
+                            <span className='block text-xs text-gray -mt-1'>
+                                by The Boring Education
+                            </span>
                         </div>
                     </div>
 
@@ -43,7 +41,7 @@ const Navigation = () => {
                     <div className='md:hidden'>
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className='text-white hover:text-primary focus:outline-none transition-colors'>
+                            className='text-black hover:text-primary focus:outline-none transition-colors'>
                             <svg
                                 className='h-6 w-6'
                                 fill='none'

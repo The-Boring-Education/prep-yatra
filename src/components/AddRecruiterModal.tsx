@@ -102,9 +102,7 @@ const AddRecruiterModal = ({
             }
 
             const response = await fetch(
-                `${
-                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
-                }/prepyatra/recruiter`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/recruiter`,
                 {
                     method: editContact ? "PUT" : "POST",
                     headers: {
@@ -151,12 +149,12 @@ const AddRecruiterModal = ({
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className='sm:max-w-[600px] max-h-[90vh] overflow-y-auto glass-dark border-primary/20'>
                 <DialogHeader>
-                    <DialogTitle className='text-white'>
+                    <DialogTitle className='text-black'>
                         {editContact
                             ? "Edit Recruiter Contact"
                             : "Add New Recruiter Contact"}
                     </DialogTitle>
-                    <DialogDescription className='text-gray-300'>
+                    <DialogDescription className='text-gray'>
                         {editContact
                             ? "Update recruiter information and progress."
                             : "Add a new recruiter contact to your prep journey."}
@@ -203,7 +201,7 @@ const AddRecruiterModal = ({
                         <div className='flex gap-2 flex-col'>
                             <Label
                                 htmlFor='applicationStatus'
-                                className='text-white'>
+                                className='text-black'>
                                 Status
                             </Label>
                             <select
@@ -214,7 +212,7 @@ const AddRecruiterModal = ({
                                         e.target.value
                                     )
                                 }
-                                className='bg-gray-800 border border-primary/20 text-white rounded-md px-2 py-2'>
+                                className='bg-gray-800 border border-primary/20 text-black rounded-md px-2 py-2'>
                                 <option value='Screening in Process'>
                                     Screening in Process
                                 </option>
@@ -253,7 +251,7 @@ const AddRecruiterModal = ({
                         />
                     </div>
                     <div>
-                        <Label htmlFor='comments' className='text-white'>
+                        <Label htmlFor='comments' className='text-black'>
                             Comments
                         </Label>
                         <Textarea
@@ -263,7 +261,7 @@ const AddRecruiterModal = ({
                             onChange={(e) =>
                                 handleInputChange("comments", e.target.value)
                             }
-                            className='bg-gray-800 border-gray-600 text-white resize-none'
+                            className='bg-gray-800 border-gray-600 text-black resize-none'
                             rows={3}
                         />
                     </div>
