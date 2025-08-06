@@ -5,14 +5,6 @@ const nextConfig = {
     images: {
         unoptimized: true
     },
-    env: {
-        NEXT_PUBLIC_TBE_WEBAPP_API_URL:
-            process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL || "",
-        NEXT_PUBLIC_ONBOARDING_APP_URL:
-            process.env.NEXT_PUBLIC_ONBOARDING_APP_URL || "",
-        NEXT_PUBLIC_GOOGLE_CLIENT_ID:
-            process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID || ""
-    },
     webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
         // Handle Canvas for client-side (if using any Canvas libraries)
         if (!isServer) {
@@ -30,6 +22,14 @@ const nextConfig = {
     compiler: {
         // Remove console logs in production
         removeConsole: process.env.NODE_ENV === "production"
+    },
+    // Add some additional configurations to prevent issues
+    poweredByHeader: false,
+    generateEtags: false,
+    // Ensure proper error handling
+    onDemandEntries: {
+        maxInactiveAge: 25 * 1000,
+        pagesBufferLength: 2,
     }
 }
 
