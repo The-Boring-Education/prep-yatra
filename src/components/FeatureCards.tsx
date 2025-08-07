@@ -36,7 +36,7 @@ const FeatureCards = () => {
         <section className='py-20 px-4'>
             <div className='container mx-auto'>
                 <div className='text-center mb-16'>
-                    <h2 className='text-3xl md:text-5xl font-bold text-black mb-6'>
+                    <h2 className='text-3xl md:text-5xl font-bold text-white mb-6'>
                         Everything You Need to{" "}
                         <span className='text-primary'>
                             Land Your Dream Job
@@ -59,7 +59,7 @@ const FeatureCards = () => {
                                 <div className='w-16 h-16 bg-primary rounded-xl mb-6 flex items-center justify-center'>
                                     <Icon className='w-8 h-8 text-primary-foreground' />
                                 </div>
-                                <h3 className='text-2xl font-bold text-black mb-4'>
+                                <h3 className='text-2xl font-bold text-white mb-4'>
                                     {feature.title}
                                 </h3>
                                 <p className='text-gray text-lg leading-relaxed'>

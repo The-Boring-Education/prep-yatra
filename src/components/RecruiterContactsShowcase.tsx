@@ -44,7 +44,7 @@ const RecruiterContactsShowcase = () => {
         <section className='py-20 px-4'>
             <div className='container mx-auto'>
                 <div className='text-center mb-16 animate-fade-in'>
-                    <h2 className='text-4xl md:text-5xl font-bold text-black mb-6'>
+                    <h2 className='text-4xl md:text-5xl font-bold text-white mb-6'>
                         📞{" "}
                         <span className='text-primary'>Recruiter Contacts</span>
                     </h2>
@@ -57,7 +57,7 @@ const RecruiterContactsShowcase = () => {
                 <div className='max-w-6xl mx-auto animate-slide-in-left'>
                     <Card className='glass-dark border-primary/20'>
                         <CardHeader className='text-center'>
-                            <CardTitle className='text-2xl text-black flex items-center justify-center gap-2'>
+                            <CardTitle className='text-2xl text-white flex items-center justify-center gap-2'>
                                 🔥 Your Recruiter Network Dashboard
                             </CardTitle>
                         </CardHeader>
@@ -106,7 +106,7 @@ const RecruiterContactsShowcase = () => {
                                             <TableRow
                                                 key={index}
                                                 className='border-primary/10 hover:bg-primary/5 transition-colors'>
-                                                <TableCell className='text-black font-medium'>
+                                                <TableCell className='text-white font-medium'>
                                                     {recruiter.name}
                                                 </TableCell>
                                                 <TableCell className='text-gray'>

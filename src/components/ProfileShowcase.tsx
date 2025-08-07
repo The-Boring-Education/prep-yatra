@@ -5,7 +5,7 @@ const ProfileShowcase = () => {
         <section className='py-20 px-4'>
             <div className='container mx-auto'>
                 <div className='text-center mb-16'>
-                    <h2 className='text-3xl md:text-5xl font-bold text-black mb-6'>
+                    <h2 className='text-3xl md:text-5xl font-bold text-white mb-6'>
                         Track Your{" "}
                         <span className='text-primary'>Progress</span>
                     </h2>
@@ -23,7 +23,7 @@ const ProfileShowcase = () => {
                                 AK
                             </div>
                             <div className='ml-4'>
-                                <h3 className='text-xl font-bold text-black'>
+                                <h3 className='text-xl font-bold text-white'>
                                     Alex Kumar
                                 </h3>
                                 <p className='text-gray-400'>
@@ -37,7 +37,7 @@ const ProfileShowcase = () => {
                             <div className='flex items-center justify-between'>
                                 <div className='flex items-center'>
                                     <Flame className='w-6 h-6 text-orange-500 mr-2' />
-                                    <span className='text-black font-semibold'>
+                                    <span className='text-white font-semibold'>
                                         Current Streak
                                     </span>
                                 </div>
@@ -51,7 +51,7 @@ const ProfileShowcase = () => {
                         <div className='grid grid-cols-2 gap-4 mb-6'>
                             <div className='glass rounded-xl p-4 text-center'>
                                 <Calendar className='w-6 h-6 text-primary mx-auto mb-2' />
-                                <div className='text-2xl font-bold text-black'>
+                                <div className='text-2xl font-bold text-white'>
                                     142
                                 </div>
                                 <div className='text-gray-400 text-sm'>
@@ -60,7 +60,7 @@ const ProfileShowcase = () => {
                             </div>
                             <div className='glass rounded-xl p-4 text-center'>
                                 <Target className='w-6 h-6 text-primary mx-auto mb-2' />
-                                <div className='text-2xl font-bold text-black'>
+                                <div className='text-2xl font-bold text-white'>
                                     8
                                 </div>
                                 <div className='text-gray-400 text-sm'>
@@ -73,7 +73,7 @@ const ProfileShowcase = () => {
                         <div className='glass rounded-xl p-4'>
                             <div className='flex items-center mb-3'>
                                 <Award className='w-5 h-5 text-primary mr-2' />
-                                <span className='text-black font-medium'>
+                                <span className='text-white font-medium'>
                                     Recent Activity
                                 </span>
                             </div>

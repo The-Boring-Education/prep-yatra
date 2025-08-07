@@ -110,7 +110,7 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
                         aria-label='Close'>
                         <X className='w-6 h-6' />
                     </button>
-                    <h2 className='text-2xl font-bold text-black mb-4 flex items-center gap-2'>
+                    <h2 className='text-2xl font-bold text-white mb-4 flex items-center gap-2'>
                         <Plus className='w-5 h-5 text-primary' /> Add Skills
                     </h2>
                     {showWarning && (
@@ -127,7 +127,7 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
                         <input
                             ref={inputRef}
                             type='text'
-                            className='flex-1 rounded-lg px-4 py-2 bg-gray-800 text-black border border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary'
+                            className='flex-1 rounded-lg px-4 py-2 bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary'
                             placeholder='Type a skill and press Enter...'
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}

@@ -39,7 +39,7 @@ const PrepLogsShowcase = () => {
         <section className='py-20 px-4 bg-gradient-to-r from-gray-900/50 to-gray-800/50'>
             <div className='container mx-auto'>
                 <div className='text-center mb-16 animate-fade-in'>
-                    <h2 className='text-4xl md:text-5xl font-bold text-black mb-6'>
+                    <h2 className='text-4xl md:text-5xl font-bold text-white mb-6'>
                         📝 <span className='text-primary'>Prep Logs</span>
                     </h2>
                     <p className='text-xl text-gray max-w-3xl mx-auto'>
@@ -50,7 +50,7 @@ const PrepLogsShowcase = () => {
 
                 <div className='max-w-4xl mx-auto'>
                     <div className='flex justify-between items-center mb-8 animate-slide-in-left'>
-                        <div className='text-black'>
+                        <div className='text-white'>
                             <h3 className='text-2xl font-semibold'>
                                 📊 Your Preparation Dashboard
                             </h3>
@@ -72,7 +72,7 @@ const PrepLogsShowcase = () => {
                                 <CardHeader className='pb-3'>
                                     <div className='flex justify-between items-start'>
                                         <div>
-                                            <CardTitle className='text-black text-lg'>
+                                            <CardTitle className='text-white text-lg'>
                                                 {log.title}
                                             </CardTitle>
                                             <div className='flex gap-2 mt-2'>
@@ -118,19 +118,19 @@ const PrepLogsShowcase = () => {
                                         <Button
                                             size='sm'
                                             variant='outline'
-                                            className='border-primary/30 hover:bg-primary/10 text-black'>
+                                            className='border-primary/30 hover:bg-primary/10 text-white'>
                                             ✏️ Edit
                                         </Button>
                                         <Button
                                             size='sm'
                                             variant='outline'
-                                            className='border-primary/30 hover:bg-primary/10 text-black'>
+                                            className='border-primary/30 hover:bg-primary/10 text-white'>
                                             🔄 Continue
                                         </Button>
                                         <Button
                                             size='sm'
                                             variant='outline'
-                                            className='border-primary/30 hover:bg-primary/10 text-black'>
+                                            className='border-primary/30 hover:bg-primary/10 text-white'>
                                             📤 Share
                                         </Button>
                                     </div>

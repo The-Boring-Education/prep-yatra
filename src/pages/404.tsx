@@ -34,7 +34,7 @@ const NotFound = () => {
                     <div className='text-8xl font-bold text-primary mb-4'>
                         404
                     </div>
-                    <CardTitle className='text-2xl text-black mb-2'>
+                    <CardTitle className='text-2xl text-white mb-2'>
                         Page Not Found
                     </CardTitle>
                     <CardDescription className='text-gray'>

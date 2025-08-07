@@ -61,7 +61,7 @@ const ResourceSharingShowcase = () => {
         <section className='py-20 px-4'>
             <div className='container mx-auto'>
                 <div className='text-center mb-16 animate-fade-in'>
-                    <h2 className='text-4xl md:text-5xl font-bold text-black mb-6'>
+                    <h2 className='text-4xl md:text-5xl font-bold text-white mb-6'>
                         🔄{" "}
                         <span className='text-primary'>
                             Resource Sharing Feed
@@ -76,7 +76,7 @@ const ResourceSharingShowcase = () => {
 
                 <div className='max-w-4xl mx-auto'>
                     <div className='flex justify-between items-center mb-8 animate-slide-in-left'>
-                        <div className='text-black'>
+                        <div className='text-white'>
                             <h3 className='text-2xl font-semibold'>
                                 🔥 Trending Resources
                             </h3>
@@ -102,7 +102,7 @@ const ResourceSharingShowcase = () => {
                                         </div>
                                         <div className='flex-1'>
                                             <div className='flex items-center gap-2 mb-2'>
-                                                <span className='text-black font-semibold'>
+                                                <span className='text-white font-semibold'>
                                                     {resource.author}
                                                 </span>
                                                 <span className='text-gray-400 text-sm'>
@@ -115,7 +115,7 @@ const ResourceSharingShowcase = () => {
                                                     {resource.type}
                                                 </span>
                                             </div>
-                                            <CardTitle className='text-black text-xl mb-2'>
+                                            <CardTitle className='text-white text-xl mb-2'>
                                                 {resource.title}
                                             </CardTitle>
                                             <p className='text-gray text-sm'>
@@ -191,7 +191,7 @@ const ResourceSharingShowcase = () => {
                                         <Button
                                             variant='outline'
                                             size='sm'
-                                            className='border-primary/30 hover:bg-primary/10 text-black'>
+                                            className='border-primary/30 hover:bg-primary/10 text-white'>
                                             📖 View Resource
                                         </Button>
                                     </div>
@@ -203,7 +203,7 @@ const ResourceSharingShowcase = () => {
                     <div className='text-center mt-8'>
                         <Button
                             variant='outline'
-                            className='border-primary/30 hover:bg-primary/10 text-black'>
+                            className='border-primary/30 hover:bg-primary/10 text-white'>
                             Load More Resources 🔽
                         </Button>
                     </div>

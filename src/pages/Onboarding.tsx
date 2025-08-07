@@ -151,7 +151,7 @@ const Onboarding = () => {
                             </p>
                         </div>
 
-                        <CardTitle className='text-2xl text-black'>
+                        <CardTitle className='text-2xl text-white'>
                             {getStepTitle()}
                         </CardTitle>
                         <CardDescription className='text-gray'>
