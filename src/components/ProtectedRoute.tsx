@@ -36,15 +36,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
                             // Redirect to external onboarding app
                             const onboardingBaseUrl =
                                 process.env.NEXT_PUBLIC_ONBOARDING_APP_URL
-                            const params = new URLSearchParams({
-                                userId: user.id || "",
-                                from: "prepyatra",
-                                redirect: `${window.location.origin}/dashboard`
-                            })
-                            if ((user as any).token) {
-                                params.append("token", (user as any).token)
+                            if (onboardingBaseUrl) {
+                                const redirectUrl = `${onboardingBaseUrl}?userId=${user.id}&from=prepyatra&redirect=${encodeURIComponent(window.location.origin + "/dashboard")}`
+                                window.location.href = redirectUrl
+                            } else {
+                                // Fallback to internal onboarding if external URL is not configured
+                                router.push("/onboarding")
                             }
-                            window.location.href = `${onboardingBaseUrl}/?${params.toString()}`
                             return
                         }
                     } catch (error) {
@@ -52,15 +50,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
                         // On error, also redirect to external onboarding app
                         const onboardingBaseUrl =
                             process.env.NEXT_PUBLIC_ONBOARDING_APP_URL
-                        const params = new URLSearchParams({
-                            userId: user.id || "",
-                            from: "prepyatra",
-                            redirect: `${window.location.origin}/dashboard`
-                        })
-                        if ((user as any).token) {
-                            params.append("token", (user as any).token)
+                        if (onboardingBaseUrl) {
+                            const redirectUrl = `${onboardingBaseUrl}?userId=${user.id}&from=prepyatra&redirect=${encodeURIComponent(window.location.origin + "/dashboard")}`
+                            window.location.href = redirectUrl
+                        } else {
+                            // Fallback to internal onboarding if external URL is not configured
+                            router.push("/onboarding")
                         }
-                        window.location.href = `${onboardingBaseUrl}/?${params.toString()}`
                         return
                     }
                 }

@@ -74,5 +74,14 @@ export const recruitersService = {
         const result = await response.json()
         if (!result.status) throw new Error(result.message)
         return result.data || []
+    },
+
+    async getByUserId(userId: string): Promise<RecruiterContact[]> {
+        const response = await fetch(
+            `${API_BASE_URL}/prepyatra/recruiter?userId=${userId}`
+        )
+        const result = await response.json()
+        if (!result.status) throw new Error(result.message)
+        return result.data || []
     }
 }

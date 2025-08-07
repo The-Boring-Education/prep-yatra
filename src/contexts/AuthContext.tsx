@@ -36,6 +36,41 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [loading, setLoading] = useState(true)
     const router = useRouter()
 
+    // Handle return from external onboarding app
+    useEffect(() => {
+        const handleOnboardingReturn = () => {
+            const urlParams = new URLSearchParams(window.location.search)
+            const onboardingReturn = urlParams.get('onboardingReturn')
+            const userId = urlParams.get('userId')
+            const redirect = urlParams.get('redirect')
+
+            if (onboardingReturn === 'success' && userId) {
+                // Clear the URL parameters
+                const newUrl = window.location.pathname
+                window.history.replaceState({}, document.title, newUrl)
+
+                // Check if user is authenticated
+                const storedUser = localStorage.getItem("auth_user")
+                if (storedUser) {
+                    const userData = JSON.parse(storedUser)
+                    setUser(userData)
+                    
+                    // Redirect to the specified URL or dashboard
+                    if (redirect) {
+                        router.push(redirect)
+                    } else {
+                        router.push("/dashboard")
+                    }
+                } else {
+                    // User not authenticated, redirect to auth
+                    router.push("/auth")
+                }
+            }
+        }
+
+        handleOnboardingReturn()
+    }, [router])
+
     const createUserInWebapp = async (
         googleUser: GoogleUser
     ): Promise<User> => {
@@ -75,7 +110,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     }
 
-    const checkUserOnboarding = async (userEmail: string) => {
+    const checkUserOnboarding = async (userEmail: string, userId: string) => {
         try {
             const res = await fetch(
                 `${
@@ -86,10 +121,21 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             if (data?.data?.prepYatra?.pyOnboarded) {
                 router.push("/dashboard")
-            } // else do nothing, let global logic handle onboarding
+            } else {
+                // Redirect to external onboarding app
+                const onboardingUrl = process.env.NEXT_PUBLIC_ONBOARDING_APP_URL
+                if (onboardingUrl) {
+                    const redirectUrl = `${onboardingUrl}?userId=${userId}&from=prepyatra&redirect=${encodeURIComponent(window.location.origin + "/dashboard")}`
+                    window.location.href = redirectUrl
+                } else {
+                    // Fallback to internal onboarding if external URL is not configured
+                    router.push("/onboarding")
+                }
+            }
         } catch (error) {
             console.error("Error checking user onboarding:", error)
-            // Do not navigate to /onboarding on error
+            // Fallback to internal onboarding on error
+            router.push("/onboarding")
         }
     }
 
@@ -113,7 +159,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             }
 
             // Check onboarding status and navigate accordingly
-            await checkUserOnboarding(userData.email)
+            await checkUserOnboarding(userData.email, userData.id)
         } catch (error) {
             console.error("Error signing in:", error)
             throw error

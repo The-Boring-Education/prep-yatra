@@ -106,6 +106,7 @@ const RecruiterContactsTable = ({
             })
 
             if (onContactDeleted) onContactDeleted()
+            if (onContactUpdated) onContactUpdated()
         } catch (error) {
             toast({
                 title: "Error",
@@ -200,6 +201,10 @@ const RecruiterContactsTable = ({
     const handleModalClose = () => {
         setEditingContact(null)
         setIsModalOpen(false)
+        // Trigger parent refresh when modal closes
+        if (onContactUpdated) {
+            onContactUpdated()
+        }
     }
 
     const openEmail = (email?: string) => {
@@ -502,6 +507,7 @@ const RecruiterContactsTable = ({
             </div>
 
             <AddRecruiterModal
+                key={`edit-recruiter-${editingContact?._id || 'new'}`}
                 isOpen={isModalOpen}
                 onClose={handleModalClose}
                 onContactAdded={onContactAdded}

@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/useAuth"
 import { useGamificationContext } from "@/contexts/GamificationContext"
 import { usePrepLogs } from "@/hooks/use-prep-logs"
 import { useUser } from "@/hooks/use-user"
+import { recruitersService } from "@/services/recruiters"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -105,13 +106,13 @@ const Dashboard = () => {
         useState(false)
     const [isAddSkillsModalOpen, setIsAddSkillsModalOpen] = useState(false)
     const [recruiterContacts, setRecruiterContacts] = useState([])
-    const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
     const [profile, setProfile] = useState<Profile | null>(null)
     const [loading, setLoading] = useState(true)
+    const [refreshTrigger, setRefreshTrigger] = useState(0)
 
     // Hooks
     const router = useRouter()
-    const { user, signOut } = useAuth()
+    const { user, signOut, loading: authLoading } = useAuth()
     const { showCelebration } = useGamificationContext()
     const {
         logs,
@@ -122,30 +123,13 @@ const Dashboard = () => {
     // Fetch recruiter contacts
     const fetchRecruiterContacts = async (userId: string) => {
         try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user/recruiter-contacts?user=${userId}`
-            )
-            if (response.ok) {
-                const data = await response.json()
-                setRecruiterContacts(data.data || [])
-            }
+            console.log("Fetching recruiter contacts for userId:", userId)
+            const data = await recruitersService.getByUserId(userId)
+            console.log("Recruiter contacts data:", data)
+            setRecruiterContacts(data)
         } catch (error) {
             console.error("Error fetching recruiter contacts:", error)
-        }
-    }
-
-    // Fetch prep logs
-    const fetchPrepLogs = async (userId: string) => {
-        try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prep-logs?userId=${userId}`
-            )
-            if (response.ok) {
-                const data = await response.json()
-                setPrepLogs(data.data || [])
-            }
-        } catch (error) {
-            console.error("Error fetching prep logs:", error)
+            setRecruiterContacts([])
         }
     }
 
@@ -168,6 +152,11 @@ const Dashboard = () => {
 
     // Initialize data on component mount
     useEffect(() => {
+        // Don't do anything while auth is loading
+        if (authLoading) {
+            return
+        }
+
         const initializeData = async () => {
             if (!user?.id) {
                 setLoading(false)
@@ -177,7 +166,6 @@ const Dashboard = () => {
             try {
                 await Promise.all([
                     fetchRecruiterContacts(user.id),
-                    fetchPrepLogs(user.id),
                     refetchProfile()
                 ])
             } catch (error) {
@@ -201,7 +189,15 @@ const Dashboard = () => {
                 const data = await response.json()
 
                 if (!data?.data?.prepYatra?.pyOnboarded) {
-                    router.push("/onboarding")
+                    // Redirect to external onboarding app
+                    const onboardingUrl = process.env.NEXT_PUBLIC_ONBOARDING_APP_URL
+                    if (onboardingUrl) {
+                        const redirectUrl = `${onboardingUrl}?userId=${user.id}&from=prepyatra&redirect=${encodeURIComponent(window.location.origin + "/dashboard")}`
+                        window.location.href = redirectUrl
+                    } else {
+                        // Fallback to internal onboarding if external URL is not configured
+                        router.push("/onboarding")
+                    }
                     return
                 }
 
@@ -213,7 +209,15 @@ const Dashboard = () => {
         }
 
         checkAuthAndProfile()
-    }, [user, router])
+    }, [user, router, authLoading])
+
+    // Refetch data when refreshTrigger changes
+    useEffect(() => {
+        if (user?.id && refreshTrigger > 0 && !authLoading) {
+            fetchRecruiterContacts(user.id)
+            refetchPrepLogs()
+        }
+    }, [refreshTrigger, user?.id, authLoading])
 
     // Event handlers
     const handleSignOut = async () => {
@@ -227,7 +231,7 @@ const Dashboard = () => {
 
     const handleContactAdded = () => {
         if (user?.id) {
-            fetchRecruiterContacts(user.id)
+            setRefreshTrigger(prev => prev + 1)
             showCelebration(5)
             toast.success("Recruiter contact added successfully!")
         }
@@ -235,8 +239,7 @@ const Dashboard = () => {
 
     const handleLogAdded = () => {
         if (user?.id) {
-            fetchPrepLogs(user.id)
-            refetchPrepLogs()
+            setRefreshTrigger(prev => prev + 1)
             showCelebration(10)
             toast.success("Prep log added successfully!")
         }
@@ -244,7 +247,7 @@ const Dashboard = () => {
 
     const handleContactUpdated = () => {
         if (user?.id) {
-            fetchRecruiterContacts(user.id)
+            setRefreshTrigger(prev => prev + 1)
         }
     }
 
@@ -256,7 +259,16 @@ const Dashboard = () => {
             .toUpperCase()
     }
 
-    if (loading) {
+    if (loading || authLoading) {
+        return (
+            <div className='flex items-center justify-center min-h-screen'>
+                <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
+            </div>
+        )
+    }
+
+    // Don't render anything if auth is still loading
+    if (authLoading) {
         return (
             <div className='flex items-center justify-center min-h-screen'>
                 <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
@@ -463,6 +475,7 @@ const Dashboard = () => {
 
                                 <Suspense fallback={<ComponentLoader />}>
                                     <PrepLogsList
+                                        key={`prep-logs-${refreshTrigger}`}
                                         logs={logs}
                                         onLogUpdated={handleLogAdded}
                                         mongoUserId={user?.id || ""}
@@ -488,6 +501,7 @@ const Dashboard = () => {
 
                                 <Suspense fallback={<ComponentLoader />}>
                                     <RecruiterContactsTable
+                                        key={`recruiters-${refreshTrigger}`}
                                         contacts={recruiterContacts}
                                         onContactAdded={handleContactAdded}
                                         onContactUpdated={handleContactUpdated}
@@ -503,6 +517,7 @@ const Dashboard = () => {
             {/* Modals */}
             <Suspense fallback={null}>
                 <AddPrepLogModal
+                    key={`add-prep-log-${refreshTrigger}`}
                     isOpen={isAddPrepLogModalOpen}
                     onClose={() => setIsAddPrepLogModalOpen(false)}
                     onLogAdded={handleLogAdded}
@@ -512,6 +527,7 @@ const Dashboard = () => {
 
             <Suspense fallback={null}>
                 <AddRecruiterModal
+                    key={`add-recruiter-${refreshTrigger}`}
                     isOpen={isAddRecruiterModalOpen}
                     onClose={() => setIsAddRecruiterModalOpen(false)}
                     onContactAdded={handleContactAdded}
