@@ -169,7 +169,7 @@ const AddPrepLogModal = ({
                             type='button'
                             variant='outline'
                             onClick={onClose}
-                            className='border-gray-300 text-gray-900 hover:bg-gray-100'>
+                            className='border-gray-300 text-white hover:bg-gray-100'>
                             Cancel
                         </Button>
                         <Button

@@ -117,7 +117,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                     <Button
                                         size='sm'
                                         variant='outline'
-                                        className=''
+                                        className='bg-secondary text-secondary-foreground'
                                         onClick={() => openEditModal(log)}>
                                         ✏️ Edit
                                     </Button>
@@ -127,7 +127,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                             <Button
                                                 size='sm'
                                                 variant='outline'
-                                                className=''
+                                                className='bg-secondary text-secondary-foreground'
                                                 onClick={() =>
                                                     setDeleteId(log._id)
                                                 }>
