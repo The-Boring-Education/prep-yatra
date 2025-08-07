@@ -1,15 +1,42 @@
 {
-    "buildCommand": "npm run build",
-    "outputDirectory": ".next",
-    "framework": "nextjs",
-    "installCommand": "npm install",
-    "devCommand": "npm run dev",
-    "regions": [
-        "iad1"
-    ],
-    "functions": {
-        "src/pages/api/**/*.ts": {
-            "maxDuration": 10
+    "version": 2,
+    "builds": [
+        {
+            "src": "package.json",
+            "use": "@vercel/next"
         }
-    }
+    ],
+    "routes": [
+        {
+            "src": "/auth",
+            "dest": "/auth"
+        },
+        {
+            "src": "/dashboard",
+            "dest": "/dashboard"
+        },
+        {
+            "src": "/onboarding",
+            "dest": "/onboarding"
+        },
+        {
+            "src": "/pricing",
+            "dest": "/pricing"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/$1"
+        }
+    ],
+    "headers": [
+        {
+            "source": "/(.*)",
+            "headers": [
+                {
+                    "key": "Cache-Control",
+                    "value": "no-cache, no-store, must-revalidate"
+                }
+            ]
+        }
+    ]
 }
