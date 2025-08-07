@@ -103,7 +103,7 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
     return createPortal(
         <Dialog open={isOpen} onOpenChange={onClose}>
             <div className='fixed inset-0 flex items-center justify-center z-[99999] bg-black/60'>
-                <div className='bg-gray-900 rounded-2xl p-10 w-full max-w-2xl min-h-[400px] shadow-xl relative z-[100000]'>
+                <div className='bg-gray-900 rounded-2xl p-10 w-full max-w-2xl shadow-xl relative z-[100000]'>
                     <button
                         className='absolute top-4 right-4 text-gray-400 hover:text-red-400'
                         onClick={onClose}
@@ -134,7 +134,7 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
                             disabled={loading}
                             maxLength={32}
                         />
-                        <Button
+                        {/* <Button
                             type='submit'
                             disabled={loading || !inputValue.trim()}
                             className='bg-primary text-primary-foreground hover:bg-primary/90'>
@@ -143,7 +143,7 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
                             ) : (
                                 <Plus className='w-4 h-4' />
                             )}
-                        </Button>
+                        </Button> */}
                     </form>
                     <div className='flex flex-wrap gap-2 mb-4'>
                         {skills.length === 0 && (
@@ -168,9 +168,9 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
                         ))}
                     </div>
                     <Button
-                        onClick={onClose}
+                        onClick={handleAddSkill}
                         className='w-full mt-2 bg-primary text-primary-foreground hover:bg-primary/90'>
-                        Done
+                        Add Skill
                     </Button>
                 </div>
             </div>

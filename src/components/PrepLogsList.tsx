@@ -41,6 +41,13 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
         setIsEditModalOpen(true)
     }
 
+    const handleModalClose = () => {
+        setIsEditModalOpen(false)
+        setSelectedLog(null)
+        // Trigger parent refresh when modal closes
+        onLogUpdated()
+    }
+
     const handleDelete = async () => {
         if (!deleteId) return
 
@@ -168,8 +175,9 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
             </div>
 
             <AddPrepLogModal
+                key={`edit-prep-log-${selectedLog?._id || 'new'}`}
                 isOpen={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
+                onClose={handleModalClose}
                 onLogAdded={onLogUpdated}
                 mongoUserId={mongoUserId}
                 editLog={selectedLog}
