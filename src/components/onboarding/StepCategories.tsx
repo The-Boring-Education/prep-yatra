@@ -13,7 +13,7 @@ type Props = {
 const StepCategories: React.FC<Props> = ({ formData, toggleArrayField }) => (
     <div className='space-y-6'>
         <div className='text-center mb-8'>
-            <h1 className='text-2xl font-bold text-black mb-2'>
+            <h1 className='text-2xl font-bold text-white mb-2'>
                 What would you like to focus on? 📚
             </h1>
             <p className='text-gray'>Choose your preparation areas</p>
@@ -32,7 +32,7 @@ const StepCategories: React.FC<Props> = ({ formData, toggleArrayField }) => (
                             : "border-gray-600 hover:border-gray-500 bg-gray-800/50"
                     }`}>
                     <div className='text-2xl mb-2'>{category.icon}</div>
-                    <div className='font-medium text-black mb-1'>
+                    <div className='font-medium text-white mb-1'>
                         {category.label}
                     </div>
                     <div className='text-sm text-gray'>

@@ -13,7 +13,7 @@ type Props = {
 const StepExperience: React.FC<Props> = ({ formData, handleInputChange }) => (
     <div className='space-y-6'>
         <div className='text-center mb-8'>
-            <h1 className='text-2xl font-bold text-black mb-2'>
+            <h1 className='text-2xl font-bold text-white mb-2'>
                 What's your experience level? 💼
             </h1>
             <p className='text-gray'>
@@ -34,7 +34,7 @@ const StepExperience: React.FC<Props> = ({ formData, handleInputChange }) => (
                             : "border-gray-600 hover:border-gray-500 bg-gray-800/50"
                     }`}>
                     <div className='text-2xl mb-2'>{level.icon}</div>
-                    <div className='font-medium text-black'>{level.label}</div>
+                    <div className='font-medium text-white'>{level.label}</div>
                 </button>
             ))}
         </div>

@@ -41,7 +41,7 @@ const Navigation = () => {
                     <div className='md:hidden'>
                         <button
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
-                            className='text-black hover:text-primary focus:outline-none transition-colors'>
+                            className='text-white hover:text-primary focus:outline-none transition-colors'>
                             <svg
                                 className='h-6 w-6'
                                 fill='none'

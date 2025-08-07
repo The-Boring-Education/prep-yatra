@@ -15,20 +15,20 @@ const Navbar: React.FC<NavbarProps> = ({ username, onSignOut, userId }) => {
                 <span className='text-3xl font-bold text-primary'>
                     PrepYatra
                 </span>
-                <span className='text-xs text-black'>
+                <span className='text-xs text-white'>
                     By The Boring Education
                 </span>
             </div>
             <div className='flex items-center gap-4'>
                 <NavbarDropdownLinks />
                 {userId && <GamificationDisplay userId={userId} />}
-                <span className='text-black font-medium hidden sm:inline'>
+                <span className='text-white font-medium hidden sm:inline'>
                     Hello {capitalize(username)}
                 </span>
                 <Button
                     onClick={onSignOut}
                     variant='outline'
-                    className='border-gray-300 text-gray-900 hover:bg-gray-100'>
+                    className='border-gray-300 text-white hover:bg-gray-100'>
                     Sign Out
                 </Button>
             </div>

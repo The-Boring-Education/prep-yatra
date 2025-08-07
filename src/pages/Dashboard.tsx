@@ -381,7 +381,7 @@ const Dashboard = () => {
 
                                 <Button
                                     variant='outline'
-                                    className='w-full mt-4'
+                                    className='w-full mt-4 bg-primary text-primary-foreground'
                                     onClick={() =>
                                         setIsEditOnboardingModalOpen(true)
                                     }>
@@ -390,11 +390,6 @@ const Dashboard = () => {
                                 </Button>
                             </CardContent>
                         </Card>
-
-                        {/* Gamification Display */}
-                        <Suspense fallback={<ComponentLoader />}>
-                            <GamificationDisplay userId={user?.id || ""} />
-                        </Suspense>
 
                         {/* Skills Section */}
                         <Card className='mt-6'>
@@ -415,7 +410,7 @@ const Dashboard = () => {
                                 <Button
                                     variant='outline'
                                     size='sm'
-                                    className='w-full mt-3'
+                                    className='w-full mt-3 bg-secondary text-secondary-foreground'
                                     onClick={() =>
                                         setIsAddSkillsModalOpen(true)
                                     }>

@@ -35,12 +35,12 @@ const DailyPrepEncouragement = ({
                             <span className='text-2xl'>
                                 {encouragementEmoji}
                             </span>
-                            <h3 className='text-lg font-bold text-black'>
+                            <h3 className='text-lg font-bold text-white'>
                                 Daily Prep Check-in
                             </h3>
                         </div>
 
-                        <p className='text-black font-medium mb-2'>
+                        <p className='text-white font-medium mb-2'>
                             {encouragementMessage}
                         </p>
 
@@ -81,7 +81,7 @@ const DailyPrepEncouragement = ({
                                 min-w-[140px] font-medium transition-all duration-300
                                 ${
                                     hasLoggedToday
-                                        ? "bg-green-600 hover:bg-green-700 text-black"
+                                        ? "bg-green-600 hover:bg-green-700 text-white"
                                         : "bg-primary hover:bg-primary/90 text-primary-foreground"
                                 }
                             `}

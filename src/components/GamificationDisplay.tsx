@@ -37,7 +37,7 @@ const GamificationDisplay = ({ userId }: { userId: string }) => {
     return (
         <div className='relative' ref={popoverRef}>
             <button
-                className='flex p-1 w-10 h-10 justify-center items-center rounded-full border-2 border-primary text-primary hover:text-black hover:bg-primary font-bold'
+                className='flex p-1 w-10 h-10 justify-center items-center rounded-full border-2 border-primary text-primary hover:text-white hover:bg-primary font-bold'
                 onClick={() => setOpen((v) => !v)}>
                 <span className='w-full h-full flex text-xs items-center justify-center'>
                     {points}
@@ -101,7 +101,7 @@ const GamificationDisplay = ({ userId }: { userId: string }) => {
                                     Level {currentLevel} : {currentLevelName}
                                 </span>
                                 {nextLevelName && (
-                                    <span className='mt-2 text-sm font-semibold text-black px-2 py-1 rounded-md bg-gradient-to-r from-pink-500 to-yellow-400'>
+                                    <span className='mt-2 text-sm font-semibold text-white px-2 py-1 rounded-md bg-gradient-to-r from-pink-500 to-yellow-400'>
                                         {pointsNeededForNextLevel} Points to{" "}
                                         {nextLevelName}
                                     </span>

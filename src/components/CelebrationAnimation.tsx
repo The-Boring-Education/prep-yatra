@@ -49,7 +49,7 @@ const CelebrationAnimation = ({
             <div className='absolute inset-0 flex items-center justify-center'>
                 <div className='bg-black/80 rounded-2xl p-8 text-center animate-pulse'>
                     <div className='text-6xl mb-4'>🎉</div>
-                    <div className='text-2xl font-bold text-black mb-2'>
+                    <div className='text-2xl font-bold text-white mb-2'>
                         +{pointsEarned} Points!
                     </div>
                     <div className='text-gray'>Great job! Keep it up!</div>

@@ -118,7 +118,7 @@ const AddPrepLogModal = ({
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className='sm:max-w-[600px] max-h-[90vh] overflow-y-auto glass-dark border-primary/20'>
                 <DialogHeader>
-                    <DialogTitle className='text-black'>
+                    <DialogTitle className='text-white'>
                         {editLog ? "✏️ Edit Prep Log" : "📝 Add New Prep Log"}
                     </DialogTitle>
                     <DialogDescription className='text-gray'>
@@ -139,7 +139,7 @@ const AddPrepLogModal = ({
                     />
 
                     <div className='flex gap-2 flex-col'>
-                        <Label htmlFor='description' className='text-black'>
+                        <Label htmlFor='description' className='text-white'>
                             Description
                         </Label>
                         <Textarea
@@ -149,7 +149,7 @@ const AddPrepLogModal = ({
                                 handleInputChange("description", e.target.value)
                             }
                             placeholder='Briefly describe your preparation work...'
-                            className='bg-gray-800 border-gray-600 text-black resize-none'
+                            className='bg-gray-800 border-gray-600 text-white resize-none'
                             rows={3}
                         />
                     </div>
@@ -169,7 +169,7 @@ const AddPrepLogModal = ({
                             type='button'
                             variant='outline'
                             onClick={onClose}
-                            className='border-gray-300 text-gray-900 hover:bg-gray-100'>
+                            className='border-gray-300 text-white hover:bg-gray-100'>
                             Cancel
                         </Button>
                         <Button

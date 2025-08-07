@@ -149,7 +149,7 @@ const AddRecruiterModal = ({
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className='sm:max-w-[600px] max-h-[90vh] overflow-y-auto glass-dark border-primary/20'>
                 <DialogHeader>
-                    <DialogTitle className='text-black'>
+                    <DialogTitle className='text-white'>
                         {editContact
                             ? "Edit Recruiter Contact"
                             : "Add New Recruiter Contact"}
@@ -201,7 +201,7 @@ const AddRecruiterModal = ({
                         <div className='flex gap-2 flex-col'>
                             <Label
                                 htmlFor='applicationStatus'
-                                className='text-black'>
+                                className='text-white'>
                                 Status
                             </Label>
                             <select
@@ -212,7 +212,7 @@ const AddRecruiterModal = ({
                                         e.target.value
                                     )
                                 }
-                                className='bg-gray-800 border border-primary/20 text-black rounded-md px-2 py-2'>
+                                className='bg-gray-800 border border-primary/20 text-white rounded-md px-2 py-2'>
                                 <option value='Screening in Process'>
                                     Screening in Process
                                 </option>
@@ -251,7 +251,7 @@ const AddRecruiterModal = ({
                         />
                     </div>
                     <div>
-                        <Label htmlFor='comments' className='text-black'>
+                        <Label htmlFor='comments' className='text-white'>
                             Comments
                         </Label>
                         <Textarea
@@ -261,7 +261,7 @@ const AddRecruiterModal = ({
                             onChange={(e) =>
                                 handleInputChange("comments", e.target.value)
                             }
-                            className='bg-gray-800 border-gray-600 text-black resize-none'
+                            className='bg-gray-800 border-gray-600 text-white resize-none'
                             rows={3}
                         />
                     </div>
@@ -270,7 +270,7 @@ const AddRecruiterModal = ({
                             type='button'
                             variant='outline'
                             onClick={onClose}
-                            className='border-gray-300 text-gray-900 hover:bg-gray-100'>
+                            className='border-gray-300 text-white hover:bg-gray-100'>
                             Cancel
                         </Button>
                         <Button

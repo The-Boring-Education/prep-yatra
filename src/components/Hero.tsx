@@ -28,7 +28,7 @@ const Hero = () => {
 
             <div className='container mx-auto text-center relative z-10'>
                 <div className='animate-fade-in'>
-                    <h1 className='text-4xl md:text-6xl lg:text-7xl font-bold text-black mb-6 leading-tight'>
+                    <h1 className='text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight'>
                         Turn{" "}
                         <span className='text-primary animate-pulse'>
                             Hustle
@@ -75,7 +75,7 @@ const Hero = () => {
                                 />
                             </svg>
                         </div>
-                        <h3 className='text-black font-semibold mb-2'>
+                        <h3 className='text-white font-semibold mb-2'>
                             📞 Recruiter Network
                         </h3>
                         <p className='text-gray text-sm'>
@@ -101,7 +101,7 @@ const Hero = () => {
                                 />
                             </svg>
                         </div>
-                        <h3 className='text-black font-semibold mb-2'>
+                        <h3 className='text-white font-semibold mb-2'>
                             📝 Prep Logs
                         </h3>
                         <p className='text-gray text-sm'>
@@ -127,7 +127,7 @@ const Hero = () => {
                                 />
                             </svg>
                         </div>
-                        <h3 className='text-black font-semibold mb-2'>
+                        <h3 className='text-white font-semibold mb-2'>
                             🔄 Resource Sharing
                         </h3>
                         <p className='text-gray text-sm'>

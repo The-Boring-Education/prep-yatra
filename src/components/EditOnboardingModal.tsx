@@ -183,7 +183,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className='max-w-2xl max-h-[90vh] overflow-y-auto bg-gray-900 border-gray-700'>
                 <DialogHeader>
-                    <DialogTitle className='text-black text-xl'>
+                    <DialogTitle className='text-white text-xl'>
                         Edit Onboarding Details
                     </DialogTitle>
                 </DialogHeader>
@@ -191,7 +191,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 <div className='space-y-6'>
                     {/* Social Links Section */}
                     <div className='space-y-3'>
-                        <h3 className='text-lg font-semibold text-black'>
+                        <h3 className='text-lg font-semibold text-white'>
                             Social Links
                         </h3>
                         <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
@@ -212,7 +212,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                             e.target.value
                                         )
                                     }
-                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-black focus:border-primary focus:ring-primary transition-all outline-none'
+                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
                                 />
                             </div>
                             {/* GitHub */}
@@ -232,7 +232,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                             e.target.value
                                         )
                                     }
-                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-black focus:border-primary focus:ring-primary transition-all outline-none'
+                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
                                 />
                             </div>
                             {/* LeetCode */}
@@ -252,7 +252,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                             e.target.value
                                         )
                                     }
-                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-black focus:border-primary focus:ring-primary transition-all outline-none'
+                                    className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
                                 />
                             </div>
                         </div>
@@ -260,7 +260,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
 
                     {/* Goal Selection */}
                     <div className='space-y-3'>
-                        <h3 className='text-lg font-semibold text-black'>
+                        <h3 className='text-lg font-semibold text-white'>
                             Goal Timeline 🎯
                         </h3>
                         <div className='space-y-2'>
@@ -277,7 +277,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                             : "border-gray-600 hover:border-gray-500 bg-gray-800/50"
                                     }`}>
                                     {goal.popular && (
-                                        <span className='absolute top-1 right-1 bg-orange-500 text-black text-xs px-2 py-1 rounded-full'>
+                                        <span className='absolute top-1 right-1 bg-orange-500 text-white text-xs px-2 py-1 rounded-full'>
                                             Popular
                                         </span>
                                     )}
@@ -286,7 +286,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                             {goal.icon}
                                         </span>
                                         <div>
-                                            <div className='font-medium text-black'>
+                                            <div className='font-medium text-white'>
                                                 {goal.label}
                                             </div>
                                             <div className='text-sm text-gray'>
@@ -301,7 +301,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
 
                     {/* Target Companies */}
                     <div className='space-y-3'>
-                        <h3 className='text-lg font-semibold text-black'>
+                        <h3 className='text-lg font-semibold text-white'>
                             Target Companies 🏢
                         </h3>
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
@@ -325,7 +325,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                     <div className='text-xl mb-1'>
                                         {company.icon}
                                     </div>
-                                    <div className='font-medium text-black text-sm mb-1'>
+                                    <div className='font-medium text-white text-sm mb-1'>
                                         {company.label}
                                     </div>
                                     <div className='text-xs text-gray'>
@@ -341,7 +341,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
 
                     {/* Interview Categories */}
                     <div className='space-y-3'>
-                        <h3 className='text-lg font-semibold text-black'>
+                        <h3 className='text-lg font-semibold text-white'>
                             Interview Category 📚
                         </h3>
                         <div className='grid grid-cols-1 sm:grid-cols-2 gap-3'>
@@ -365,7 +365,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                     <div className='text-xl mb-1'>
                                         {category.icon}
                                     </div>
-                                    <div className='font-medium text-black text-sm mb-1'>
+                                    <div className='font-medium text-white text-sm mb-1'>
                                         {category.label}
                                     </div>
                                     <div className='text-xs text-gray'>
@@ -390,7 +390,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                         <Button
                             onClick={onClose}
                             variant='outline'
-                            className='flex-1 border-gray-600 text-black hover:bg-gray-800 hover:text-black'>
+                            className='flex-1 border-gray-600 text-white hover:bg-gray-800 hover:text-white'>
                             Cancel
                         </Button>
                     </div>

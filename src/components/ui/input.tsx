@@ -38,7 +38,7 @@ const InputField = ({
     onChange: (field: string, value: string) => void
 }) => (
     <div className='flex gap-2 flex-col'>
-        <Label htmlFor={field} className='text-black'>
+        <Label htmlFor={field} className='text-white'>
             {label}
             {required && " *"}
         </Label>
@@ -49,7 +49,7 @@ const InputField = ({
             onChange={(e) => onChange(field, e.target.value)}
             required={required}
             placeholder={placeholder}
-            className='bg-gray-800 border-gray-600 text-black'
+            className='bg-gray-800 border-gray-600 text-white'
         />
     </div>
 )

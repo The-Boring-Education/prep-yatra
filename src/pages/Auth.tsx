@@ -55,7 +55,7 @@ const Auth = () => {
                             by The Boring Education
                         </span>
                     </div>
-                    <h1 className='text-2xl font-bold text-black mb-2'>
+                    <h1 className='text-2xl font-bold text-white mb-2'>
                         Welcome Back!
                     </h1>
                     <p className='text-gray'>

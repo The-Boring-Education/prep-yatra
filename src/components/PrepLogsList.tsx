@@ -70,11 +70,11 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
     if (logs.length === 0) {
         return (
             <div className='mt-8'>
-                <h2 className='text-2xl font-bold text-black mb-4'>
+                <h2 className='text-2xl font-bold text-white mb-4'>
                     📚 Your Prep Logs
                 </h2>
                 <div className='glass-dark rounded-2xl p-8 text-center'>
-                    <h3 className='text-xl font-bold text-black mb-2'>
+                    <h3 className='text-xl font-bold text-white mb-2'>
                         No PrepLogs Yet
                     </h3>
                     <p className='text-gray'>
@@ -89,7 +89,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
     return (
         <>
             <div className='mt-8'>
-                <h2 className='text-2xl font-bold text-black mb-4'>
+                <h2 className='text-2xl font-bold text-white mb-4'>
                     📚 Your Prep Logs
                 </h2>
 
@@ -99,7 +99,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                             key={log._id}
                             className='glass-dark border border-primary/20 hover:border-primary/40 transition-all'>
                             <CardHeader>
-                                <CardTitle className='text-black text-lg'>
+                                <CardTitle className='text-white text-lg'>
                                     {log.title}
                                 </CardTitle>
                                 <p className='text-sm text-gray-400'>
@@ -117,7 +117,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                     <Button
                                         size='sm'
                                         variant='outline'
-                                        className=''
+                                        className='bg-secondary text-secondary-foreground'
                                         onClick={() => openEditModal(log)}>
                                         ✏️ Edit
                                     </Button>
@@ -127,7 +127,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                             <Button
                                                 size='sm'
                                                 variant='outline'
-                                                className=''
+                                                className='bg-secondary text-secondary-foreground'
                                                 onClick={() =>
                                                     setDeleteId(log._id)
                                                 }>
@@ -136,7 +136,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                         </AlertDialogTrigger>
                                         <AlertDialogContent className='bg-gray-800 border-primary/20'>
                                             <AlertDialogHeader>
-                                                <AlertDialogTitle className='text-black'>
+                                                <AlertDialogTitle className='text-white'>
                                                     Delete Prep Log
                                                 </AlertDialogTitle>
                                                 <AlertDialogDescription className='text-gray'>
@@ -146,11 +146,11 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
-                                                <AlertDialogCancel className='bg-muted border-primary/20 bg-gray-800 text-black '>
+                                                <AlertDialogCancel className='bg-muted border-primary/20 bg-gray-800 text-white '>
                                                     Cancel
                                                 </AlertDialogCancel>
                                                 <AlertDialogAction
-                                                    className='bg-red-600 text-black hover:bg-red-700'
+                                                    className='bg-red-600 text-white hover:bg-red-700'
                                                     onClick={handleDelete}
                                                     disabled={isDeleting}>
                                                     {isDeleting
