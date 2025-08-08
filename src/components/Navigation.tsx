@@ -1,10 +1,10 @@
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/router"
 
 const Navigation = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const navigate = useNavigate()
+    const router = useRouter()
 
     const scrollToWaitlist = () => {
         const waitlistSection = document.getElementById("waitlist")
@@ -12,7 +12,7 @@ const Navigation = () => {
     }
 
     const handleGetStarted = () => {
-        navigate("/auth")
+        router.push("/auth")
     }
 
     return (
@@ -20,15 +20,13 @@ const Navigation = () => {
             <div className='container mx-auto px-4 sm:px-6 lg:px-8'>
                 <div className='flex items-center justify-between h-16'>
                     <div className='flex items-center'>
-                        <div className='flex-shrink-0'>
-                            <div className='text-center'>
-                                <span className='block text-2xl font-bold text-primary'>
-                                    PrepYatra
-                                </span>
-                                <span className='block text-xs text-gray-300 -mt-1'>
-                                    by The Boring Education
-                                </span>
-                            </div>
+                        <div className='text-left gap-2'>
+                            <span className='block text-2xl font-bold text-primary'>
+                                PrepYatra
+                            </span>
+                            <span className='block text-xs text-gray -mt-1'>
+                                by The Boring Education
+                            </span>
                         </div>
                     </div>
 

@@ -21,14 +21,14 @@ export function usePrepLogs(userId: string) {
     const [logs, setLogs] = useState<PrepLog[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [refreshTrigger, setRefreshTrigger] = useState(0)
 
-    useEffect(() => {
-        const fetchPrepLogs = async () => {
-            if (!userId) {
-                setError("User ID is required")
-                setLoading(false)
-                return
-            }
+    const fetchPrepLogs = async () => {
+        if (!userId) {
+            setError("User ID is required")
+            setLoading(false)
+            return
+        }
 
             try {
                 setLoading(true)
@@ -48,8 +48,9 @@ export function usePrepLogs(userId: string) {
             }
         }
 
+    useEffect(() => {
         fetchPrepLogs()
-    }, [userId])
+    }, [userId, refreshTrigger])
 
     // Calculate statistics
     const totalTimeSpent = logs.reduce(
@@ -113,9 +114,7 @@ export function usePrepLogs(userId: string) {
         streak,
         recentActivity,
         refetch: () => {
-            setLoading(true)
-            setError(null)
-            // This will trigger the useEffect again
+            setRefreshTrigger(prev => prev + 1)
         }
     }
 }

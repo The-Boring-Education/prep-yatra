@@ -5,7 +5,7 @@ export const prepLogsService = {
         try {
             const response = await fetch(
                 `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
                 }/prepyatra/prep-log?userId=${userId}`,
                 {
                     headers: {
@@ -39,7 +39,7 @@ export const prepLogsService = {
     }): Promise<PrepLog> {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/prepyatra/prep-log`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/prep-log`,
                 {
                     method: "POST",
                     headers: {
@@ -78,7 +78,7 @@ export const prepLogsService = {
     }): Promise<PrepLog> {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/prepyatra/prep-log`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/prep-log`,
                 {
                     method: "PUT",
                     headers: {
@@ -113,7 +113,7 @@ export const prepLogsService = {
         try {
             const response = await fetch(
                 `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
                 }/prepyatra/prep-log?prepLogId=${id}`,
                 {
                     method: "DELETE",

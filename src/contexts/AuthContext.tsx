@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState, ReactNode } from "react"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/router"
 
 export interface GoogleUser {
     sub: string
@@ -34,14 +34,49 @@ interface AuthProviderProps {
 const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const [user, setUser] = useState<User | null>(null)
     const [loading, setLoading] = useState(true)
-    const navigate = useNavigate()
+    const router = useRouter()
+
+    // Handle return from external onboarding app
+    useEffect(() => {
+        const handleOnboardingReturn = () => {
+            const urlParams = new URLSearchParams(window.location.search)
+            const onboardingReturn = urlParams.get('onboardingReturn')
+            const userId = urlParams.get('userId')
+            const redirect = urlParams.get('redirect')
+
+            if (onboardingReturn === 'success' && userId) {
+                // Clear the URL parameters
+                const newUrl = window.location.pathname
+                window.history.replaceState({}, document.title, newUrl)
+
+                // Check if user is authenticated
+                const storedUser = localStorage.getItem("auth_user")
+                if (storedUser) {
+                    const userData = JSON.parse(storedUser)
+                    setUser(userData)
+                    
+                    // Redirect to the specified URL or dashboard
+                    if (redirect) {
+                        router.push(redirect)
+                    } else {
+                        router.push("/dashboard")
+                    }
+                } else {
+                    // User not authenticated, redirect to auth
+                    router.push("/auth")
+                }
+            }
+        }
+
+        handleOnboardingReturn()
+    }, [router])
 
     const createUserInWebapp = async (
         googleUser: GoogleUser
     ): Promise<User> => {
         try {
             const res = await fetch(
-                `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user`,
                 {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -75,21 +110,32 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     }
 
-    const checkUserOnboarding = async (userEmail: string) => {
+    const checkUserOnboarding = async (userEmail: string, userId: string) => {
         try {
             const res = await fetch(
                 `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
                 }/user?email=${userEmail}`
             )
             const data = await res.json()
 
             if (data?.data?.prepYatra?.pyOnboarded) {
-                navigate("/dashboard")
-            } // else do nothing, let global logic handle onboarding
+                router.push("/dashboard")
+            } else {
+                // Redirect to external onboarding app
+                const onboardingUrl = process.env.NEXT_PUBLIC_ONBOARDING_APP_URL
+                if (onboardingUrl) {
+                    const redirectUrl = `${onboardingUrl}?userId=${userId}&from=prepyatra&redirect=${encodeURIComponent(window.location.origin + "/dashboard")}`
+                    window.location.href = redirectUrl
+                } else {
+                    // Fallback to internal onboarding if external URL is not configured
+                    router.push("/onboarding")
+                }
+            }
         } catch (error) {
             console.error("Error checking user onboarding:", error)
-            // Do not navigate to /onboarding on error
+            // Fallback to internal onboarding on error
+            router.push("/onboarding")
         }
     }
 
@@ -108,12 +154,12 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const redirectUrl = localStorage.getItem("redirectAfterLogin")
             if (redirectUrl) {
                 localStorage.removeItem("redirectAfterLogin")
-                navigate(redirectUrl)
+                router.push(redirectUrl)
                 return
             }
 
             // Check onboarding status and navigate accordingly
-            await checkUserOnboarding(userData.email)
+            await checkUserOnboarding(userData.email, userData.id)
         } catch (error) {
             console.error("Error signing in:", error)
             throw error
@@ -127,7 +173,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setUser(null)
             // Clear any stored auth data
             localStorage.removeItem("auth_user")
-            navigate("/auth")
+            router.push("/auth")
         } catch (error) {
             console.error("Error signing out:", error)
         }
@@ -145,7 +191,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
                 // Verify with backend
                 const res = await fetch(
-                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?email=${
+                    `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?email=${
                         userData.email
                     }`
                 )

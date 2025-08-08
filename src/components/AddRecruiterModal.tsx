@@ -102,9 +102,7 @@ const AddRecruiterModal = ({
             }
 
             const response = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/prepyatra/recruiter`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/recruiter`,
                 {
                     method: editContact ? "PUT" : "POST",
                     headers: {
@@ -156,7 +154,7 @@ const AddRecruiterModal = ({
                             ? "Edit Recruiter Contact"
                             : "Add New Recruiter Contact"}
                     </DialogTitle>
-                    <DialogDescription className='text-gray-300'>
+                    <DialogDescription className='text-gray'>
                         {editContact
                             ? "Update recruiter information and progress."
                             : "Add a new recruiter contact to your prep journey."}
@@ -272,7 +270,7 @@ const AddRecruiterModal = ({
                             type='button'
                             variant='outline'
                             onClick={onClose}
-                            className='border-gray-300 text-gray-900 hover:bg-gray-100'>
+                            className='border-gray-300 text-white hover:bg-gray-100'>
                             Cancel
                         </Button>
                         <Button

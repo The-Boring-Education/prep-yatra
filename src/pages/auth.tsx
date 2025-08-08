@@ -1,11 +1,11 @@
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/router"
 import { Button } from "@/components/ui/button"
 import { useGoogleLogin } from "@react-oauth/google"
 import { useAuth } from "@/contexts/useAuth"
 import InstallButton from "@/components/InstallButton"
 
 const Auth = () => {
-    const navigate = useNavigate()
+    const router = useRouter()
     const { signIn, loading } = useAuth()
 
     const login = useGoogleLogin({
@@ -51,14 +51,14 @@ const Auth = () => {
                         <span className='block text-3xl font-bold text-primary'>
                             PrepYatra
                         </span>
-                        <span className='block text-sm text-gray-300 mt-1'>
+                        <span className='block text-sm text-gray mt-1'>
                             by The Boring Education
                         </span>
                     </div>
                     <h1 className='text-2xl font-bold text-white mb-2'>
                         Welcome Back!
                     </h1>
-                    <p className='text-gray-300'>
+                    <p className='text-gray'>
                         Sign in to continue your journey
                     </p>
                 </div>

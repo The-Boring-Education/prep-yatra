@@ -41,6 +41,13 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
         setIsEditModalOpen(true)
     }
 
+    const handleModalClose = () => {
+        setIsEditModalOpen(false)
+        setSelectedLog(null)
+        // Trigger parent refresh when modal closes
+        onLogUpdated()
+    }
+
     const handleDelete = async () => {
         if (!deleteId) return
 
@@ -77,7 +84,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                     <h3 className='text-xl font-bold text-white mb-2'>
                         No PrepLogs Yet
                     </h3>
-                    <p className='text-gray-300'>
+                    <p className='text-gray'>
                         Start building your recruiter network by adding your
                         first contact!
                     </p>
@@ -110,14 +117,14 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                 </p>
                             </CardHeader>
                             <CardContent>
-                                <p className='text-gray-300 mb-4'>
+                                <p className='text-gray mb-4'>
                                     {log.description || "No description"}
                                 </p>
                                 <div className='flex gap-2'>
                                     <Button
                                         size='sm'
                                         variant='outline'
-                                        className=''
+                                        className='bg-secondary text-secondary-foreground'
                                         onClick={() => openEditModal(log)}>
                                         ✏️ Edit
                                     </Button>
@@ -127,7 +134,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                             <Button
                                                 size='sm'
                                                 variant='outline'
-                                                className=''
+                                                className='bg-secondary text-secondary-foreground'
                                                 onClick={() =>
                                                     setDeleteId(log._id)
                                                 }>
@@ -139,7 +146,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                                 <AlertDialogTitle className='text-white'>
                                                     Delete Prep Log
                                                 </AlertDialogTitle>
-                                                <AlertDialogDescription className='text-gray-300'>
+                                                <AlertDialogDescription className='text-gray'>
                                                     Are you sure you want to
                                                     delete this prep log? This
                                                     action cannot be undone.
@@ -168,8 +175,9 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
             </div>
 
             <AddPrepLogModal
+                key={`edit-prep-log-${selectedLog?._id || 'new'}`}
                 isOpen={isEditModalOpen}
-                onClose={() => setIsEditModalOpen(false)}
+                onClose={handleModalClose}
                 onLogAdded={onLogUpdated}
                 mongoUserId={mongoUserId}
                 editLog={selectedLog}

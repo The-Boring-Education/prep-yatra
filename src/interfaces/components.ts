@@ -27,11 +27,6 @@ interface NavbarProps {
     userId?: string
 }
 
-
-
-
-
-
 export type {
     CelebrationAnimationProps,
     GamificationBadgeProps,

@@ -121,7 +121,7 @@ const AddPrepLogModal = ({
                     <DialogTitle className='text-white'>
                         {editLog ? "✏️ Edit Prep Log" : "📝 Add New Prep Log"}
                     </DialogTitle>
-                    <DialogDescription className='text-gray-300'>
+                    <DialogDescription className='text-gray'>
                         {editLog
                             ? "Update your existing preparation log entry."
                             : "Log your daily preparation efforts."}
@@ -169,7 +169,7 @@ const AddPrepLogModal = ({
                             type='button'
                             variant='outline'
                             onClick={onClose}
-                            className='border-gray-300 text-gray-900 hover:bg-gray-100'>
+                            className='border-gray-300 text-white hover:bg-gray-100'>
                             Cancel
                         </Button>
                         <Button

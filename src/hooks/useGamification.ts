@@ -46,7 +46,7 @@ export function useGamification(userId?: string) {
         try {
             const res = await fetch(
                 `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
+                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
                 }/gamification?userId=${userId}`
             )
             const result = await res.json()

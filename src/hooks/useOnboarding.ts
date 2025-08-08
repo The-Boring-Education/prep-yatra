@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/router"
 import { useToast } from "@/hooks/use-toast"
 import { OnboardingData } from "@/types/onboarding"
 import { useAuth } from "@/contexts/useAuth"
@@ -7,15 +7,15 @@ import { useAuth } from "@/contexts/useAuth"
 // Debug function to help identify issues
 const debugOnboardingConfig = () => {
     console.log("=== Onboarding Debug Info ===")
-    console.log("API URL:", import.meta.env.VITE_TBE_WEBAPP_API_URL)
-    console.log("Environment:", import.meta.env.MODE)
+    console.log("API URL:", process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL)
+    console.log("Environment:", process.env.NODE_ENV)
     console.log("User Agent:", navigator.userAgent)
     console.log("Online Status:", navigator.onLine)
     console.log("===========================")
 }
 
 export function useOnboarding() {
-    const navigate = useNavigate()
+    const router = useRouter()
     const { toast } = useToast()
     const { user } = useAuth()
     const [centralUserId, setCentralUserId] = useState<string | null>(null)
@@ -38,7 +38,7 @@ export function useOnboarding() {
     useEffect(() => {
         const checkAuthAndFetchCentralUser = async () => {
             if (!user) {
-                navigate("/auth")
+                router.push("/auth")
                 return
             }
 
@@ -48,7 +48,7 @@ export function useOnboarding() {
             try {
                 console.log("Checking user in central DB:", user.email)
                 const res = await fetch(
-                    `${import.meta.env.VITE_TBE_WEBAPP_API_URL}/user?email=${
+                    `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?email=${
                         user.email
                     }`
                 )
@@ -98,12 +98,12 @@ export function useOnboarding() {
                     description: errorMessage,
                     variant: "destructive"
                 })
-                navigate("/auth")
+                router.push("/auth")
             }
         }
 
         checkAuthAndFetchCentralUser()
-    }, [navigate, toast])
+    }, [router, user])
 
     const handleInputChange = (
         field: keyof OnboardingData,
@@ -222,8 +222,8 @@ export function useOnboarding() {
                 )
                 const step1Response = await fetch(
                     `${
-                        import.meta.env.VITE_TBE_WEBAPP_API_URL
-                    }/user/onbording?userId=${centralUserId}`,
+                        process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
+                    }/user/onboarding?userId=${centralUserId}`,
                     {
                         method: "PUT",
                         headers: { "Content-Type": "application/json" },
@@ -273,7 +273,7 @@ export function useOnboarding() {
 
                 const prepYatraResponse = await fetch(
                     `${
-                        import.meta.env.VITE_TBE_WEBAPP_API_URL
+                        process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
                     }/prepyatra/onboarding`,
                     {
                         method: "POST",
@@ -309,7 +309,7 @@ export function useOnboarding() {
                     title: "Welcome to PrepYatra!",
                     description: "Your profile has been set up successfully."
                 })
-                navigate("/dashboard")
+                router.push("/dashboard")
             } catch (error) {
                 console.error(`Onboarding error (attempt ${attempt}):`, error)
 

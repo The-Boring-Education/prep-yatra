@@ -20,4 +20,4 @@ export interface OnboardingData {
   goal: GoalType;
   targetCompanies: CompanyType[];
   preferredCategories: InterviewCategory[];
-} 
+}

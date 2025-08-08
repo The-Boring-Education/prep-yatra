@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/router"
 
 const Hero = () => {
-    const navigate = useNavigate()
+    const router = useRouter()
 
     const scrollToWaitlist = () => {
         const waitlistSection = document.getElementById("waitlist")
@@ -10,7 +10,7 @@ const Hero = () => {
     }
 
     const handleGetStarted = () => {
-        navigate("/auth")
+        router.push("/auth")
     }
 
     return (
@@ -40,7 +40,7 @@ const Hero = () => {
                         </span>
                     </h1>
 
-                    <p className='text-xl md:text-2xl text-gray-300 mb-8 max-w-4xl mx-auto animate-slide-in-left'>
+                    <p className='text-xl md:text-2xl text-gray mb-8 max-w-4xl mx-auto animate-slide-in-left'>
                         The ultimate community platform for job hunters to store
                         recruiter contacts, share prep logs, and crowdsource
                         resources together.
@@ -78,7 +78,7 @@ const Hero = () => {
                         <h3 className='text-white font-semibold mb-2'>
                             📞 Recruiter Network
                         </h3>
-                        <p className='text-gray-300 text-sm'>
+                        <p className='text-gray text-sm'>
                             Build and manage your professional recruiter
                             contacts database
                         </p>
@@ -104,7 +104,7 @@ const Hero = () => {
                         <h3 className='text-white font-semibold mb-2'>
                             📝 Prep Logs
                         </h3>
-                        <p className='text-gray-300 text-sm'>
+                        <p className='text-gray text-sm'>
                             Track your interview preparation progress and
                             learnings
                         </p>
@@ -130,7 +130,7 @@ const Hero = () => {
                         <h3 className='text-white font-semibold mb-2'>
                             🔄 Resource Sharing
                         </h3>
-                        <p className='text-gray-300 text-sm'>
+                        <p className='text-gray text-sm'>
                             Share and discover valuable job search resources
                             with the community
                         </p>

@@ -15,11 +15,12 @@ import {
     OnboardingData,
     GoalType,
     CompanyType,
-    InterviewCategory
+    InterviewCategory,
+    ExperienceLevel
 } from "@/types/onboarding"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/contexts/useAuth"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Linkedin, Github } from "lucide-react"
 
 interface EditOnboardingModalProps {
     isOpen: boolean
@@ -43,16 +44,16 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         workDomain: "",
         name: "",
         username: "",
-        experienceLevel: "fresher",
-        goal: "6Months",
-        targetCompanies: [],
-        preferredCategories: []
+        experienceLevel: "fresher" as ExperienceLevel,
+        goal: "6Months" as GoalType,
+        targetCompanies: [] as CompanyType[],
+        preferredCategories: [] as InterviewCategory[]
     })
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         if (currentData) {
-            setFormData({
+            const newFormData = {
                 linkedInUrl: currentData.linkedInUrl || "",
                 githubUrl: currentData.githubUrl || "",
                 leetCodeUrl: currentData.leetCodeUrl || "",
@@ -60,25 +61,27 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 name: currentData.name || user?.name || "",
                 username:
                     currentData.username || user?.email?.split("@")[0] || "",
-                experienceLevel: currentData.experienceLevel || "fresher",
-                goal: currentData.goal || "6Months",
-                targetCompanies: currentData.targetCompanies || [],
-                preferredCategories: currentData.interviewCategories || []
-            })
+                experienceLevel: (currentData.prepYatra?.experienceLevel || "fresher") as ExperienceLevel,
+                goal: (currentData.prepYatra?.goal || "6Months") as GoalType,
+                targetCompanies: (currentData.prepYatra?.targetCompanies || []) as CompanyType[],
+                preferredCategories: (currentData.prepYatra?.preferences?.interviewCategories || []) as InterviewCategory[]
+            }
+            setFormData(newFormData)
         } else {
             // Set default values for new users
-            setFormData({
+            const defaultFormData = {
                 linkedInUrl: "",
                 githubUrl: "",
                 leetCodeUrl: "",
-                workDomain:"",
+                workDomain: "",
                 name: user?.name || "",
                 username: user?.email?.split("@")[0] || "",
-                experienceLevel: "fresher",
-                goal: "6Months",
-                targetCompanies: [],
-                preferredCategories: []
-            })
+                experienceLevel: "fresher" as ExperienceLevel,
+                goal: "6Months" as GoalType,
+                targetCompanies: [] as CompanyType[],
+                preferredCategories: [] as InterviewCategory[]
+            }
+            setFormData(defaultFormData)
         }
     }, [currentData, user])
 
@@ -127,9 +130,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
             }
 
             const response = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/prepyatra/onboarding`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/onboarding`,
                 {
                     method: "POST",
                     headers: {
@@ -199,40 +200,64 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                         <div className='grid grid-cols-1 sm:grid-cols-3 gap-4'>
                             {/* LinkedIn */}
                             <div>
-                                <label htmlFor='linkedInUrl' className='block text-xs font-medium text-gray-400 mb-1'>
+                                <label
+                                    htmlFor='linkedInUrl'
+                                    className='block text-xs font-medium text-gray-400 mb-1 flex items-center gap-2'>
+                                    <Linkedin className='w-4 h-4' />
                                     LinkedIn URL
                                 </label>
                                 <input
                                     id='linkedInUrl'
                                     type='url'
                                     value={formData.linkedInUrl}
-                                    onChange={e => handleInputChange('linkedInUrl', e.target.value)}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            "linkedInUrl",
+                                            e.target.value
+                                        )
+                                    }
                                     className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
                                 />
                             </div>
                             {/* GitHub */}
                             <div>
-                                <label htmlFor='githubUrl' className='block text-xs font-medium text-gray-400 mb-1'>
+                                <label
+                                    htmlFor='githubUrl'
+                                    className='block text-xs font-medium text-gray-400 mb-1 flex items-center gap-2'>
+                                    <Github className='w-4 h-4' />
                                     GitHub URL
                                 </label>
                                 <input
                                     id='githubUrl'
                                     type='url'
-                                    value={formData.githubUrl || ''}
-                                    onChange={e => handleInputChange('githubUrl', e.target.value)}
+                                    value={formData.githubUrl || ""}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            "githubUrl",
+                                            e.target.value
+                                        )
+                                    }
                                     className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
                                 />
                             </div>
                             {/* LeetCode */}
                             <div>
-                                <label htmlFor='leetCodeUrl' className='block text-xs font-medium text-gray-400 mb-1'>
+                                <label
+                                    htmlFor='leetCodeUrl'
+                                    className='block text-xs font-medium text-gray-400 mb-1 flex items-center gap-2'>
+                                    <ExternalLink className='w-4 h-4' />
                                     LeetCode URL
                                 </label>
                                 <input
                                     id='leetCodeUrl'
                                     type='url'
-                                    value={formData.leetCodeUrl || ''}
-                                    onChange={e => handleInputChange('leetCodeUrl', e.target.value)}
+                                    value={formData.leetCodeUrl || ""}
+                                    onChange={(e) =>
+                                        handleInputChange(
+                                            "leetCodeUrl",
+                                            e.target.value
+                                        )
+                                    }
                                     className='px-3 py-2 block w-full rounded-lg border border-gray-600 bg-gray-800/60 text-white focus:border-primary focus:ring-primary transition-all outline-none'
                                 />
                             </div>
@@ -270,7 +295,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                             <div className='font-medium text-white'>
                                                 {goal.label}
                                             </div>
-                                            <div className='text-sm text-gray-300'>
+                                            <div className='text-sm text-gray'>
                                                 {goal.description}
                                             </div>
                                         </div>
@@ -309,7 +334,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                     <div className='font-medium text-white text-sm mb-1'>
                                         {company.label}
                                     </div>
-                                    <div className='text-xs text-gray-300'>
+                                    <div className='text-xs text-gray'>
                                         {company.description}
                                     </div>
                                 </button>
@@ -349,7 +374,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                     <div className='font-medium text-white text-sm mb-1'>
                                         {category.label}
                                     </div>
-                                    <div className='text-xs text-gray-300'>
+                                    <div className='text-xs text-gray'>
                                         {category.description}
                                     </div>
                                 </button>
@@ -371,7 +396,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                         <Button
                             onClick={onClose}
                             variant='outline'
-                            className='flex-1 border-gray-600 text-black hover:bg-gray-800 hover:text-white'>
+                            className='flex-1 border-gray-600 text-white hover:bg-gray-800 hover:text-white'>
                             Cancel
                         </Button>
                     </div>

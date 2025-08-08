@@ -60,6 +60,15 @@ const RecruiterContactsTable = ({
     const [editingContact, setEditingContact] =
         useState<RecruiterContact | null>(null)
     const [isModalOpen, setIsModalOpen] = useState(false)
+    const [hideInactiveContacts, setHideInactiveContacts] = useState(false)
+
+    const visibleContacts = hideInactiveContacts
+        ? contacts.filter(
+              (c) =>
+                  c.applicationStatus !== "Rejected" &&
+                  c.applicationStatus !== "Not Interested"
+          )
+        : contacts
 
     const getStatusColor = (status?: string) => {
         switch (status) {
@@ -81,9 +90,7 @@ const RecruiterContactsTable = ({
     const handleDelete = async (recruiterId: string) => {
         try {
             const res = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/prepyatra/recruiter?recruiterId=${recruiterId}`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/recruiter?recruiterId=${recruiterId}`,
                 {
                     method: "DELETE"
                 }
@@ -99,6 +106,7 @@ const RecruiterContactsTable = ({
             })
 
             if (onContactDeleted) onContactDeleted()
+            if (onContactUpdated) onContactUpdated()
         } catch (error) {
             toast({
                 title: "Error",
@@ -114,9 +122,7 @@ const RecruiterContactsTable = ({
     ) => {
         try {
             const res = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/prepyatra/recruiter`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/recruiter`,
                 {
                     method: "PUT",
                     headers: {
@@ -155,9 +161,7 @@ const RecruiterContactsTable = ({
     ) => {
         try {
             const res = await fetch(
-                `${
-                    import.meta.env.VITE_TBE_WEBAPP_API_URL
-                }/prepyatra/recruiter`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/recruiter`,
                 {
                     method: "PUT",
                     headers: {
@@ -197,6 +201,10 @@ const RecruiterContactsTable = ({
     const handleModalClose = () => {
         setEditingContact(null)
         setIsModalOpen(false)
+        // Trigger parent refresh when modal closes
+        if (onContactUpdated) {
+            onContactUpdated()
+        }
     }
 
     const openEmail = (email?: string) => {
@@ -224,7 +232,7 @@ const RecruiterContactsTable = ({
                 <h3 className='text-xl font-bold text-white mb-2'>
                     No Contacts Yet
                 </h3>
-                <p className='text-gray-300'>
+                <p className='text-gray'>
                     Start building your recruiter network by adding your first
                     contact!
                 </p>
@@ -239,12 +247,25 @@ const RecruiterContactsTable = ({
                     <h3 className='text-xl font-bold text-white'>
                         Your Recruiter Network
                     </h3>
-                    <Badge
-                        variant='secondary'
-                        className='bg-primary/20 text-primary'>
-                        {contacts.length} Contact
-                        {contacts.length !== 1 ? "s" : ""}
-                    </Badge>
+
+                    <div className='flex items-center gap-8'>
+                        <Button
+                            onClick={() =>
+                                setHideInactiveContacts((prev) => !prev)
+                            }
+                            variant='default'>
+                            {hideInactiveContacts
+                                ? "Show All Contacts"
+                                : "Hide Inactive Contacts"}
+                        </Button>
+
+                        <Badge
+                            variant='secondary'
+                            className='bg-primary/20 text-primary'>
+                            {visibleContacts.length} Contact
+                            {visibleContacts.length !== 1 ? "s" : ""}
+                        </Badge>
+                    </div>
                 </div>
 
                 <div className='overflow-x-auto'>
@@ -278,14 +299,14 @@ const RecruiterContactsTable = ({
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {contacts.map((contact) => (
+                            {visibleContacts.map((contact) => (
                                 <TableRow
                                     key={contact._id}
                                     className='border-primary/10 hover:bg-primary/5 transition-colors'>
                                     <TableCell className='text-white font-medium'>
                                         {contact.recruiterName}
                                     </TableCell>
-                                    <TableCell className='text-gray-300'>
+                                    <TableCell className='text-gray'>
                                         <div className='flex flex-col gap-1'>
                                             {contact.email && (
                                                 <div className='text-sm'>
@@ -380,12 +401,12 @@ const RecruiterContactsTable = ({
                                             portalId='recruiter-datepicker-portal'
                                         />
                                     </TableCell>
-                                    <TableCell className='text-gray-300 max-w-xs'>
+                                    <TableCell className='text-gray max-w-xs'>
                                         <div className='line-clamp-2 whitespace-pre-line break-words'>
                                             {contact.company || "-"}
                                         </div>
                                     </TableCell>
-                                    <TableCell className='text-gray-300 max-w-xs'>
+                                    <TableCell className='text-gray max-w-xs'>
                                         <div className='line-clamp-2 whitespace-pre-line break-words'>
                                             {contact.comments || "-"}
                                         </div>
@@ -453,7 +474,7 @@ const RecruiterContactsTable = ({
                                                         <AlertDialogTitle className='text-white'>
                                                             Delete Contact
                                                         </AlertDialogTitle>
-                                                        <AlertDialogDescription className='text-gray-300'>
+                                                        <AlertDialogDescription className='text-gray'>
                                                             Are you sure you
                                                             want to delete this
                                                             contact? This action
@@ -486,6 +507,7 @@ const RecruiterContactsTable = ({
             </div>
 
             <AddRecruiterModal
+                key={`edit-recruiter-${editingContact?._id || 'new'}`}
                 isOpen={isModalOpen}
                 onClose={handleModalClose}
                 onContactAdded={onContactAdded}
