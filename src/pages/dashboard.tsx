@@ -316,6 +316,7 @@ const Dashboard = () => {
                                         <Button
                                             variant='outline'
                                             size='sm'
+                                            className='border-gray-600 hover:border-gray-500 bg-gray-800/50 hover:bg-gray-700/50'
                                             asChild>
                                             <a
                                                 href={withProtocol(
@@ -323,7 +324,7 @@ const Dashboard = () => {
                                                 )}
                                                 target='_blank'
                                                 rel='noopener noreferrer'>
-                                                <Linkedin className='w-4 h-4' />
+                                                <Linkedin className='w-4 h-4 text-white' />
                                             </a>
                                         </Button>
                                     )}
@@ -331,6 +332,7 @@ const Dashboard = () => {
                                         <Button
                                             variant='outline'
                                             size='sm'
+                                            className='border-gray-600 hover:border-gray-500 bg-gray-800/50 hover:bg-gray-700/50'
                                             asChild>
                                             <a
                                                 href={withProtocol(
@@ -338,7 +340,7 @@ const Dashboard = () => {
                                                 )}
                                                 target='_blank'
                                                 rel='noopener noreferrer'>
-                                                <Github className='w-4 h-4' />
+                                                <Github className='w-4 h-4 text-white' />
                                             </a>
                                         </Button>
                                     )}
@@ -346,6 +348,7 @@ const Dashboard = () => {
                                         <Button
                                             variant='outline'
                                             size='sm'
+                                            className='border-gray-600 hover:border-gray-500 bg-gray-800/50 hover:bg-gray-700/50'
                                             asChild>
                                             <a
                                                 href={withProtocol(
@@ -353,7 +356,7 @@ const Dashboard = () => {
                                                 )}
                                                 target='_blank'
                                                 rel='noopener noreferrer'>
-                                                <ExternalLink className='w-4 h-4' />
+                                                <ExternalLink className='w-4 h-4 text-white' />
                                             </a>
                                         </Button>
                                     )}

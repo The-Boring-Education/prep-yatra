@@ -15,11 +15,12 @@ import {
     OnboardingData,
     GoalType,
     CompanyType,
-    InterviewCategory
+    InterviewCategory,
+    ExperienceLevel
 } from "@/types/onboarding"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/contexts/useAuth"
-import { ExternalLink } from "lucide-react"
+import { ExternalLink, Linkedin, Github } from "lucide-react"
 
 interface EditOnboardingModalProps {
     isOpen: boolean
@@ -43,16 +44,16 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         workDomain: "",
         name: "",
         username: "",
-        experienceLevel: "fresher",
-        goal: "6Months",
-        targetCompanies: [],
-        preferredCategories: []
+        experienceLevel: "fresher" as ExperienceLevel,
+        goal: "6Months" as GoalType,
+        targetCompanies: [] as CompanyType[],
+        preferredCategories: [] as InterviewCategory[]
     })
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
         if (currentData) {
-            setFormData({
+            const newFormData = {
                 linkedInUrl: currentData.linkedInUrl || "",
                 githubUrl: currentData.githubUrl || "",
                 leetCodeUrl: currentData.leetCodeUrl || "",
@@ -60,25 +61,27 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 name: currentData.name || user?.name || "",
                 username:
                     currentData.username || user?.email?.split("@")[0] || "",
-                experienceLevel: currentData.experienceLevel || "fresher",
-                goal: currentData.goal || "6Months",
-                targetCompanies: currentData.targetCompanies || [],
-                preferredCategories: currentData.interviewCategories || []
-            })
+                experienceLevel: (currentData.prepYatra?.experienceLevel || "fresher") as ExperienceLevel,
+                goal: (currentData.prepYatra?.goal || "6Months") as GoalType,
+                targetCompanies: (currentData.prepYatra?.targetCompanies || []) as CompanyType[],
+                preferredCategories: (currentData.prepYatra?.preferences?.interviewCategories || []) as InterviewCategory[]
+            }
+            setFormData(newFormData)
         } else {
             // Set default values for new users
-            setFormData({
+            const defaultFormData = {
                 linkedInUrl: "",
                 githubUrl: "",
                 leetCodeUrl: "",
                 workDomain: "",
                 name: user?.name || "",
                 username: user?.email?.split("@")[0] || "",
-                experienceLevel: "fresher",
-                goal: "6Months",
-                targetCompanies: [],
-                preferredCategories: []
-            })
+                experienceLevel: "fresher" as ExperienceLevel,
+                goal: "6Months" as GoalType,
+                targetCompanies: [] as CompanyType[],
+                preferredCategories: [] as InterviewCategory[]
+            }
+            setFormData(defaultFormData)
         }
     }, [currentData, user])
 
@@ -199,7 +202,8 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                             <div>
                                 <label
                                     htmlFor='linkedInUrl'
-                                    className='block text-xs font-medium text-gray-400 mb-1'>
+                                    className='block text-xs font-medium text-gray-400 mb-1 flex items-center gap-2'>
+                                    <Linkedin className='w-4 h-4' />
                                     LinkedIn URL
                                 </label>
                                 <input
@@ -219,7 +223,8 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                             <div>
                                 <label
                                     htmlFor='githubUrl'
-                                    className='block text-xs font-medium text-gray-400 mb-1'>
+                                    className='block text-xs font-medium text-gray-400 mb-1 flex items-center gap-2'>
+                                    <Github className='w-4 h-4' />
                                     GitHub URL
                                 </label>
                                 <input
@@ -239,7 +244,8 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                             <div>
                                 <label
                                     htmlFor='leetCodeUrl'
-                                    className='block text-xs font-medium text-gray-400 mb-1'>
+                                    className='block text-xs font-medium text-gray-400 mb-1 flex items-center gap-2'>
+                                    <ExternalLink className='w-4 h-4' />
                                     LeetCode URL
                                 </label>
                                 <input
