@@ -26,6 +26,7 @@ import {
     MessageSquare,
     Plus,
     Settings,
+    Share,
     Users
 } from "lucide-react"
 
@@ -402,6 +403,18 @@ const Dashboard = () => {
                                     }>
                                     <Settings className='w-4 h-4 mr-2' />
                                     Edit Profile
+                                </Button>
+                                
+                                <Button
+                                    variant='outline'
+                                    className='w-full mt-3 border-gray-600 text-white hover:bg-gray-800 hover:text-white'
+                                    onClick={() => {
+                                        const journeyUrl = `${window.location.origin}/journey/${user?.id}`
+                                        navigator.clipboard.writeText(journeyUrl)
+                                        toast.success("Journey link copied to clipboard!")
+                                    }}>
+                                    <Share className='w-4 h-4 mr-2' />
+                                    Share Journey
                                 </Button>
                             </CardContent>
                         </Card>
