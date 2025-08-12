@@ -7,6 +7,7 @@ export interface PrepLog {
     title: string
     description?: string
     timeSpent: number
+    mentorFeedback?: string
     createdAt: string
     updatedAt: string
     __v: number

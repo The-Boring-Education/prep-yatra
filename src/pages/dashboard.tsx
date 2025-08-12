@@ -489,6 +489,30 @@ const Dashboard = () => {
                                     </Button>
                                 </div>
 
+                                {/* Mentor Feedback Section */}
+                                {logs?.some((l) => (l as any).mentorFeedback) && (
+                                    <div className='rounded-lg border border-purple-500/30 bg-purple-900/20 p-4'>
+                                        <div className='text-sm font-semibold text-purple-200 mb-2'>
+                                            Mentor Feedback
+                                        </div>
+                                        <div className='space-y-3'>
+                                            {logs
+                                                .filter((l: any) => l.mentorFeedback)
+                                                .slice(0, 3)
+                                                .map((l: any) => (
+                                                    <div key={l._id} className='p-3 rounded-md bg-purple-900/30 border border-purple-500/20'>
+                                                        <div className='text-xs text-purple-300 mb-1'>
+                                                            {new Date(l.createdAt).toLocaleDateString()}
+                                                        </div>
+                                                        <div className='text-sm text-purple-100 whitespace-pre-line'>
+                                                            {l.mentorFeedback}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    </div>
+                                )}
+
                                 <Suspense fallback={<ComponentLoader />}>
                                     <PrepLogsList
                                         key={`prep-logs-${refreshTrigger}`}
