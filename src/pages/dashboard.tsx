@@ -48,8 +48,12 @@ const BuildYourStack = lazy(() => import("@/components/BuildYourStack"))
 const DailyPrepEncouragement = lazy(
     () => import("@/components/DailyPrepEncouragement")
 )
+const SubscriptionInterestPopover = lazy(
+    () => import("@/components/SubscriptionInterestPopover")
+)
 const AddSkillsModal = lazy(() => import("@/components/AddSkillsModal"))
 const UserSkillsShowcase = lazy(() => import("@/components/UserSkillsShowcase"))
+const ChallengeSection = lazy(() => import("@/components/ChallengeSection"))
 
 // Loading component for Suspense fallback
 const ComponentLoader = () => (
@@ -287,6 +291,10 @@ const Dashboard = () => {
                 />
             </Suspense>
 
+            <Suspense fallback={null}>
+                <SubscriptionInterestPopover />
+            </Suspense>
+
             <main className='container mx-auto px-4 py-8'>
                 <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
                     {/* Profile Section */}
@@ -463,8 +471,11 @@ const Dashboard = () => {
                         </Suspense>
 
                         {/* Tabs for different sections */}
-                        <Tabs defaultValue='prep-logs' className='w-full'>
-                            <TabsList className='grid w-full grid-cols-2'>
+                        <Tabs defaultValue='challenges' className='w-full'>
+                            <TabsList className='grid w-full grid-cols-3'>
+                                <TabsTrigger value='challenges'>
+                                    Challenges
+                                </TabsTrigger>
                                 <TabsTrigger value='prep-logs'>
                                     Prep Logs
                                 </TabsTrigger>
@@ -472,6 +483,16 @@ const Dashboard = () => {
                                     Recruiters
                                 </TabsTrigger>
                             </TabsList>
+
+                            <TabsContent
+                                value='challenges'
+                                className='space-y-4'>
+                                <Suspense fallback={<ComponentLoader />}>
+                                    <ChallengeSection
+                                        userId={user?.id || ""}
+                                    />
+                                </Suspense>
+                            </TabsContent>
 
                             <TabsContent
                                 value='prep-logs'
