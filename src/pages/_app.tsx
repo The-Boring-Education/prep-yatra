@@ -9,6 +9,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google"
 import { GamificationProvider } from "@/contexts/GamificationContext"
 import AuthProvider from "@/contexts/AuthContext"
 import "@/styles/globals.css"
+import { initGA, installGlobalListeners, trackPageview } from "@/lib/analytics"
+import { useRouter } from "next/router"
 
 // Simple error boundary component
 class ErrorBoundary extends React.Component<
@@ -120,6 +122,19 @@ const CacheManager = () => {
 }
 
 export default function App({ Component, pageProps }: AppProps) {
+    const router = useRouter()
+
+    useEffect(() => {
+        initGA()
+        installGlobalListeners()
+        trackPageview(router.asPath)
+        const handleRouteChange = (url: string) => trackPageview(url)
+        router.events.on("routeChangeComplete", handleRouteChange)
+        return () => {
+            router.events.off("routeChangeComplete", handleRouteChange)
+        }
+    }, [router])
+
     return (
         <ErrorBoundary>
             <Head>

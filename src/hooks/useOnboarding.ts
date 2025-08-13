@@ -3,6 +3,7 @@ import { useRouter } from "next/router"
 import { useToast } from "@/hooks/use-toast"
 import { OnboardingData } from "@/types/onboarding"
 import { useAuth } from "@/contexts/useAuth"
+import { trackEvent } from "@/lib/analytics"
 
 // Debug function to help identify issues
 const debugOnboardingConfig = () => {
@@ -148,6 +149,12 @@ export function useOnboarding() {
 
     const handleNext = () => {
         if (currentStep < totalSteps) {
+            try {
+                trackEvent("onboarding_next", {
+                    category: "onboarding",
+                    step: currentStep
+                })
+            } catch {}
             setCurrentStep(currentStep + 1)
         } else {
             handleSubmit()
@@ -156,6 +163,12 @@ export function useOnboarding() {
 
     const handlePrevious = () => {
         if (currentStep > 1) {
+            try {
+                trackEvent("onboarding_previous", {
+                    category: "onboarding",
+                    step: currentStep
+                })
+            } catch {}
             setCurrentStep(currentStep - 1)
         }
     }
@@ -208,6 +221,13 @@ export function useOnboarding() {
             })
             return
         }
+
+        try {
+            trackEvent("onboarding_submit", {
+                category: "onboarding",
+                step: currentStep
+            })
+        } catch {}
 
         const maxRetries = 3
         const attemptOnboarding = async (
@@ -309,9 +329,21 @@ export function useOnboarding() {
                     title: "Welcome to PrepYatra!",
                     description: "Your profile has been set up successfully."
                 })
+                try {
+                    trackEvent("onboarding_complete", {
+                        category: "onboarding",
+                        totalSteps
+                    })
+                } catch {}
                 router.push("/dashboard")
             } catch (error) {
                 console.error(`Onboarding error (attempt ${attempt}):`, error)
+                try {
+                    trackEvent("onboarding_error", {
+                        category: "onboarding",
+                        attempt
+                    })
+                } catch {}
 
                 // If we haven't exceeded max retries and it's a network error, retry
                 if (

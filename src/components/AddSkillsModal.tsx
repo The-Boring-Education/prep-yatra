@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { X, Plus, Code, AlertTriangle } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { trackEvent } from "@/lib/analytics"
 
 interface AddSkillsModalProps {
     isOpen: boolean
@@ -62,6 +63,9 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
                     title: "Skill added!",
                     description: `${skill} added to your stack.`
                 })
+                try {
+                    trackEvent("skill_add", { category: "skills", skill })
+                } catch {}
                 if (onSkillsUpdated) onSkillsUpdated()
             } else {
                 toast({
@@ -92,6 +96,9 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
                 title: "Skill removed",
                 description: `${skill} removed from your stack.`
             })
+            try {
+                trackEvent("skill_remove", { category: "skills", skill })
+            } catch {}
             if (onSkillsUpdated) onSkillsUpdated()
         } finally {
             setRemoving(null)
