@@ -27,7 +27,8 @@ import {
     Plus,
     Settings,
     Share,
-    Users
+    Users,
+    Target
 } from "lucide-react"
 
 // Lazy load components for better performance
@@ -50,6 +51,7 @@ const DailyPrepEncouragement = lazy(
 )
 const AddSkillsModal = lazy(() => import("@/components/AddSkillsModal"))
 const UserSkillsShowcase = lazy(() => import("@/components/UserSkillsShowcase"))
+const ChallengesShowcase = lazy(() => import("@/components/challenges/ChallengesShowcase"))
 
 // Loading component for Suspense fallback
 const ComponentLoader = () => (
@@ -106,6 +108,7 @@ const Dashboard = () => {
     const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] =
         useState(false)
     const [isAddSkillsModalOpen, setIsAddSkillsModalOpen] = useState(false)
+    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
     const [recruiterContacts, setRecruiterContacts] = useState([])
     const [profile, setProfile] = useState<Profile | null>(null)
     const [loading, setLoading] = useState(true)
@@ -447,6 +450,45 @@ const Dashboard = () => {
                                 </Button>
                             </CardContent>
                         </Card>
+
+                        {/* Create Your First Challenge Section */}
+                        <Card className='mt-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-2 border-dashed border-blue-300 dark:border-blue-700'>
+                            <CardHeader className='text-center pb-4'>
+                                <div className='w-16 h-16 mx-auto bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center mb-4'>
+                                    <Target className='h-8 w-8 text-white' />
+                                </div>
+                                <CardTitle className='text-xl font-bold text-gray-900 dark:text-white'>
+                                    🎯 Create Your First Challenge
+                                </CardTitle>
+                                <CardDescription className='text-gray-600 dark:text-gray-400'>
+                                    Start a structured learning journey and track your progress daily
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent className='text-center'>
+                                <div className='space-y-4'>
+                                    <div className='grid grid-cols-1 md:grid-cols-3 gap-3 text-sm'>
+                                        <div className='flex items-center space-x-2 justify-center'>
+                                            <div className='w-2 h-2 bg-blue-500 rounded-full'></div>
+                                            <span className='text-gray-600 dark:text-gray-400'>Choose Template</span>
+                                        </div>
+                                        <div className='flex items-center space-x-2 justify-center'>
+                                            <div className='w-2 h-2 bg-purple-500 rounded-full'></div>
+                                            <span className='text-gray-600 dark:text-gray-400'>Log Progress</span>
+                                        </div>
+                                        <div className='flex items-center space-x-2 justify-center'>
+                                            <div className='w-2 h-2 bg-green-500 rounded-full'></div>
+                                            <span className='text-gray-600 dark:text-gray-400'>Share & Inspire</span>
+                                        </div>
+                                    </div>
+                                    <Button 
+                                        onClick={() => setIsCreateModalOpen(true)}
+                                        className='bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-3 text-lg'
+                                    >
+                                        🚀 Start Your Challenge
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
 
                     {/* Main Content */}
@@ -464,9 +506,12 @@ const Dashboard = () => {
 
                         {/* Tabs for different sections */}
                         <Tabs defaultValue='prep-logs' className='w-full'>
-                            <TabsList className='grid w-full grid-cols-2'>
+                            <TabsList className='grid w-full grid-cols-3'>
                                 <TabsTrigger value='prep-logs'>
                                     Prep Logs
+                                </TabsTrigger>
+                                <TabsTrigger value='challenges'>
+                                    Challenges
                                 </TabsTrigger>
                                 <TabsTrigger value='recruiters'>
                                     Recruiters
@@ -495,6 +540,16 @@ const Dashboard = () => {
                                         logs={logs}
                                         onLogUpdated={handleLogAdded}
                                         mongoUserId={user?.id || ""}
+                                    />
+                                </Suspense>
+                            </TabsContent>
+
+                            <TabsContent
+                                value='challenges'
+                                className='space-y-4'>
+                                <Suspense fallback={<ComponentLoader />}>
+                                    <ChallengesShowcase
+                                        userId={user?.id || ""}
                                     />
                                 </Suspense>
                             </TabsContent>
