@@ -18,6 +18,7 @@ import { Challenge } from '@/types/challenges';
 import ChallengeCard from './ChallengeCard';
 import CreateChallengeModal from './CreateChallengeModal';
 import ChallengeLogModal from './ChallengeLogModal';
+import MotivationalBoost from './MotivationalBoost';
 
 interface ChallengeSectionProps {
   userId: string;
@@ -92,6 +93,9 @@ const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => 
   if (challenges.length === 0) {
     return (
       <div className={`space-y-6 ${className}`}>
+        {/* Motivational Boost for new users */}
+        <MotivationalBoost challenges={challenges} className="mb-6" />
+        
         <Card className="relative overflow-hidden bg-gradient-to-br from-primary/20 via-purple-600/20 to-primary/20 border-primary/30">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-y-12 translate-y-full animate-shimmer"></div>
           
@@ -167,6 +171,9 @@ const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => 
   // Show challenges dashboard when user has challenges
   return (
     <div className={`space-y-6 ${className}`}>
+      {/* Motivational Boost */}
+      <MotivationalBoost challenges={challenges} className="mb-6" />
+
       {/* Header with Stats */}
       <div className="flex items-center justify-between">
         <div>
