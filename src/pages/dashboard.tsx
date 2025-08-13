@@ -265,7 +265,13 @@ const Dashboard = () => {
                 <EditOnboardingModal
                     isOpen={isEditModalOpen}
                     onClose={() => setIsEditModalOpen(false)}
-                    profile={profile}
+                    onUpdate={() => {
+                        if (user?.id) {
+                            fetchProfile(user.id)
+                        }
+                    }}
+                    currentData={profile as any}
+                    userId={user?.id || ""}
                 />
             </Suspense>
 
@@ -273,8 +279,9 @@ const Dashboard = () => {
                 <AddSkillsModal
                     isOpen={isSkillsModalOpen}
                     onClose={() => setIsSkillsModalOpen(false)}
-                    onSkillsAdded={handleSkillsUpdated}
-                    currentSkills={profile?.prepYatra?.skills || []}
+                    userId={user?.id || ""}
+                    userSkills={profile?.prepYatra?.skills || []}
+                    onSkillsUpdated={handleSkillsUpdated}
                 />
             </Suspense>
         </div>
