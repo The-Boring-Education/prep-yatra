@@ -22,11 +22,9 @@ export * from "./features"
 // Popover Components
 export * from "./popovers"
 
-// UI Components (re-export for convenience)
-export * from "./ui"
+// UI Components are imported directly from their paths when needed
 
-// Onboarding Components (re-export for convenience)
-export * from "./onboarding"
+// Onboarding Components are imported directly from their paths when needed
 
 // Dashboard Components
 export * from "./dashboard"

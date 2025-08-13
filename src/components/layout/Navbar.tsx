@@ -1,7 +1,7 @@
 import React from "react"
 import { Button } from "@/components/ui/button"
-import GamificationDisplay from "@/components/GamificationDisplay"
-import NavbarDropdownLinks from "@/components/NavbarDropdownLinks"
+import { GamificationDisplay } from "@/components/gamification"
+import NavbarDropdownLinks from "@/components/layout/NavbarDropdownLinks"
 import { NavbarProps } from "@/interfaces/components"
 
 const capitalize = (str: string) => {

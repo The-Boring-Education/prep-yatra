@@ -15,9 +15,9 @@ import {
 } from 'lucide-react';
 import { useChallenges } from '@/hooks/use-challenges';
 import { Challenge } from '@/types/challenges';
-import ChallengeCard from './ChallengeCard';
-import CreateChallengeModal from './CreateChallengeModal';
-import ChallengeLogModal from './ChallengeLogModal';
+import ChallengeCard from '@/components/cards/ChallengeCard';
+import CreateChallengeModal from '@/components/modals/CreateChallengeModal';
+import ChallengeLogModal from '@/components/modals/ChallengeLogModal';
 import MotivationalBoost from './MotivationalBoost';
 
 interface ChallengeSectionProps {

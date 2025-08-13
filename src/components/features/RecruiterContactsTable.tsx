@@ -39,7 +39,7 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select"
-import AddRecruiterModal from "./AddRecruiterModal"
+import AddRecruiterModal from "@/components/modals/AddRecruiterModal"
 
 interface RecruiterContactsTableProps {
     contacts: RecruiterContact[]

@@ -4,6 +4,7 @@ import { useAuth } from "@/contexts/useAuth"
 import { useGamificationContext } from "@/contexts/GamificationContext"
 import { usePrepLogs } from "@/hooks/use-prep-logs"
 import { recruitersService } from "@/services/recruiters"
+import { RecruiterContact } from "@/types/recruiters"
 import { toast } from "sonner"
 
 // Dashboard Components
@@ -27,20 +28,7 @@ const ComponentLoader = () => (
     </div>
 )
 
-// Type definitions (removed unused PrepLog)
-
-type RecruiterContact = {
-    _id: string
-    name: string
-    company: string
-    email?: string
-    linkedInUrl?: string
-    position?: string
-    notes?: string
-    status: string
-    lastContact?: string
-    createdAt: string
-}
+// Type definitions
 
 type Profile = {
     _id?: string
@@ -61,7 +49,7 @@ const Dashboard = () => {
     const router = useRouter()
     const { user, loading: authLoading, signOut } = useAuth()
     const { showCelebration } = useGamificationContext()
-    const { prepLogs, loading: prepLogsLoading, refetch: refetchPrepLogs } = usePrepLogs(user?.id)
+    const { logs: prepLogs, loading: prepLogsLoading, refetch: refetchPrepLogs } = usePrepLogs(user?.id)
 
     // State management
     const [profile, setProfile] = useState<Profile | null>(null)
@@ -90,28 +78,28 @@ const Dashboard = () => {
 
     const fetchRecruiterContacts = async (userId: string) => {
         try {
-            const contacts = await recruitersService.getContacts(userId)
+            const contacts = await recruitersService.getByUserId(userId)
             setRecruiterContacts(contacts)
         } catch (error) {
             console.error("Error fetching recruiter contacts:", error)
         }
-    }
+        }
 
-    const initializeData = async () => {
+        const initializeData = async () => {
         if (!user?.id) return
 
         setLoading(true)
-        try {
-            await Promise.all([
+            try {
+                await Promise.all([
                 fetchProfile(user.id),
                 fetchRecruiterContacts(user.id)
-            ])
-        } catch (error) {
+                ])
+            } catch (error) {
             console.error("Error initializing data:", error)
-        } finally {
-            setLoading(false)
+            } finally {
+                setLoading(false)
+            }
         }
-    }
 
     // Effects
     useEffect(() => {
@@ -220,17 +208,23 @@ const Dashboard = () => {
 
                         {/* Additional components */}
                         <Suspense fallback={<ComponentLoader />}>
-                            <GamificationDisplay />
+                            <GamificationDisplay userId={user?.id || ""} />
                         </Suspense>
 
-                        <Suspense fallback={<ComponentLoader />}>
-                            <BuildYourStack />
-                        </Suspense>
+                                <Suspense fallback={<ComponentLoader />}>
+                            <BuildYourStack 
+                                userId={user?.id || ""} 
+                                userSkills={profile?.prepYatra?.skills || []} 
+                            />
+                                </Suspense>
 
-                        <Suspense fallback={<ComponentLoader />}>
-                            <DailyPrepEncouragement />
-                        </Suspense>
-                    </div>
+                                <Suspense fallback={<ComponentLoader />}>
+                            <DailyPrepEncouragement 
+                                userId={user?.id || ""} 
+                                onAddPrepLog={() => setIsPrepLogModalOpen(true)} 
+                            />
+                                </Suspense>
+                                </div>
 
                     {/* Main Content */}
                     <div className="lg:col-span-2">
@@ -242,8 +236,8 @@ const Dashboard = () => {
                             onPrepLogModalOpen={() => setIsPrepLogModalOpen(true)}
                             onRecruiterModalOpen={() => setIsRecruiterModalOpen(true)}
                             onSkillsModalOpen={() => setIsSkillsModalOpen(true)}
-                            onContactUpdated={handleContactUpdated}
-                        />
+                                        onContactUpdated={handleContactUpdated}
+                                    />
                     </div>
                 </div>
             </main>
@@ -253,7 +247,8 @@ const Dashboard = () => {
                 <AddPrepLogModal
                     isOpen={isPrepLogModalOpen}
                     onClose={() => setIsPrepLogModalOpen(false)}
-                    onPrepLogAdded={handleLogAdded}
+                    onLogAdded={handleLogAdded}
+                    mongoUserId={user?.id || ""}
                 />
             </Suspense>
 
@@ -262,6 +257,7 @@ const Dashboard = () => {
                     isOpen={isRecruiterModalOpen}
                     onClose={() => setIsRecruiterModalOpen(false)}
                     onContactAdded={handleContactAdded}
+                    mongoUserId={user?.id || ""}
                 />
             </Suspense>
 

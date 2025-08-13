@@ -2,7 +2,7 @@ import React, { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Code, Plus, AlertTriangle } from "lucide-react"
-import AddSkillsModal from "./AddSkillsModal"
+import AddSkillsModal from "@/components/modals/AddSkillsModal"
 
 interface BuildYourStackProps {
     userId: string

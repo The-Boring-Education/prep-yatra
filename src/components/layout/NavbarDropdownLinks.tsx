@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import NavbarDropdownContainer from "@/components/NavbarDropdownContainer";
+import NavbarDropdownContainer from "@/components/layout/NavbarDropdownContainer";
 import { links } from "@/constants";
 
 

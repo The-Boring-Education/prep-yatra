@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from "react"
-import  CelebrationAnimation  from "@/components/CelebrationAnimation"
+import  CelebrationAnimation  from "@/components/gamification/CelebrationAnimation"
 
 interface GamificationContextType {
     showCelebration: (pointsEarned: number) => void

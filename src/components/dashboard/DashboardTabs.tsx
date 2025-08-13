@@ -1,6 +1,8 @@
 import React, { Suspense } from "react"
 import { Plus } from "lucide-react"
 
+import { PrepLog } from "@/hooks/use-prep-logs"
+import { RecruiterContact } from "@/types/recruiters"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -10,35 +12,6 @@ const PrepLogsList = React.lazy(() => import("@/components/features/PrepLogsList
 const RecruiterContactsTable = React.lazy(() => import("@/components/features/RecruiterContactsTable"))
 const ChallengeSection = React.lazy(() => import("@/components/features/ChallengeSection"))
 const UserSkillsShowcase = React.lazy(() => import("@/components/showcase/UserSkillsShowcase"))
-
-interface PrepLog {
-    _id: string
-    title: string
-    description?: string
-    date: string
-    category: string
-    tags?: string[]
-    duration?: number
-    difficulty?: string
-    resources?: Array<{
-        title: string
-        url: string
-        type: string
-    }>
-}
-
-interface RecruiterContact {
-    _id: string
-    name: string
-    company: string
-    email?: string
-    linkedInUrl?: string
-    position?: string
-    notes?: string
-    status: string
-    lastContact?: string
-    createdAt: string
-}
 
 interface DashboardTabsProps {
     prepLogs: PrepLog[]
@@ -158,7 +131,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
                     <CardContent>
                         <Suspense fallback={<ComponentLoader />}>
                             <UserSkillsShowcase 
-                                skills={profile?.prepYatra?.skills || []}
+                                userSkills={profile?.prepYatra?.skills || []}
                             />
                         </Suspense>
                     </CardContent>

@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import AddPrepLogModal from "./AddPrepLogModal"
+import AddPrepLogModal from "@/components/modals/AddPrepLogModal"
 import {
     AlertDialog,
     AlertDialogTrigger,
