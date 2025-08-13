@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { X, Sparkles, Star, Zap, Users, Target, Gift } from "lucide-react"
+import { X, Sparkles, Star, Zap, Users, Target, Gift, CheckCircle, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { 
     Popover, 
@@ -126,27 +126,33 @@ const SubscriptionInterestPopover = ({ className = "" }: SubscriptionInterestPop
                     </Button>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-96 p-0 border-0 shadow-2xl bg-white">
+                <PopoverContent className="w-96 p-0 border-0 shadow-2xl bg-white animate-in slide-in-from-right-4 duration-300">
                     <div className="relative bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg overflow-hidden">
                         {/* Header */}
-                        <div className="p-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+                        <div className="p-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
+                            {/* Background Animation */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/50 to-purple-600/50 animate-pulse"></div>
+                            
                             <button
                                 onClick={handleDismiss}
-                                className="absolute top-4 right-4 text-white/80 hover:text-white transition-colors"
+                                className="absolute top-4 right-4 text-white/80 hover:text-white transition-all duration-200 hover:scale-110 z-10"
+                                aria-label="Close premium features popup"
                             >
                                 <X className="h-5 w-5" />
                             </button>
                             
-                            <div className="flex items-center gap-2 mb-2">
-                                <Sparkles className="h-6 w-6" />
-                                <span className="font-bold text-lg">PrepYatra Premium</span>
-                                <Badge className="bg-yellow-400 text-black text-xs font-medium">
-                                    Coming Soon
-                                </Badge>
+                            <div className="relative z-10">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Sparkles className="h-6 w-6 animate-spin" />
+                                    <span className="font-bold text-lg">PrepYatra Premium</span>
+                                    <Badge className="bg-yellow-400 text-black text-xs font-medium animate-bounce">
+                                        Coming Soon
+                                    </Badge>
+                                </div>
+                                <p className="text-blue-100 text-sm">
+                                    🚀 Transform your job search with premium features
+                                </p>
                             </div>
-                            <p className="text-blue-100 text-sm">
-                                Transform your job search with premium features
-                            </p>
                         </div>
 
                         {/* Features */}
@@ -157,11 +163,18 @@ const SubscriptionInterestPopover = ({ className = "" }: SubscriptionInterestPop
                             
                             <div className="space-y-3 mb-6">
                                 {subscriptionFeatures.map((feature, index) => (
-                                    <div key={index} className="flex items-start gap-3">
-                                        <feature.icon className={`h-5 w-5 mt-0.5 ${feature.color}`} />
-                                        <span className="text-sm text-gray-700 leading-relaxed">
+                                    <div 
+                                        key={index} 
+                                        className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/70 transition-all duration-200 hover:scale-[1.02] cursor-pointer group"
+                                        style={{ animationDelay: `${index * 100}ms` }}
+                                    >
+                                        <div className="p-2 rounded-full bg-white shadow-sm group-hover:shadow-md transition-shadow">
+                                            <feature.icon className={`h-4 w-4 ${feature.color} group-hover:scale-110 transition-transform`} />
+                                        </div>
+                                        <span className="text-sm text-gray-700 flex-1 group-hover:text-gray-900 transition-colors leading-relaxed">
                                             {feature.text}
                                         </span>
+                                        <CheckCircle className="h-4 w-4 text-green-500 opacity-0 group-hover:opacity-100 transition-opacity" />
                                     </div>
                                 ))}
                             </div>
@@ -171,24 +184,35 @@ const SubscriptionInterestPopover = ({ className = "" }: SubscriptionInterestPop
                                 <Button
                                     onClick={handleInterestClick}
                                     disabled={isLoading || isInterested}
-                                    className={`w-full font-medium transition-all duration-200 ${
+                                    className={`w-full font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] group ${
                                         isInterested 
-                                            ? "bg-green-600 hover:bg-green-700" 
-                                            : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                                            ? "bg-green-600 hover:bg-green-700 shadow-lg shadow-green-200" 
+                                            : "bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg shadow-blue-200"
                                     }`}
                                 >
-                                    {isLoading 
-                                        ? "Registering..." 
-                                        : isInterested 
-                                            ? "Interest Registered ✓" 
-                                            : "Interested? Count Me In! 🚀"
-                                    }
+                                    {isLoading ? (
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                            Registering...
+                                        </div>
+                                    ) : isInterested ? (
+                                        <div className="flex items-center gap-2 animate-in zoom-in duration-300">
+                                            <CheckCircle className="h-4 w-4 animate-bounce" />
+                                            Interest Registered ✓
+                                        </div>
+                                    ) : (
+                                        <div className="flex items-center gap-2">
+                                            <Sparkles className="h-4 w-4 group-hover:animate-spin" />
+                                            Interested? Count Me In! 🚀
+                                            <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-all duration-200 transform group-hover:translate-x-1" />
+                                        </div>
+                                    )}
                                 </Button>
                                 
                                 <Button
                                     variant="ghost"
                                     onClick={handleDismiss}
-                                    className="w-full text-gray-600 hover:text-gray-800 text-sm"
+                                    className="w-full text-gray-600 hover:text-gray-800 text-sm hover:bg-gray-100 transition-all duration-200"
                                 >
                                     Maybe Later
                                 </Button>

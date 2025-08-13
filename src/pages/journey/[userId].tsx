@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import Navigation from "@/components/Navigation"
-import Footer from "@/components/Footer"
+import Navigation from "@/components/layout/Navigation"
+import Footer from "@/components/layout/Footer"
 
 interface PrepLog {
     _id: string

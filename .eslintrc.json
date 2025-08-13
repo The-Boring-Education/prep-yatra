@@ -1,7 +1,112 @@
 {
-    "extends": "next/core-web-vitals",
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        }
+    },
+    "extends": [
+        "next/core-web-vitals"
+    ],
+    "plugins": [
+        "@typescript-eslint",
+        "import",
+        "unused-imports"
+    ],
     "rules": {
+        // React & JSX Rules
         "react/no-unescaped-entities": "off",
-        "react-hooks/exhaustive-deps": "warn"
+        "react/jsx-uses-react": "error",
+        "react/jsx-uses-vars": "error",
+        "react/no-unused-state": "error",
+        "react/jsx-no-duplicate-props": "error",
+        "react/jsx-key": "error",
+        "react/self-closing-comp": "warn",
+        "react/jsx-boolean-value": ["warn", "never"],
+        
+        // React Hooks Rules
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        
+        // Import/Export Rules
+        "import/order": [
+            "warn",
+            {
+                "groups": [
+                    "builtin",
+                    "external",
+                    "internal",
+                    "parent",
+                    "sibling",
+                    "index"
+                ],
+                "newlines-between": "always",
+                "alphabetize": {
+                    "order": "asc",
+                    "caseInsensitive": true
+                }
+            }
+        ],
+        "import/no-duplicates": "error",
+        "import/no-unused-modules": "warn",
+        
+        // Unused Imports & Variables
+        "unused-imports/no-unused-imports": "warn",
+        "unused-imports/no-unused-vars": [
+            "warn",
+            {
+                "vars": "all",
+                "varsIgnorePattern": "^_",
+                "args": "after-used",
+                "argsIgnorePattern": "^_"
+            }
+        ],
+        
+        // TypeScript Rules (relaxed)
+        "@typescript-eslint/no-unused-vars": "off",
+        "@typescript-eslint/no-explicit-any": "warn",
+        "@typescript-eslint/prefer-const": "off",
+        "@typescript-eslint/no-var-requires": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/explicit-function-return-type": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        
+        // General Code Quality (essential only)
+        "no-console": "off",
+        "no-debugger": "error",
+        "no-duplicate-imports": "error",
+        "no-unused-expressions": "off",
+        "prefer-const": "off",
+        "no-var": "off",
+        "eqeqeq": "off",
+        "curly": "off",
+        
+        // Style & Formatting (relaxed for gradual adoption)
+        "quotes": "off",
+        "semi": "off", 
+        "comma-dangle": "off",
+        "object-curly-spacing": "off",
+        "array-bracket-spacing": "off",
+        
+        // Next.js specific
+        "@next/next/no-img-element": "error",
+        "@next/next/no-html-link-for-pages": "error"
+    },
+    "settings": {
+        "react": {
+            "version": "detect"
+        },
+        "import/resolver": {
+            "typescript": {
+                "alwaysTryTypes": true
+            }
+        }
+    },
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
     }
 }

@@ -2,7 +2,7 @@ import { useRouter } from "next/router"
 import { Button } from "@/components/ui/button"
 import { useGoogleLogin } from "@react-oauth/google"
 import { useAuth } from "@/contexts/useAuth"
-import InstallButton from "@/components/InstallButton"
+import InstallButton from "@/components/features/InstallButton"
 
 const Auth = () => {
     const router = useRouter()

@@ -6,8 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import { Check, Star, Zap, Crown } from "lucide-react"
 import useCashfreePayment from "@/hooks/useCashfreePayment"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
+import Navbar from "@/components/layout/Navbar"
+import Footer from "@/components/layout/Footer"
 
 interface PricingPlan {
     id: string

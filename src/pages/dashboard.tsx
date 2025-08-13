@@ -3,204 +3,135 @@ import { useRouter } from "next/router"
 import { useAuth } from "@/contexts/useAuth"
 import { useGamificationContext } from "@/contexts/GamificationContext"
 import { usePrepLogs } from "@/hooks/use-prep-logs"
-import { useUser } from "@/hooks/use-user"
 import { recruitersService } from "@/services/recruiters"
-import { Button } from "@/components/ui/button"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle
-} from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
-import {
-    Calendar,
-    ExternalLink,
-    Github,
-    Linkedin,
-    MessageSquare,
-    Plus,
-    Settings,
-    Share,
-    Users
-} from "lucide-react"
+
+// Dashboard Components
+import { ProfileSection, DashboardTabs, LoadingSpinner } from "@/components/dashboard"
 
 // Lazy load components for better performance
-const Navbar = lazy(() => import("@/components/Navbar"))
-const AddPrepLogModal = lazy(() => import("@/components/AddPrepLogModal"))
-const PrepLogsList = lazy(() => import("@/components/PrepLogsList"))
-const AddRecruiterModal = lazy(() => import("@/components/AddRecruiterModal"))
-const RecruiterContactsTable = lazy(
-    () => import("@/components/RecruiterContactsTable")
-)
-const EditOnboardingModal = lazy(
-    () => import("@/components/EditOnboardingModal")
-)
-const GamificationDisplay = lazy(
-    () => import("@/components/GamificationDisplay")
-)
-const BuildYourStack = lazy(() => import("@/components/BuildYourStack"))
-const DailyPrepEncouragement = lazy(
-    () => import("@/components/DailyPrepEncouragement")
-)
-const SubscriptionInterestPopover = lazy(
-    () => import("@/components/SubscriptionInterestPopover")
-)
-const AddSkillsModal = lazy(() => import("@/components/AddSkillsModal"))
-const UserSkillsShowcase = lazy(() => import("@/components/UserSkillsShowcase"))
-const ChallengeSection = lazy(() => import("@/components/ChallengeSection"))
+const Navbar = lazy(() => import("@/components/layout/Navbar"))
+const AddPrepLogModal = lazy(() => import("@/components/modals/AddPrepLogModal"))
+const AddRecruiterModal = lazy(() => import("@/components/modals/AddRecruiterModal"))
+const EditOnboardingModal = lazy(() => import("@/components/modals/EditOnboardingModal"))
+const GamificationDisplay = lazy(() => import("@/components/gamification/GamificationDisplay"))
+const BuildYourStack = lazy(() => import("@/components/features/BuildYourStack"))
+const DailyPrepEncouragement = lazy(() => import("@/components/features/DailyPrepEncouragement"))
+const SubscriptionInterestPopover = lazy(() => import("@/components/popovers/SubscriptionInterestPopover"))
+const AddSkillsModal = lazy(() => import("@/components/modals/AddSkillsModal"))
 
 // Loading component for Suspense fallback
 const ComponentLoader = () => (
-    <div className='flex items-center justify-center h-32'>
-        <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-primary'></div>
+    <div className="flex items-center justify-center h-32">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
     </div>
 )
 
-// Type definitions (same as original)
-type PrepLog = {
+// Type definitions (removed unused PrepLog)
+
+type RecruiterContact = {
     _id: string
-    userId: string
-    title: string
-    description?: string
-    timeSpent: number
+    name: string
+    company: string
+    email?: string
+    linkedInUrl?: string
+    position?: string
+    notes?: string
+    status: string
+    lastContact?: string
     createdAt: string
 }
 
 type Profile = {
-    _id: string
-    name: string
-    username: string
-    userName?: string
-    createdAt: string
+    _id?: string
+    name?: string
+    username?: string
     linkedInUrl?: string
     githubUrl?: string
     leetCodeUrl?: string
-    userSkills?: string[]
-    userSkillsLastUpdated?: string
-    prepYatra: {
-        workExperience: number
-        pyOnboarded: boolean
-        goal?: string
-        targetCompanies?: string[]
+    prepYatra?: {
         experienceLevel?: string
-        preferences?: {
-            interviewCategories: string[]
-            focusAreas: string[]
-        }
+        goal?: string
+        skills?: string[]
     }
-}
-
-// Utility function to add protocol to URLs
-function withProtocol(url: string | undefined) {
-    if (!url) return undefined
-    return url.startsWith("http") ? url : `https://${url}`
+    createdAt?: string
 }
 
 const Dashboard = () => {
+    const router = useRouter()
+    const { user, loading: authLoading, signOut } = useAuth()
+    const { showCelebration } = useGamificationContext()
+    const { prepLogs, loading: prepLogsLoading, refetch: refetchPrepLogs } = usePrepLogs(user?.id)
+
     // State management
-    const [isAddPrepLogModalOpen, setIsAddPrepLogModalOpen] = useState(false)
-    const [isAddRecruiterModalOpen, setIsAddRecruiterModalOpen] =
-        useState(false)
-    const [isEditOnboardingModalOpen, setIsEditOnboardingModalOpen] =
-        useState(false)
-    const [isAddSkillsModalOpen, setIsAddSkillsModalOpen] = useState(false)
-    const [recruiterContacts, setRecruiterContacts] = useState([])
     const [profile, setProfile] = useState<Profile | null>(null)
+    const [recruiterContacts, setRecruiterContacts] = useState<RecruiterContact[]>([])
     const [loading, setLoading] = useState(true)
     const [refreshTrigger, setRefreshTrigger] = useState(0)
 
-    // Hooks
-    const router = useRouter()
-    const { user, signOut, loading: authLoading } = useAuth()
-    const { showCelebration } = useGamificationContext()
-    const {
-        logs,
-        loading: prepLogsLoading,
-        refetch: refetchPrepLogs
-    } = usePrepLogs(user?.id || "")
+    // Modal states
+    const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
+    const [isRecruiterModalOpen, setIsRecruiterModalOpen] = useState(false)
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    const [isSkillsModalOpen, setIsSkillsModalOpen] = useState(false)
 
-    // Fetch recruiter contacts
-    const fetchRecruiterContacts = async (userId: string) => {
+    // Data fetching functions
+    const fetchProfile = async (userId: string) => {
         try {
-            console.log("Fetching recruiter contacts for userId:", userId)
-            const data = await recruitersService.getByUserId(userId)
-            console.log("Recruiter contacts data:", data)
-            setRecruiterContacts(data)
-        } catch (error) {
-            console.error("Error fetching recruiter contacts:", error)
-            setRecruiterContacts([])
-        }
-    }
-
-    // Fetch profile data
-    const refetchProfile = async () => {
-        if (!user?.email) return
-
-        try {
-            const response = await fetch(
-                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?email=${user.email}`
-            )
+            const response = await fetch(`/api/profile?userId=${userId}`)
             if (response.ok) {
                 const data = await response.json()
-                setProfile(data.data)
+                setProfile(data)
             }
         } catch (error) {
             console.error("Error fetching profile:", error)
         }
     }
 
-    // Initialize data on component mount
+    const fetchRecruiterContacts = async (userId: string) => {
+        try {
+            const contacts = await recruitersService.getContacts(userId)
+            setRecruiterContacts(contacts)
+        } catch (error) {
+            console.error("Error fetching recruiter contacts:", error)
+        }
+    }
+
+    const initializeData = async () => {
+        if (!user?.id) return
+
+        setLoading(true)
+        try {
+            await Promise.all([
+                fetchProfile(user.id),
+                fetchRecruiterContacts(user.id)
+            ])
+        } catch (error) {
+            console.error("Error initializing data:", error)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    // Effects
     useEffect(() => {
-        // Don't do anything while auth is loading
-        if (authLoading) {
-            return
-        }
-
-        const initializeData = async () => {
-            if (!user?.id) {
-                setLoading(false)
-                return
-            }
-
-            try {
-                await Promise.all([
-                    fetchRecruiterContacts(user.id),
-                    refetchProfile()
-                ])
-            } catch (error) {
-                console.error("Error initializing dashboard data:", error)
-            } finally {
-                setLoading(false)
-            }
-        }
-
         const checkAuthAndProfile = async () => {
-            if (!user?.id) {
+            if (authLoading) return
+
+            if (!user) {
                 router.push("/auth")
                 return
             }
 
-            // Check if user is onboarded
             try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?email=${user.email}`
-                )
-                const data = await response.json()
-
-                if (!data?.data?.prepYatra?.pyOnboarded) {
-                    // Redirect to external onboarding app
-                    const onboardingUrl = process.env.NEXT_PUBLIC_ONBOARDING_APP_URL
+                // Check if user needs onboarding
+                const response = await fetch(`/api/profile?userId=${user.id}`)
+                if (!response.ok) {
+                    const onboardingUrl = process.env.NEXT_PUBLIC_ONBOARDING_URL
                     if (onboardingUrl) {
                         const redirectUrl = `${onboardingUrl}?userId=${user.id}&from=prepyatra&redirect=${encodeURIComponent(window.location.origin + "/dashboard")}`
                         window.location.href = redirectUrl
                     } else {
-                        // Fallback to internal onboarding if external URL is not configured
                         router.push("/onboarding")
                     }
                     return
@@ -222,7 +153,7 @@ const Dashboard = () => {
             fetchRecruiterContacts(user.id)
             refetchPrepLogs()
         }
-    }, [refreshTrigger, user?.id, authLoading])
+    }, [refreshTrigger, user?.id, authLoading, refetchPrepLogs])
 
     // Event handlers
     const handleSignOut = async () => {
@@ -256,33 +187,19 @@ const Dashboard = () => {
         }
     }
 
-    const getInitials = (name: string) => {
-        return name
-            .split(" ")
-            .map((part) => part[0])
-            .join("")
-            .toUpperCase()
+    const handleSkillsUpdated = () => {
+        if (user?.id) {
+            fetchProfile(user.id)
+            toast.success("Skills updated successfully!")
+        }
     }
 
     if (loading || authLoading) {
-        return (
-            <div className='flex items-center justify-center min-h-screen'>
-                <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
-            </div>
-        )
-    }
-
-    // Don't render anything if auth is still loading
-    if (authLoading) {
-        return (
-            <div className='flex items-center justify-center min-h-screen'>
-                <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
-            </div>
-        )
+        return <LoadingSpinner />
     }
 
     return (
-        <div className='min-h-screen bg-background'>
+        <div className="min-h-screen bg-background">
             <Suspense fallback={<ComponentLoader />}>
                 <Navbar
                     username={user?.name || ""}
@@ -295,282 +212,38 @@ const Dashboard = () => {
                 <SubscriptionInterestPopover />
             </Suspense>
 
-            <main className='container mx-auto px-4 py-8'>
-                <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
+            <main className="container mx-auto px-4 py-8">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Profile Section */}
-                    <div className='lg:col-span-1'>
-                        <Card className='mb-6'>
-                            <CardHeader className='text-center'>
-                                <Avatar className='w-20 h-20 mx-auto mb-4'>
-                                    <AvatarImage
-                                        src={user?.picture}
-                                        alt={user?.name}
-                                    />
-                                    <AvatarFallback className='text-lg'>
-                                        {getInitials(user?.name || "")}
-                                    </AvatarFallback>
-                                </Avatar>
-                                <CardTitle className='text-xl'>
-                                    {profile?.name || user?.name}
-                                </CardTitle>
-                                <CardDescription>
-                                    @
-                                    {profile?.username ||
-                                        user?.name?.toLowerCase()}
-                                </CardDescription>
+                    <div className="lg:col-span-1">
+                        <ProfileSection user={user} profile={profile} />
 
-                                {/* Social Links */}
-                                <div className='flex justify-center space-x-3 mt-4'>
-                                    {profile?.linkedInUrl && (
-                                        <Button
-                                            variant='outline'
-                                            size='sm'
-                                            className='border-gray-600 hover:border-gray-500 bg-gray-800/50 hover:bg-gray-700/50'
-                                            asChild>
-                                            <a
-                                                href={withProtocol(
-                                                    profile.linkedInUrl
-                                                )}
-                                                target='_blank'
-                                                rel='noopener noreferrer'>
-                                                <Linkedin className='w-4 h-4 text-white' />
-                                            </a>
-                                        </Button>
-                                    )}
-                                    {profile?.githubUrl && (
-                                        <Button
-                                            variant='outline'
-                                            size='sm'
-                                            className='border-gray-600 hover:border-gray-500 bg-gray-800/50 hover:bg-gray-700/50'
-                                            asChild>
-                                            <a
-                                                href={withProtocol(
-                                                    profile.githubUrl
-                                                )}
-                                                target='_blank'
-                                                rel='noopener noreferrer'>
-                                                <Github className='w-4 h-4 text-white' />
-                                            </a>
-                                        </Button>
-                                    )}
-                                    {profile?.leetCodeUrl && (
-                                        <Button
-                                            variant='outline'
-                                            size='sm'
-                                            className='border-gray-600 hover:border-gray-500 bg-gray-800/50 hover:bg-gray-700/50'
-                                            asChild>
-                                            <a
-                                                href={withProtocol(
-                                                    profile.leetCodeUrl
-                                                )}
-                                                target='_blank'
-                                                rel='noopener noreferrer'>
-                                                <ExternalLink className='w-4 h-4 text-white' />
-                                            </a>
-                                        </Button>
-                                    )}
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className='space-y-2'>
-                                    <div className='flex justify-between text-sm'>
-                                        <span className='text-muted-foreground'>
-                                            Experience:
-                                        </span>
-                                        <Badge variant='secondary'>
-                                            {profile?.prepYatra
-                                                ?.experienceLevel || "Not set"}
-                                        </Badge>
-                                    </div>
-                                    <div className='flex justify-between text-sm'>
-                                        <span className='text-muted-foreground'>
-                                            Goal:
-                                        </span>
-                                        <Badge variant='outline'>
-                                            {profile?.prepYatra?.goal ||
-                                                "Not set"}
-                                        </Badge>
-                                    </div>
-                                    <div className='flex justify-between text-sm'>
-                                        <span className='text-muted-foreground'>
-                                            Joined:
-                                        </span>
-                                        <span>
-                                            {new Date(
-                                                profile?.createdAt || ""
-                                            ).toLocaleDateString()}
-                                        </span>
-                                    </div>
-                                </div>
+                        {/* Additional components */}
+                        <Suspense fallback={<ComponentLoader />}>
+                            <GamificationDisplay />
+                        </Suspense>
 
-                                <Button
-                                    variant='outline'
-                                    className='w-full mt-4 bg-primary text-primary-foreground'
-                                    onClick={() =>
-                                        setIsEditOnboardingModalOpen(true)
-                                    }>
-                                    <Settings className='w-4 h-4 mr-2' />
-                                    Edit Profile
-                                </Button>
-                                
-                                <Button
-                                    variant='outline'
-                                    className='w-full mt-3 border-gray-600 text-white hover:bg-gray-800 hover:text-white'
-                                    onClick={() => {
-                                        const journeyUrl = `${window.location.origin}/journey/${user?.id}`
-                                        navigator.clipboard.writeText(journeyUrl)
-                                        toast.success("Journey link copied to clipboard!")
-                                    }}>
-                                    <Share className='w-4 h-4 mr-2' />
-                                    Share Journey
-                                </Button>
-                            </CardContent>
-                        </Card>
+                        <Suspense fallback={<ComponentLoader />}>
+                            <BuildYourStack />
+                        </Suspense>
 
-                        {/* Skills Section */}
-                        <Card className='mt-6'>
-                            <CardHeader>
-                                <CardTitle className='text-lg'>
-                                    Skills
-                                </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <Suspense fallback={<ComponentLoader />}>
-                                    <UserSkillsShowcase
-                                        userSkills={profile?.userSkills || []}
-                                        lastUpdated={
-                                            profile?.userSkillsLastUpdated
-                                        }
-                                    />
-                                </Suspense>
-                                <Button
-                                    variant='outline'
-                                    size='sm'
-                                    className='w-full mt-3 bg-secondary text-secondary-foreground'
-                                    onClick={() =>
-                                        setIsAddSkillsModalOpen(true)
-                                    }>
-                                    <Plus className='w-4 h-4 mr-2' />
-                                    Update Skills
-                                </Button>
-                            </CardContent>
-                        </Card>
+                        <Suspense fallback={<ComponentLoader />}>
+                            <DailyPrepEncouragement />
+                        </Suspense>
                     </div>
 
                     {/* Main Content */}
-                    <div className='lg:col-span-2'>
-                        {/* Daily Encouragement */}
-                        <Suspense fallback={<ComponentLoader />}>
-                            <DailyPrepEncouragement
-                                userId={user?.id || ""}
-                                onAddPrepLog={() =>
-                                    setIsAddPrepLogModalOpen(true)
-                                }
-                                className='mb-6'
-                            />
-                        </Suspense>
-
-                        {/* Tabs for different sections */}
-                        <Tabs defaultValue='challenges' className='w-full'>
-                            <TabsList className='grid w-full grid-cols-3'>
-                                <TabsTrigger value='challenges'>
-                                    Challenges
-                                </TabsTrigger>
-                                <TabsTrigger value='prep-logs'>
-                                    Prep Logs
-                                </TabsTrigger>
-                                <TabsTrigger value='recruiters'>
-                                    Recruiters
-                                </TabsTrigger>
-                            </TabsList>
-
-                            <TabsContent
-                                value='challenges'
-                                className='space-y-4'>
-                                <Suspense fallback={<ComponentLoader />}>
-                                    <ChallengeSection
-                                        userId={user?.id || ""}
-                                    />
-                                </Suspense>
-                            </TabsContent>
-
-                            <TabsContent
-                                value='prep-logs'
-                                className='space-y-4'>
-                                <div className='flex justify-between items-center'>
-                                    <h2 className='text-2xl font-bold'>
-                                        Preparation Logs
-                                    </h2>
-                                    <Button
-                                        onClick={() =>
-                                            setIsAddPrepLogModalOpen(true)
-                                        }>
-                                        <Plus className='w-4 h-4 mr-2' />
-                                        Add Log
-                                    </Button>
-                                </div>
-
-                                {/* Mentor Feedback Section */}
-                                {logs?.some((l) => (l as any).mentorFeedback) && (
-                                    <div className='rounded-lg border border-purple-500/30 bg-purple-900/20 p-4'>
-                                        <div className='text-sm font-semibold text-purple-200 mb-2'>
-                                            Mentor Feedback
-                                        </div>
-                                        <div className='space-y-3'>
-                                            {logs
-                                                .filter((l: any) => l.mentorFeedback)
-                                                .slice(0, 3)
-                                                .map((l: any) => (
-                                                    <div key={l._id} className='p-3 rounded-md bg-purple-900/30 border border-purple-500/20'>
-                                                        <div className='text-xs text-purple-300 mb-1'>
-                                                            {new Date(l.createdAt).toLocaleDateString()}
-                                                        </div>
-                                                        <div className='text-sm text-purple-100 whitespace-pre-line'>
-                                                            {l.mentorFeedback}
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                        </div>
-                                    </div>
-                                )}
-
-                                <Suspense fallback={<ComponentLoader />}>
-                                    <PrepLogsList
-                                        key={`prep-logs-${refreshTrigger}`}
-                                        logs={logs}
-                                        onLogUpdated={handleLogAdded}
-                                        mongoUserId={user?.id || ""}
-                                    />
-                                </Suspense>
-                            </TabsContent>
-
-                            <TabsContent
-                                value='recruiters'
-                                className='space-y-4'>
-                                <div className='flex justify-between items-center'>
-                                    <h2 className='text-2xl font-bold'>
-                                        Recruiter Contacts
-                                    </h2>
-                                    <Button
-                                        onClick={() =>
-                                            setIsAddRecruiterModalOpen(true)
-                                        }>
-                                        <Plus className='w-4 h-4 mr-2' />
-                                        Add Contact
-                                    </Button>
-                                </div>
-
-                                <Suspense fallback={<ComponentLoader />}>
-                                    <RecruiterContactsTable
-                                        key={`recruiters-${refreshTrigger}`}
-                                        contacts={recruiterContacts}
-                                        onContactAdded={handleContactAdded}
-                                        onContactUpdated={handleContactUpdated}
-                                        mongoUserId={user?.id}
-                                    />
-                                </Suspense>
-                            </TabsContent>
-                        </Tabs>
+                    <div className="lg:col-span-2">
+                        <DashboardTabs
+                            prepLogs={prepLogs}
+                            recruiterContacts={recruiterContacts}
+                            user={user}
+                            profile={profile}
+                            onPrepLogModalOpen={() => setIsPrepLogModalOpen(true)}
+                            onRecruiterModalOpen={() => setIsRecruiterModalOpen(true)}
+                            onSkillsModalOpen={() => setIsSkillsModalOpen(true)}
+                            onContactUpdated={handleContactUpdated}
+                        />
                     </div>
                 </div>
             </main>
@@ -578,42 +251,34 @@ const Dashboard = () => {
             {/* Modals */}
             <Suspense fallback={null}>
                 <AddPrepLogModal
-                    key={`add-prep-log-${refreshTrigger}`}
-                    isOpen={isAddPrepLogModalOpen}
-                    onClose={() => setIsAddPrepLogModalOpen(false)}
-                    onLogAdded={handleLogAdded}
-                    mongoUserId={user?.id || ""}
+                    isOpen={isPrepLogModalOpen}
+                    onClose={() => setIsPrepLogModalOpen(false)}
+                    onPrepLogAdded={handleLogAdded}
                 />
             </Suspense>
 
             <Suspense fallback={null}>
                 <AddRecruiterModal
-                    key={`add-recruiter-${refreshTrigger}`}
-                    isOpen={isAddRecruiterModalOpen}
-                    onClose={() => setIsAddRecruiterModalOpen(false)}
+                    isOpen={isRecruiterModalOpen}
+                    onClose={() => setIsRecruiterModalOpen(false)}
                     onContactAdded={handleContactAdded}
-                    mongoUserId={user?.id || ""}
                 />
             </Suspense>
 
             <Suspense fallback={null}>
                 <EditOnboardingModal
-                    isOpen={isEditOnboardingModalOpen}
-                    onClose={() => setIsEditOnboardingModalOpen(false)}
-                    onUpdate={refetchProfile}
-                    currentData={profile}
-                    userId={user?.id || ""}
+                    isOpen={isEditModalOpen}
+                    onClose={() => setIsEditModalOpen(false)}
+                    profile={profile}
                 />
             </Suspense>
 
             <Suspense fallback={null}>
                 <AddSkillsModal
-                    isOpen={isAddSkillsModalOpen}
-                    onClose={() => setIsAddSkillsModalOpen(false)}
-                    userId={user?.id || ""}
-                    userSkills={profile?.userSkills || []}
-                    lastUpdated={profile?.userSkillsLastUpdated}
-                    onSkillsUpdated={refetchProfile}
+                    isOpen={isSkillsModalOpen}
+                    onClose={() => setIsSkillsModalOpen(false)}
+                    onSkillsAdded={handleSkillsUpdated}
+                    currentSkills={profile?.prepYatra?.skills || []}
                 />
             </Suspense>
         </div>

@@ -1,0 +1,171 @@
+import React, { Suspense } from "react"
+import { Plus } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+// Lazy load components
+const PrepLogsList = React.lazy(() => import("@/components/features/PrepLogsList"))
+const RecruiterContactsTable = React.lazy(() => import("@/components/features/RecruiterContactsTable"))
+const ChallengeSection = React.lazy(() => import("@/components/features/ChallengeSection"))
+const UserSkillsShowcase = React.lazy(() => import("@/components/showcase/UserSkillsShowcase"))
+
+interface PrepLog {
+    _id: string
+    title: string
+    description?: string
+    date: string
+    category: string
+    tags?: string[]
+    duration?: number
+    difficulty?: string
+    resources?: Array<{
+        title: string
+        url: string
+        type: string
+    }>
+}
+
+interface RecruiterContact {
+    _id: string
+    name: string
+    company: string
+    email?: string
+    linkedInUrl?: string
+    position?: string
+    notes?: string
+    status: string
+    lastContact?: string
+    createdAt: string
+}
+
+interface DashboardTabsProps {
+    prepLogs: PrepLog[]
+    recruiterContacts: RecruiterContact[]
+    user?: {
+        id?: string
+        name?: string
+        email?: string
+    }
+    profile?: {
+        prepYatra?: {
+            skills?: string[]
+        }
+    }
+    onPrepLogModalOpen: () => void
+    onRecruiterModalOpen: () => void
+    onSkillsModalOpen: () => void
+    onContactUpdated: () => void
+}
+
+const ComponentLoader = () => (
+    <div className="flex items-center justify-center h-32">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+    </div>
+)
+
+const DashboardTabs: React.FC<DashboardTabsProps> = ({
+    prepLogs,
+    recruiterContacts,
+    user,
+    profile,
+    onPrepLogModalOpen,
+    onRecruiterModalOpen,
+    onSkillsModalOpen,
+    onContactUpdated
+}) => {
+    return (
+        <Tabs defaultValue="prep-logs" className="space-y-6">
+            <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="prep-logs">Prep Logs</TabsTrigger>
+                <TabsTrigger value="challenges">Challenges</TabsTrigger>
+                <TabsTrigger value="recruiters">Recruiters</TabsTrigger>
+                <TabsTrigger value="skills">Skills</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="prep-logs" className="space-y-4">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle>Preparation Logs</CardTitle>
+                            <CardDescription>
+                                Track your learning progress and preparation journey
+                            </CardDescription>
+                        </div>
+                        <Button onClick={onPrepLogModalOpen} size="sm">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add Log
+                        </Button>
+                    </CardHeader>
+                    <CardContent>
+                        <Suspense fallback={<ComponentLoader />}>
+                            <PrepLogsList 
+                                logs={prepLogs}
+                                onLogUpdated={() => {}} 
+                                mongoUserId={user?.id || ""}
+                            />
+                        </Suspense>
+                    </CardContent>
+                </Card>
+            </TabsContent>
+
+            <TabsContent value="challenges" className="space-y-4">
+                <Suspense fallback={<ComponentLoader />}>
+                    <ChallengeSection userId={user?.id} />
+                </Suspense>
+            </TabsContent>
+
+            <TabsContent value="recruiters" className="space-y-4">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle>Recruiter Contacts</CardTitle>
+                            <CardDescription>
+                                Manage your network of recruiting professionals
+                            </CardDescription>
+                        </div>
+                        <Button onClick={onRecruiterModalOpen} size="sm">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add Contact
+                        </Button>
+                    </CardHeader>
+                    <CardContent>
+                        <Suspense fallback={<ComponentLoader />}>
+                            <RecruiterContactsTable
+                                contacts={recruiterContacts}
+                                onContactUpdated={onContactUpdated}
+                            />
+                        </Suspense>
+                    </CardContent>
+                </Card>
+            </TabsContent>
+
+            <TabsContent value="skills" className="space-y-4">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between">
+                        <div>
+                            <CardTitle>Skills & Technologies</CardTitle>
+                            <CardDescription>
+                                Showcase your technical skills and expertise
+                            </CardDescription>
+                        </div>
+                        <Button onClick={onSkillsModalOpen} size="sm">
+                            <Plus className="w-4 h-4 mr-2" />
+                            Add Skills
+                        </Button>
+                    </CardHeader>
+                    <CardContent>
+                        <Suspense fallback={<ComponentLoader />}>
+                            <UserSkillsShowcase 
+                                skills={profile?.prepYatra?.skills || []}
+                            />
+                        </Suspense>
+                    </CardContent>
+                </Card>
+            </TabsContent>
+        </Tabs>
+    )
+}
+
+export default DashboardTabs
