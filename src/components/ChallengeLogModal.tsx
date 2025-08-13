@@ -15,10 +15,16 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { challengesService } from '@/services/challenges';
 import { Challenge } from '@/types/challenges';
 import { useGamificationContext } from '@/contexts/GamificationContext';
+import { 
+  generateSocialMessage, 
+  socialMediaTemplates, 
+  SocialMediaTemplateData 
+} from '@/utils/socialMediaTemplates';
 import { 
   Clock, 
   Share2, 
@@ -29,7 +35,9 @@ import {
   CheckCircle2,
   Twitter,
   Linkedin,
-  Facebook
+  Facebook,
+  Palette,
+  RefreshCw
 } from 'lucide-react';
 
 interface ChallengeLogModalProps {
@@ -51,6 +59,7 @@ const ChallengeLogModal = ({
   const [loading, setLoading] = useState(false);
   const [showSocialPreview, setShowSocialPreview] = useState(false);
   const [socialMessage, setSocialMessage] = useState('');
+  const [selectedTemplate, setSelectedTemplate] = useState('default');
 
   const [formData, setFormData] = useState({
     progressText: '',
@@ -82,26 +91,22 @@ const ChallengeLogModal = ({
     setFormData(prev => ({ ...prev, nextGoals: newGoals }));
   };
 
-  const generateSocialMessage = () => {
+  const generateSocialMessageFromTemplate = () => {
     const nextDay = challenge.currentDay + 1;
-    const goals = formData.nextGoals
-      .filter(goal => goal.trim())
-      .map((goal, index) => `${index + 1}. ${goal}`)
-      .join('\n');
-
-    const defaultGoals = goals || '1. Continue learning consistently\n2. Apply new concepts in practice';
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://prepyatra.com';
+    
+    const templateData: SocialMediaTemplateData = {
+      challengeName: challenge.name,
+      currentDay: nextDay,
+      totalDays: challenge.totalDays,
+      progressText: formData.progressText,
+      hoursSpent: parseFloat(formData.hoursSpent) || 0,
+      nextGoals: formData.nextGoals.filter(goal => goal.trim()),
+      predefinedType: challenge.predefinedType,
+      appUrl
+    };
 
-    return `Today was Day ${nextDay} of ${challenge.name}
-
-I worked on - 
-${formData.progressText}
-
-My next goal is - 
-${defaultGoals}
-
----
-Learning it on Prep Yatra. Visit ${appUrl} to create your challenge.`;
+    return generateSocialMessage(selectedTemplate, templateData);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -129,7 +134,7 @@ Learning it on Prep Yatra. Visit ${appUrl} to create your challenge.`;
       });
 
       // Generate social media message
-      const socialMsg = generateSocialMessage();
+      const socialMsg = generateSocialMessageFromTemplate();
       setSocialMessage(socialMsg);
       setShowSocialPreview(true);
 
@@ -325,10 +330,49 @@ Learning it on Prep Yatra. Visit ${appUrl} to create your challenge.`;
                   Social Media Post
                 </CardTitle>
                 <CardDescription>
-                  Ready-to-share message for your social networks
+                  Choose a template style and customize your message
                 </CardDescription>
               </CardHeader>
               <CardContent>
+                {/* Template Selection */}
+                <div className="space-y-4 mb-4">
+                  <div className="flex items-center gap-2">
+                    <Palette className="w-4 h-4 text-primary" />
+                    <Label htmlFor="template-select" className="text-white">Template Style:</Label>
+                  </div>
+                  <div className="flex gap-2">
+                    <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                      <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                        <SelectValue placeholder="Choose a template" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {socialMediaTemplates.map((template) => (
+                          <SelectItem key={template.id} value={template.id}>
+                            <div className="flex flex-col">
+                              <span className="font-medium">{template.name}</span>
+                              <span className="text-xs text-muted-foreground">
+                                {template.description}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        const newMessage = generateSocialMessageFromTemplate();
+                        setSocialMessage(newMessage);
+                      }}
+                      className="border-gray-600 text-white hover:bg-gray-700"
+                    >
+                      <RefreshCw className="w-4 h-4 mr-1" />
+                      Regenerate
+                    </Button>
+                  </div>
+                </div>
+
                 <div className="bg-gray-900/50 p-4 rounded-lg border border-gray-600">
                   <pre className="text-sm text-gray-200 whitespace-pre-wrap font-sans">
                     {socialMessage}
