@@ -33,7 +33,7 @@ export const useChallengeLogs = (challengeId: string) => {
     setError(null)
 
     try {
-      const newLog = await challengesService.addLog(logData)
+      const newLog = await challengesService.addLog(logData.challengeId, logData)
       setLogs(prev => [newLog, ...prev])
       toast.success("Progress logged successfully!")
       return newLog

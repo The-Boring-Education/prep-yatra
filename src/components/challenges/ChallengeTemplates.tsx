@@ -13,7 +13,7 @@ const ChallengeTemplates: React.FC<ChallengeTemplatesProps> = ({
   onSelectTemplate,
   onCustomChallenge
 }) => {
-  const templates = [
+  const templates: ChallengeTemplate[] = [
     {
       id: 'python-21',
       name: '21 Days of Learning Python',
@@ -21,8 +21,7 @@ const ChallengeTemplates: React.FC<ChallengeTemplatesProps> = ({
       category: 'Programming',
       description: 'Master Python fundamentals in 21 days',
       icon: '🐍',
-      color: 'bg-primary',
-      features: ['Basic Syntax', 'Data Structures', 'Functions', 'OOP', 'File Handling']
+      color: 'bg-green-500'
     },
     {
       id: 'java-21',
@@ -31,8 +30,7 @@ const ChallengeTemplates: React.FC<ChallengeTemplatesProps> = ({
       category: 'Programming',
       description: 'Learn Java programming basics',
       icon: '☕',
-      color: 'bg-primary',
-      features: ['Java Basics', 'Classes & Objects', 'Inheritance', 'Interfaces', 'Collections']
+      color: 'bg-orange-500'
     },
     {
       id: 'internship-50',
@@ -41,8 +39,7 @@ const ChallengeTemplates: React.FC<ChallengeTemplatesProps> = ({
       category: 'Career',
       description: 'Prepare for internship interviews',
       icon: '💼',
-      color: 'bg-primary',
-      features: ['DSA Practice', 'System Design', 'Behavioral Prep', 'Mock Interviews', 'Resume Building']
+      color: 'bg-blue-500'
     },
     {
       id: 'dsa-30',
@@ -51,8 +48,7 @@ const ChallengeTemplates: React.FC<ChallengeTemplatesProps> = ({
       category: 'Programming',
       description: 'Master Data Structures and Algorithms',
       icon: '⚡',
-      color: 'bg-primary',
-      features: ['Arrays & Strings', 'Linked Lists', 'Trees & Graphs', 'Dynamic Programming', 'Greedy Algorithms']
+      color: 'bg-purple-500'
     }
   ]
 
@@ -101,28 +97,8 @@ const ChallengeTemplates: React.FC<ChallengeTemplatesProps> = ({
                   {template.totalDays} days
                 </span>
                 <span className="text-sm text-primary font-medium">
-                  {template.features.length} topics
+                  {template.category}
                 </span>
-              </div>
-
-              <div className="flex flex-wrap gap-1">
-                {template.features.slice(0, 3).map((feature, index) => (
-                  <Badge 
-                    key={index} 
-                    variant="outline" 
-                    className="text-xs bg-secondary/30 text-secondary-foreground border-primary/20"
-                  >
-                    {feature}
-                  </Badge>
-                ))}
-                {template.features.length > 3 && (
-                  <Badge 
-                    variant="outline" 
-                    className="text-xs bg-secondary/30 text-secondary-foreground border-primary/20"
-                  >
-                    +{template.features.length - 3} more
-                  </Badge>
-                )}
               </div>
             </CardContent>
           </Card>

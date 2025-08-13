@@ -1,13 +1,15 @@
-import { 
-  Challenge, 
-  ChallengeLog, 
-  CreateChallengeDTO, 
+import {
+  Challenge,
+  ChallengeLog,
+  CreateChallengeDTO,
   UpdateChallengeDTO,
   CreateChallengeLogDTO,
   UpdateChallengeLogDTO,
   ChallengeProgress,
-  ChallengeStats
+  ChallengeStats,
+  SocialMediaTemplate
 } from "@/types/challenges"
+import { trackEvent } from '@/lib/analytics'
 
 // FIXED: Point to your EXTERNAL API project, not local routes
 const BASE_URL = `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/challenges`
@@ -33,6 +35,15 @@ export const challengesService = {
       if (!result.success) {
         throw new Error("Failed to create challenge")
       }
+
+          // Analytics
+      try {
+        trackEvent('challenge_create', {
+          category: 'challenge',
+          value: data.totalDays,
+          challengeName: data.name
+        });
+      } catch {}
 
       return result.data
     } catch (error) {
@@ -111,6 +122,15 @@ export const challengesService = {
         throw new Error("Failed to update challenge")
       }
 
+      // Analytics
+      try {
+        trackEvent('challenge_update', {
+          category: 'challenge',
+          challengeId: challengeId,
+          updatedFields: Object.keys(data)
+        });
+      } catch {}
+
       return result.data
     } catch (error) {
       console.error("Error updating challenge:", error)
@@ -136,6 +156,14 @@ export const challengesService = {
       if (!result.success) {
         throw new Error("Failed to delete challenge")
       }
+
+      // Analytics
+      try {
+        trackEvent('challenge_delete', {
+          category: 'challenge',
+          challengeId
+        });
+      } catch {}
     } catch (error) {
       console.error("Error deleting challenge:", error)
       throw error
@@ -162,6 +190,20 @@ export const challengesService = {
       if (!result.success) {
         throw new Error("Failed to add log")
       }
+
+      // Trigger prep-stats refetch for gamification
+      setTimeout(() => {
+        window.dispatchEvent(new CustomEvent('prep-stats-refetch'));
+      }, 500);
+
+      // Analytics
+      try {
+        trackEvent('challenge_log_create', {
+          category: 'challenge_log',
+          value: data.hoursSpent,
+          challengeId: challengeId
+        });
+      } catch {}
 
       return result.data
     } catch (error) {
@@ -295,5 +337,34 @@ export const challengesService = {
       console.error("Error fetching stats:", error)
       throw error
     }
+  },
+
+  // Generate social media template
+  generateSocialMediaTemplate(challenge: Challenge, currentLog: ChallengeLog, nextGoals: string[] = []): SocialMediaTemplate {
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://prepyatra.com';
+    
+    return {
+      challengeName: challenge.name,
+      currentDay: currentLog.day,
+      progressText: currentLog.progressText,
+      nextGoals: nextGoals.length > 0 ? nextGoals : ['Continue learning consistently', 'Apply new concepts in practice'],
+      appUrl
+    };
+  },
+
+  // Format social media message
+  formatSocialMediaMessage(template: SocialMediaTemplate): string {
+    const goals = template.nextGoals.map((goal, index) => `${index + 1}. ${goal}`).join('\n');
+    
+    return `Today was Day ${template.currentDay} of ${template.challengeName}
+
+I worked on - 
+${template.progressText}
+
+My next goal is - 
+${goals}
+
+---
+Learning it on Prep Yatra. Visit ${template.appUrl} to create your challenge.`;
   }
 }

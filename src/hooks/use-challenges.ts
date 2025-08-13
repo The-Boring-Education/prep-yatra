@@ -112,6 +112,39 @@ export const useChallenges = (userId: string) => {
     fetchChallenges()
   }, [fetchChallenges])
 
+  // Calculate statistics
+  const activeChallenges = challenges.filter(challenge => challenge.isActive);
+  const completedChallenges = challenges.filter(challenge => !challenge.isActive);
+  const totalChallenges = challenges.length;
+
+  // Get current active challenge (most recent)
+  const currentChallenge = activeChallenges.length > 0 
+    ? activeChallenges.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0]
+    : null;
+
+  // Calculate total days across all challenges
+  const totalDaysCommitted = challenges.reduce(
+    (acc, challenge) => acc + challenge.totalDays,
+    0
+  );
+
+  // Calculate completion rate
+  const completionRate = totalChallenges > 0 
+    ? Math.round((completedChallenges.length / totalChallenges) * 100)
+    : 0;
+
+  // Get recent challenges (last 30 days)
+  const getRecentChallenges = () => {
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    return challenges.filter(
+      (challenge) => new Date(challenge.createdAt) >= thirtyDaysAgo
+    );
+  };
+
+  const recentChallenges = getRecentChallenges();
+
   return {
     challenges,
     loading,
@@ -121,6 +154,14 @@ export const useChallenges = (userId: string) => {
     deleteChallenge,
     getChallengeById,
     refreshChallenges,
-    fetchChallenges
+    fetchChallenges,
+    // Additional statistics
+    activeChallenges,
+    completedChallenges,
+    currentChallenge,
+    totalChallenges,
+    totalDaysCommitted,
+    completionRate,
+    recentChallenges
   }
 }

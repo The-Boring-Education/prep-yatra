@@ -49,6 +49,9 @@ const BuildYourStack = lazy(() => import("@/components/BuildYourStack"))
 const DailyPrepEncouragement = lazy(
     () => import("@/components/DailyPrepEncouragement")
 )
+const SubscriptionInterestPopover = lazy(
+    () => import("@/components/SubscriptionInterestPopover")
+)
 const AddSkillsModal = lazy(() => import("@/components/AddSkillsModal"))
 const UserSkillsShowcase = lazy(() => import("@/components/UserSkillsShowcase"))
 const ChallengesShowcase = lazy(() => import("@/components/challenges/ChallengesShowcase"))
@@ -290,6 +293,10 @@ const Dashboard = () => {
                 />
             </Suspense>
 
+            <Suspense fallback={null}>
+                <SubscriptionInterestPopover />
+            </Suspense>
+
             <main className='container mx-auto px-4 py-8'>
                 <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
                     {/* Profile Section */}
@@ -505,18 +512,20 @@ const Dashboard = () => {
                         </Suspense>
 
                         {/* Tabs for different sections */}
-                        <Tabs defaultValue='prep-logs' className='w-full'>
-                            <TabsList className='grid w-full grid-cols-3'>
-                                <TabsTrigger value='prep-logs'>
-                                    Prep Logs
-                                </TabsTrigger>
+                        <Tabs defaultValue='challenges' className='w-full'>
+                            <TabsList className='grid w-full grid-cols-4'>
                                 <TabsTrigger value='challenges'>
                                     Challenges
+                                </TabsTrigger>
+                                <TabsTrigger value='prep-logs'>
+                                    Prep Logs
                                 </TabsTrigger>
                                 <TabsTrigger value='recruiters'>
                                     Recruiters
                                 </TabsTrigger>
                             </TabsList>
+
+
 
                             <TabsContent
                                 value='prep-logs'
@@ -533,6 +542,30 @@ const Dashboard = () => {
                                         Add Log
                                     </Button>
                                 </div>
+
+                                {/* Mentor Feedback Section */}
+                                {logs?.some((l) => (l as any).mentorFeedback) && (
+                                    <div className='rounded-lg border border-purple-500/30 bg-purple-900/20 p-4'>
+                                        <div className='text-sm font-semibold text-purple-200 mb-2'>
+                                            Mentor Feedback
+                                        </div>
+                                        <div className='space-y-3'>
+                                            {logs
+                                                .filter((l: any) => l.mentorFeedback)
+                                                .slice(0, 3)
+                                                .map((l: any) => (
+                                                    <div key={l._id} className='p-3 rounded-md bg-purple-900/30 border border-purple-500/20'>
+                                                        <div className='text-xs text-purple-300 mb-1'>
+                                                            {new Date(l.createdAt).toLocaleDateString()}
+                                                        </div>
+                                                        <div className='text-sm text-purple-100 whitespace-pre-line'>
+                                                            {l.mentorFeedback}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 <Suspense fallback={<ComponentLoader />}>
                                     <PrepLogsList

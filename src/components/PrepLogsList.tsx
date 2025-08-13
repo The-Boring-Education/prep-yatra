@@ -21,6 +21,7 @@ type PrepLog = {
     title: string
     description?: string
     timeSpent: number
+    mentorFeedback?: string
     createdAt: string
 }
 
@@ -120,6 +121,16 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                                 <p className='text-gray mb-4'>
                                     {log.description || "No description"}
                                 </p>
+                                 {log.mentorFeedback && (
+                                     <div className='mb-4 rounded-md border border-purple-500/30 bg-purple-900/30 p-3'>
+                                         <div className='text-xs font-semibold text-purple-200 mb-1'>
+                                             Mentor Feedback
+                                         </div>
+                                         <p className='text-sm text-purple-100 whitespace-pre-line'>
+                                             {log.mentorFeedback}
+                                         </p>
+                                     </div>
+                                 )}
                                 <div className='flex gap-2'>
                                     <Button
                                         size='sm'

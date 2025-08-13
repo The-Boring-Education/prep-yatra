@@ -97,137 +97,32 @@ src/
    yarn dev
    ```
 
-5. **Open your browser**
-   Navigate to [http://localhost:3000](http://localhost:3000)
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## 🛠️ Development
+You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-### Available Scripts
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run start` - Start production server
-- `npm run lint` - Run ESLint
-- `npm run type-check` - Run TypeScript type checking
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-### Code Style
-- **TypeScript**: Strict type checking enabled
-- **ESLint**: Code quality and consistency
-- **Prettier**: Code formatting
-- **Component Structure**: Functional components with hooks
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-### Component Development
-- Use TypeScript interfaces for props
-- Implement lazy loading for performance
-- Follow the established component patterns
-- Use shadcn/ui components for consistency
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## 🔌 API Integration
+## Learn More
 
-### External API Services
-The application integrates with external APIs for:
-- User authentication and management
-- Prep logs and statistics
-- Recruiter contact management
-- Challenge and gamification data
+To learn more about Next.js, take a look at the following resources:
 
-### Service Layer Pattern
-All API calls are centralized through service files:
-- `src/services/prep-logs.ts` - Learning activity management
-- `src/services/recruiters.ts` - Recruiter contact management
-- `src/services/prep-stats.ts` - Statistics and analytics
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## 🎨 UI/UX Features
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-### Design System
-- **Color Scheme**: Consistent color palette with dark/light mode support
-- **Typography**: Clear hierarchy and readability
-- **Components**: Reusable UI components with consistent styling
-- **Responsive**: Mobile-first responsive design
+## Deploy on Vercel
 
-### Key UI Components
-- **Cards**: Information display and organization
-- **Modals**: User input and confirmation dialogs
-- **Tabs**: Content organization and navigation
-- **Forms**: User input with validation
-- **Progress Indicators**: Visual feedback for progress
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## 🔐 Authentication & Security
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
-### User Management
-- Secure authentication flow
-- Protected routes for authenticated users
-- User profile management
-- Onboarding flow for new users
+## Analytics
 
-### Data Privacy
-- User data isolation
-- Secure API communication
-- Privacy-focused design
-
-## 📱 Mobile Experience
-
-### Progressive Web App (PWA)
-- Install prompt for mobile devices
-- Offline capability
-- Responsive design for all screen sizes
-- Touch-friendly interactions
-
-### Mobile-Specific Features
-- Swipe gestures
-- Touch-optimized buttons
-- Mobile-first navigation
-- Optimized performance
-
-## 🚧 Roadmap
-
-### Upcoming Features
-- [ ] **Advanced Challenge System**: More challenge types and templates
-- [ ] **Community Features**: User interactions and discussions
-- [ ] **Analytics Dashboard**: Detailed progress insights
-- [ ] **Mobile App**: Native mobile applications
-- [ ] **Integration APIs**: Third-party platform integrations
-
-### Challenge System (In Development)
-- [ ] Create custom learning challenges
-- [ ] Pre-defined challenge templates
-- [ ] Daily progress logging
-- [ ] Social media sharing
-- [ ] Gamification integration
-
-## 🤝 Contributing
-
-### Development Guidelines
-1. Follow the established code patterns
-2. Use TypeScript for all new code
-3. Implement proper error handling
-4. Add appropriate tests
-5. Update documentation
-
-### Pull Request Process
-1. Create a feature branch
-2. Implement your changes
-3. Add tests if applicable
-4. Update documentation
-5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- Built with Next.js and React
-- UI components from shadcn/ui
-- Styling with Tailwind CSS
-- Icons from Lucide React
-
-## 📞 Support
-
-For support and questions:
-- Create an issue in the repository
-- Contact the development team
-- Check the documentation
-
----
-
-**Prep Yatra** - Empowering learners to achieve their career goals through structured preparation and community support. 🎯✨
+- Set `NEXT_PUBLIC_GA_MEASUREMENT_ID` in `.env.local` to enable GA4 tracking.
+- Events tracked include page views, clicks, form submissions, onboarding steps, skills add/remove, and prep log CRUD.

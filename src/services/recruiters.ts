@@ -1,4 +1,5 @@
 import { CreateRecruiterContact, RecruiterContact } from "@/types/recruiters"
+import { trackEvent } from "@/lib/analytics"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
 
@@ -14,6 +15,13 @@ export const recruitersService = {
 
         const result = await response.json()
         if (!result.status) throw new Error(result.message)
+        try {
+            trackEvent("recruiter_contact_create", {
+                category: "recruiter",
+                name: data.name,
+                company: data.company
+            })
+        } catch {}
         return result.data
     },
 
@@ -31,6 +39,13 @@ export const recruitersService = {
 
         const result = await response.json()
         if (!result.status) throw new Error(result.message)
+        try {
+            trackEvent("recruiter_contact_update", {
+                category: "recruiter",
+                recruiterId: id,
+                status: (data as any).status
+            })
+        } catch {}
         return result.data
     },
 
@@ -47,6 +62,12 @@ export const recruitersService = {
 
         const result = await response.json()
         if (!result.status) throw new Error(result.message)
+        try {
+            trackEvent("recruiter_contact_delete", {
+                category: "recruiter",
+                recruiterId: id
+            })
+        } catch {}
     },
 
     async getById(id: string): Promise<RecruiterContact> {

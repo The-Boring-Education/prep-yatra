@@ -1,4 +1,5 @@
 import { PrepLog, PrepLogsResponse } from "@/hooks/use-prep-logs"
+import { trackEvent } from "@/lib/analytics"
 
 export const prepLogsService = {
     async getByUserId(userId: string): Promise<PrepLog[]> {
@@ -63,6 +64,15 @@ export const prepLogsService = {
                 window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
             }, 500)
 
+            // Analytics
+            try {
+                trackEvent("prep_log_create", {
+                    category: "prep_log",
+                    value: data.timeSpent,
+                    title: data.title
+                })
+            } catch {}
+
             return result.data
         } catch (error) {
             console.error("Error creating prep log:", error)
@@ -102,6 +112,14 @@ export const prepLogsService = {
                 window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
             }, 500)
 
+            try {
+                trackEvent("prep_log_update", {
+                    category: "prep_log",
+                    value: data.timeSpent,
+                    prepLogId: data.prepLogId
+                })
+            } catch {}
+
             return result.data
         } catch (error) {
             console.error("Error updating prep log:", error)
@@ -136,6 +154,13 @@ export const prepLogsService = {
             setTimeout(() => {
                 window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
             }, 500)
+
+            try {
+                trackEvent("prep_log_delete", {
+                    category: "prep_log",
+                    prepLogId: id
+                })
+            } catch {}
         } catch (error) {
             console.error("Error deleting prep log:", error)
             throw error
