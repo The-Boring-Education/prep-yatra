@@ -28,10 +28,11 @@ type PrepLog = {
 interface Props {
     logs: PrepLog[]
     onLogUpdated: () => void
+    onLogDeleted: (deletedLogId: string) => void
     mongoUserId: string
 }
 
-const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
+const PrepLogCard = ({ logs, onLogUpdated, onLogDeleted, mongoUserId }: Props) => {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false)
     const [selectedLog, setSelectedLog] = useState<PrepLog | null>(null)
     const [deleteId, setDeleteId] = useState<string | null>(null)
@@ -62,7 +63,7 @@ const PrepLogCard = ({ logs, onLogUpdated, mongoUserId }: Props) => {
                 description: "Your prep log was successfully deleted.",
                 variant: "default"
             })
-            onLogUpdated()
+            onLogDeleted(deleteId)
         } catch (error) {
             toast({
                 title: "Error",

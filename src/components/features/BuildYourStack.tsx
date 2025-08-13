@@ -27,9 +27,8 @@ const BuildYourStack: React.FC<BuildYourStackProps> = ({
 }) => {
     const [modalOpen, setModalOpen] = useState(false)
 
-    // Show warning if no skills or not updated in 60 days
-    const showWarning =
-        userSkills.length === 0 || isOlderThan60Days(lastUpdated)
+    // Show warning only if no skills
+    const showWarning = userSkills.length === 0
 
     return (
         <div className='glass-dark rounded-2xl p-6 mb-8 shadow-lg'>
@@ -40,9 +39,7 @@ const BuildYourStack: React.FC<BuildYourStackProps> = ({
                 <div className='flex items-center gap-2 bg-yellow-900/80 border border-yellow-600 text-yellow-300 rounded-lg px-4 py-2 mb-4'>
                     <AlertTriangle className='w-5 h-5 text-yellow-400' />
                     <span>
-                        {userSkills.length === 0
-                            ? "You haven't added any skills yet. Please add your skills to build your stack!"
-                            : "You haven't updated your stack in over 60 days. Keep your skills up to date!"}
+                        You haven't added any skills yet. Please add your skills to build your stack!
                     </span>
                 </div>
             )}

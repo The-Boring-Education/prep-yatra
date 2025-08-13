@@ -41,8 +41,8 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
     const { toast } = useToast()
     const inputRef = useRef<HTMLInputElement>(null)
 
-    // Show warning if no skills or not updated in 60 days
-    const showWarning = skills.length === 0 || isOlderThan60Days(lastUpdated)
+    // Show warning only if no skills
+    const showWarning = skills.length === 0
 
     const handleAddSkill = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -121,12 +121,10 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
                         <Plus className='w-5 h-5 text-primary' /> Add Skills
                     </h2>
                     {showWarning && (
-                        <div className='flex items-center gap-2 bg-yellow-900/80 border border-yellow-600 text-yellow-300 rounded-lg px-4 py-2 mb-4'>
+                        <div className='flex items-center gap-2 bg-yellow-900/80 border border-yellow-600 text-yellow-300 rounded-lg px-4 sm:px-6 mb-4'>
                             <AlertTriangle className='w-5 h-5 text-yellow-400' />
                             <span>
-                                {skills.length === 0
-                                    ? "You haven't added any skills yet. Please add your skills to build your stack!"
-                                    : "You haven't updated your stack in over 60 days. Keep your skills up to date!"}
+                                You haven't added any skills yet. Please add your skills to build your stack!
                             </span>
                         </div>
                     )}

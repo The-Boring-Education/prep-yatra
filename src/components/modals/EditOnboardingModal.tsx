@@ -59,8 +59,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 leetCodeUrl: currentData.leetCodeUrl || "",
                 workDomain: currentData.workDomain || "",
                 name: currentData.name || user?.name || "",
-                username:
-                    currentData.username || user?.email?.split("@")[0] || "",
+                username: currentData.userName || user?.email?.split("@")[0] || "",
                 experienceLevel: (currentData.prepYatra?.experienceLevel || "fresher") as ExperienceLevel,
                 goal: (currentData.prepYatra?.goal || "6Months") as GoalType,
                 targetCompanies: (currentData.prepYatra?.targetCompanies || []) as CompanyType[],

@@ -33,29 +33,38 @@ const ComponentLoader = () => (
 type Profile = {
     _id?: string
     name?: string
-    username?: string
+    userName?: string
     linkedInUrl?: string
     githubUrl?: string
     leetCodeUrl?: string
+    image?: string
+    userSkills?: string[]
+    userSkillsLastUpdated?: string
     prepYatra?: {
         experienceLevel?: string
         goal?: string
         skills?: string[]
+        targetCompanies?: string[]
+        preferences?: {
+            focusAreas?: string[]
+            interviewCategories?: string[]
+        }
     }
     createdAt?: string
+    occupation?: string
+    purpose?: string[]
 }
 
 const Dashboard = () => {
     const router = useRouter()
     const { user, loading: authLoading, signOut } = useAuth()
     const { showCelebration } = useGamificationContext()
-    const { logs: prepLogs, loading: prepLogsLoading, refetch: refetchPrepLogs } = usePrepLogs(user?.id)
+    const { logs: prepLogs, loading: prepLogsLoading, refetch: refetchPrepLogs, setLogs: setPrepLogs } = usePrepLogs(user?.id)
 
     // State management
     const [profile, setProfile] = useState<Profile | null>(null)
     const [recruiterContacts, setRecruiterContacts] = useState<RecruiterContact[]>([])
     const [loading, setLoading] = useState(true)
-    const [refreshTrigger, setRefreshTrigger] = useState(0)
 
     // Modal states
     const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false)
@@ -66,10 +75,15 @@ const Dashboard = () => {
     // Data fetching functions
     const fetchProfile = async (userId: string) => {
         try {
-            const response = await fetch(`/api/profile?userId=${userId}`)
+            const response = await fetch(`${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?userId=${userId}`)
             if (response.ok) {
-                const data = await response.json()
-                setProfile(data)
+                const result = await response.json()
+                // Extract data from the API response structure
+                if (result.status && result.data) {
+                    setProfile(result.data)
+                } else {
+                    setProfile(result)
+                }
             }
         } catch (error) {
             console.error("Error fetching profile:", error)
@@ -113,7 +127,7 @@ const Dashboard = () => {
 
             try {
                 // Check if user needs onboarding
-                const response = await fetch(`/api/profile?userId=${user.id}`)
+                const response = await fetch(`${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?userId=${user.id}`)
                 if (!response.ok) {
                     const onboardingUrl = process.env.NEXT_PUBLIC_ONBOARDING_URL
                     if (onboardingUrl) {
@@ -123,6 +137,21 @@ const Dashboard = () => {
                         router.push("/onboarding")
                     }
                     return
+                }
+
+                const result = await response.json()
+                // Check if user is onboarded based on API response
+                if (result.status && result.data) {
+                    if (!result.data.isOnboarded && !result.data.prepYatra?.pyOnboarded) {
+                        const onboardingUrl = process.env.NEXT_PUBLIC_ONBOARDING_URL
+                        if (onboardingUrl) {
+                            const redirectUrl = `${onboardingUrl}?userId=${user.id}&from=prepyatra&redirect=${encodeURIComponent(window.location.origin + "/dashboard")}`
+                            window.location.href = redirectUrl
+                        } else {
+                            router.push("/onboarding")
+                        }
+                        return
+                    }
                 }
 
                 initializeData()
@@ -135,14 +164,6 @@ const Dashboard = () => {
         checkAuthAndProfile()
     }, [user, router, authLoading])
 
-    // Refetch data when refreshTrigger changes
-    useEffect(() => {
-        if (user?.id && refreshTrigger > 0 && !authLoading) {
-            fetchRecruiterContacts(user.id)
-            refetchPrepLogs()
-        }
-    }, [refreshTrigger, user?.id, authLoading, refetchPrepLogs])
-
     // Event handlers
     const handleSignOut = async () => {
         try {
@@ -153,30 +174,46 @@ const Dashboard = () => {
         }
     }
 
-    const handleContactAdded = () => {
-        if (user?.id) {
-            setRefreshTrigger(prev => prev + 1)
-            showCelebration(5)
-            toast.success("Recruiter contact added successfully!")
-        }
-    }
-
     const handleLogAdded = () => {
         if (user?.id) {
-            setRefreshTrigger(prev => prev + 1)
+            // Only refetch prep logs, not everything
+            refetchPrepLogs()
             showCelebration(10)
             toast.success("Prep log added successfully!")
         }
     }
 
+    const handleContactAdded = () => {
+        if (user?.id) {
+            // Only refetch recruiter contacts, not everything
+            fetchRecruiterContacts(user.id)
+            showCelebration(5)
+            toast.success("Recruiter contact added successfully!")
+        }
+    }
+
     const handleContactUpdated = () => {
         if (user?.id) {
-            setRefreshTrigger(prev => prev + 1)
+            // Only refetch recruiter contacts, not everything
+            fetchRecruiterContacts(user.id)
         }
+    }
+
+    const handleLogDeleted = (deletedLogId: string) => {
+        // Immediately remove the deleted log from local state
+        setPrepLogs(prevLogs => prevLogs.filter(log => log._id !== deletedLogId))
+        toast.success("Prep log deleted successfully!")
+    }
+
+    const handleContactDeleted = (deletedContactId: string) => {
+        // Immediately remove the deleted contact from local state
+        setRecruiterContacts(prevContacts => prevContacts.filter(contact => contact._id !== deletedContactId))
+        toast.success("Recruiter contact deleted successfully!")
     }
 
     const handleSkillsUpdated = () => {
         if (user?.id) {
+            // Only refetch profile, not everything
             fetchProfile(user.id)
             toast.success("Skills updated successfully!")
         }
@@ -204,30 +241,34 @@ const Dashboard = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Profile Section */}
                     <div className="lg:col-span-1">
-                        <ProfileSection user={user} profile={profile} />
+                        <ProfileSection 
+                            user={user} 
+                            profile={profile} 
+                            onEditClick={() => setIsEditModalOpen(true)}
+                        />
 
                         {/* Additional components */}
                         <Suspense fallback={<ComponentLoader />}>
-                            <GamificationDisplay userId={user?.id || ""} />
-                        </Suspense>
-
-                                <Suspense fallback={<ComponentLoader />}>
                             <BuildYourStack 
                                 userId={user?.id || ""} 
-                                userSkills={profile?.prepYatra?.skills || []} 
+                                userSkills={profile?.userSkills || []} 
+                                lastUpdated={profile?.userSkillsLastUpdated}
                             />
-                                </Suspense>
-
-                                <Suspense fallback={<ComponentLoader />}>
-                            <DailyPrepEncouragement 
-                                userId={user?.id || ""} 
-                                onAddPrepLog={() => setIsPrepLogModalOpen(true)} 
-                            />
-                                </Suspense>
-                                </div>
+                        </Suspense>
+                    </div>
 
                     {/* Main Content */}
                     <div className="lg:col-span-2">
+                        {/* Daily Prep Check-in above tabs */}
+                        <Suspense fallback={<ComponentLoader />}>
+                            <div className="mb-6">
+                                <DailyPrepEncouragement 
+                                    userId={user?.id || ""} 
+                                    onAddPrepLog={() => setIsPrepLogModalOpen(true)} 
+                                />
+                            </div>
+                        </Suspense>
+
                         <DashboardTabs
                             prepLogs={prepLogs}
                             recruiterContacts={recruiterContacts}
@@ -236,8 +277,10 @@ const Dashboard = () => {
                             onPrepLogModalOpen={() => setIsPrepLogModalOpen(true)}
                             onRecruiterModalOpen={() => setIsRecruiterModalOpen(true)}
                             onSkillsModalOpen={() => setIsSkillsModalOpen(true)}
-                                        onContactUpdated={handleContactUpdated}
-                                    />
+                            onContactUpdated={handleContactUpdated}
+                            onLogDeleted={handleLogDeleted}
+                            onContactDeleted={handleContactDeleted}
+                        />
                     </div>
                 </div>
             </main>
@@ -280,7 +323,7 @@ const Dashboard = () => {
                     isOpen={isSkillsModalOpen}
                     onClose={() => setIsSkillsModalOpen(false)}
                     userId={user?.id || ""}
-                    userSkills={profile?.prepYatra?.skills || []}
+                    userSkills={profile?.userSkills || []}
                     onSkillsUpdated={handleSkillsUpdated}
                 />
             </Suspense>

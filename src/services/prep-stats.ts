@@ -26,9 +26,7 @@ export const prepStatsService = {
     async getByUserId(userId: string): Promise<PrepStats> {
         try {
             const response = await fetch(
-                `${
-                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
-                }/prepyatra/prep-log/stats?userId=${userId}`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/prep-log/stats?userId=${userId}`,
                 {
                     headers: {
                         "Content-Type": "application/json"
