@@ -1,26 +1,27 @@
-import { useEffect, useState } from "react"
-import { CelebrationAnimationProps } from "@/interfaces/components"
-import { CONFETTI_COLORS } from "@/constants"
+import {useEffect, useState} from "react";
+
+import {CONFETTI_COLORS} from "@/constants";
+import {CelebrationAnimationProps} from "@/interfaces/components";
 
 const CelebrationAnimation = ({
     show,
     pointsEarned = 0,
     onComplete
 }: CelebrationAnimationProps) => {
-    const [isVisible, setIsVisible] = useState(false)
+    const [isVisible, setIsVisible] = useState(false);
 
     useEffect(() => {
         if (show) {
-            setIsVisible(true)
+            setIsVisible(true);
             const timer = setTimeout(() => {
-                setIsVisible(false)
-                onComplete?.()
-            }, 3000)
-            return () => clearTimeout(timer)
+                setIsVisible(false);
+                onComplete?.();
+            }, 3000);
+            return () => clearTimeout(timer);
         }
-    }, [show, onComplete])
+    }, [show, onComplete]);
 
-    if (!isVisible) return null
+    if (!isVisible) {return null;}
 
     return (
         <div className='fixed inset-0 z-[9999] pointer-events-none'>
@@ -30,7 +31,7 @@ const CelebrationAnimation = ({
                     const color =
                         CONFETTI_COLORS[
                             Math.floor(Math.random() * CONFETTI_COLORS.length)
-                        ]
+                        ];
                     return (
                         <div
                             key={i}
@@ -40,8 +41,8 @@ const CelebrationAnimation = ({
                                 top: `${Math.random() * 100}%`,
                                 animationDelay: `${Math.random() * 2}s`,
                                 animationDuration: `${1 + Math.random() * 2}s`
-                            }}></div>
-                    )
+                            }} />
+                    );
                 })}
             </div>
 
@@ -56,7 +57,7 @@ const CelebrationAnimation = ({
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default CelebrationAnimation
+export default CelebrationAnimation;

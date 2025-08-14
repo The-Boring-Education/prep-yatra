@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react"
+import {useEffect, useState} from "react";
+
+import {Button} from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -6,13 +8,12 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog"
-import { InputField } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
-import { Label } from "@/components/ui/label"
-import { useToast } from "@/hooks/use-toast"
-import { prepLogsService } from "@/services/prep-logs"
+} from "@/components/ui/dialog";
+import {InputField} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {Textarea} from "@/components/ui/textarea";
+import {useToast} from "@/hooks/use-toast";
+import {prepLogsService} from "@/services/prep-logs";
 
 interface AddPrepLogModalProps {
     isOpen: boolean
@@ -34,14 +35,14 @@ const AddPrepLogModal = ({
     mongoUserId,
     editLog
 }: AddPrepLogModalProps) => {
-    const { toast } = useToast()
-    const [loading, setLoading] = useState(false)
+    const {toast} = useToast();
+    const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         title: "",
         description: "",
         timeSpent: ""
-    })
+    });
 
     useEffect(() => {
         if (editLog) {
@@ -49,31 +50,31 @@ const AddPrepLogModal = ({
                 title: editLog.title || "",
                 description: editLog.description || "",
                 timeSpent: editLog.timeSpent.toString() || ""
-            })
+            });
         } else {
-            setFormData({ title: "", description: "", timeSpent: "" })
+            setFormData({title: "", description: "", timeSpent: ""});
         }
-    }, [editLog, isOpen])
+    }, [editLog, isOpen]);
 
     const handleInputChange = (field: string, value: string) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
-    }
+        setFormData((prev) => ({...prev, [field]: value}));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
 
-        const { title, description, timeSpent } = formData
+        const {title, description, timeSpent} = formData;
 
         if (!title || !timeSpent) {
             toast({
                 title: "Error",
                 description: "Title and Time Spent are required",
                 variant: "destructive"
-            })
-            return
+            });
+            return;
         }
 
-        setLoading(true)
+        setLoading(true);
 
         try {
             if (editLog) {
@@ -83,7 +84,7 @@ const AddPrepLogModal = ({
                     description,
                     timeSpent: Number(timeSpent),
                     prepLogId: editLog._id
-                })
+                });
             } else {
                 // Create new log
                 await prepLogsService.create({
@@ -91,7 +92,7 @@ const AddPrepLogModal = ({
                     description,
                     timeSpent: Number(timeSpent),
                     userId: mongoUserId
-                })
+                });
             }
 
             toast({
@@ -99,20 +100,20 @@ const AddPrepLogModal = ({
                 description: `Prep Log ${
                     editLog ? "updated" : "added"
                 } successfully!`
-            })
+            });
 
-            onLogAdded()
-            onClose()
+            onLogAdded();
+            onClose();
         } catch (err) {
             toast({
                 title: "Error",
                 description: err.message || "Something went wrong",
                 variant: "destructive"
-            })
+            });
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -188,7 +189,7 @@ const AddPrepLogModal = ({
                 </form>
             </DialogContent>
         </Dialog>
-    )
-}
+    );
+};
 
-export default AddPrepLogModal
+export default AddPrepLogModal;

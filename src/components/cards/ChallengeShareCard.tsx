@@ -1,13 +1,3 @@
-import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Challenge } from '@/types/challenges';
-import { 
-  generateSocialMessage, 
-  socialMediaTemplates, 
-  SocialMediaTemplateData 
-} from '@/utils/socialMediaTemplates';
 import { 
   Share2, 
   Copy, 
@@ -17,24 +7,35 @@ import {
   Trophy,
   Target,
   Calendar
-} from 'lucide-react';
-import { toast } from 'sonner';
+} from "lucide-react";
+import React from "react";
+import {toast} from "sonner";
+
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Challenge} from "@/types/challenges";
+import { 
+  generateSocialMessage, 
+  SocialMediaTemplateData 
+} from "@/utils/socialMediaTemplates";
+
 
 interface ChallengeShareCardProps {
   challenge: Challenge;
   className?: string;
-  variant?: 'completion' | 'milestone' | 'progress';
+  variant?: "completion" | "milestone" | "progress";
 }
 
 const ChallengeShareCard = ({ 
   challenge, 
-  className = '', 
-  variant = 'progress' 
+  className = "", 
+  variant = "progress" 
 }: ChallengeShareCardProps) => {
   const progressPercentage = Math.round((challenge.currentDay / challenge.totalDays) * 100);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://prepyatra.com';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://prepyatra.com";
 
-  const getShareMessage = (templateId: string = 'default') => {
+  const getShareMessage = (templateId: string = "default") => {
     const templateData: SocialMediaTemplateData = {
       challengeName: challenge.name,
       currentDay: challenge.currentDay,
@@ -51,9 +52,9 @@ const ChallengeShareCard = ({
 
   const getContextualProgress = () => {
     switch (variant) {
-      case 'completion':
+      case "completion":
         return `🎉 Successfully completed my ${challenge.name} challenge! What an incredible journey of growth and learning.`;
-      case 'milestone':
+      case "milestone":
         if (progressPercentage >= 75) {
           return `💪 ${progressPercentage}% through my ${challenge.name} challenge! The finish line is in sight and I'm feeling stronger than ever.`;
         } else if (progressPercentage >= 50) {
@@ -68,20 +69,20 @@ const ChallengeShareCard = ({
 
   const getContextualGoals = () => {
     switch (variant) {
-      case 'completion':
-        return ['Start my next learning challenge', 'Apply new skills to real projects', 'Share knowledge with others'];
-      case 'milestone':
-        return ['Maintain daily consistency', 'Deepen understanding of core concepts', 'Prepare for upcoming advanced topics'];
+      case "completion":
+        return ["Start my next learning challenge", "Apply new skills to real projects", "Share knowledge with others"];
+      case "milestone":
+        return ["Maintain daily consistency", "Deepen understanding of core concepts", "Prepare for upcoming advanced topics"];
       default:
-        return ['Continue daily progress', 'Focus on practical application', 'Build upon yesterday\'s learning'];
+        return ["Continue daily progress", "Focus on practical application", "Build upon yesterday's learning"];
     }
   };
 
   const getVariantIcon = () => {
     switch (variant) {
-      case 'completion':
+      case "completion":
         return <Trophy className="w-5 h-5 text-yellow-500" />;
-      case 'milestone':
+      case "milestone":
         return <Target className="w-5 h-5 text-green-500" />;
       default:
         return <Calendar className="w-5 h-5 text-blue-500" />;
@@ -90,46 +91,46 @@ const ChallengeShareCard = ({
 
   const getVariantTitle = () => {
     switch (variant) {
-      case 'completion':
-        return 'Challenge Completed! 🎉';
-      case 'milestone':
+      case "completion":
+        return "Challenge Completed! 🎉";
+      case "milestone":
         return `${progressPercentage}% Milestone Reached! 🎯`;
       default:
-        return 'Share Your Progress 📈';
+        return "Share Your Progress 📈";
     }
   };
 
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success('Copied to clipboard! 📋');
+      toast.success("Copied to clipboard! 📋");
     } catch (error) {
-      toast.error('Failed to copy to clipboard');
+      toast.error("Failed to copy to clipboard");
     }
   };
 
-  const shareToSocial = (platform: string, templateId: string = 'default') => {
+  const shareToSocial = (platform: string, templateId: string = "default") => {
     const message = generateSocialMessage(templateId);
     const encodedText = encodeURIComponent(message);
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://prepyatra.com';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://prepyatra.com";
     
-    let shareUrl = '';
+    let shareUrl = "";
     switch (platform) {
-      case 'twitter':
+      case "twitter":
         // Updated to use X (Twitter) sharing URL
         shareUrl = `https://x.com/intent/tweet?text=${encodedText}`;
         break;
-      case 'linkedin':
+      case "linkedin":
         shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(appUrl)}&summary=${encodedText}`;
         break;
-      case 'facebook':
+      case "facebook":
         shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(appUrl)}&quote=${encodedText}`;
         break;
     }
     
     if (shareUrl) {
-      window.open(shareUrl, '_blank', 'width=600,height=400');
-      toast.success(`Opening ${platform === 'twitter' ? 'X (Twitter)' : platform}... 🚀`);
+      window.open(shareUrl, "_blank", "width=600,height=400");
+      toast.success(`Opening ${platform === "twitter" ? "X (Twitter)" : platform}... 🚀`);
     }
   };
 
@@ -163,7 +164,7 @@ const ChallengeShareCard = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => copyToClipboard(getShareMessage('default'))}
+            onClick={() => copyToClipboard(getShareMessage("default"))}
             className="border-gray-600 text-white hover:bg-gray-700"
           >
             <Copy className="w-4 h-4 mr-2" />
@@ -172,7 +173,7 @@ const ChallengeShareCard = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => copyToClipboard(getShareMessage('motivational'))}
+            onClick={() => copyToClipboard(getShareMessage("motivational"))}
             className="border-gray-600 text-white hover:bg-gray-700"
           >
             <Share2 className="w-4 h-4 mr-2" />
@@ -185,7 +186,7 @@ const ChallengeShareCard = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => shareToSocial('twitter', 'twitter-short')}
+            onClick={() => shareToSocial("twitter", "twitter-short")}
             className="flex-1 border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
           >
             <Twitter className="w-4 h-4 mr-1" />
@@ -194,7 +195,7 @@ const ChallengeShareCard = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => shareToSocial('linkedin', 'linkedin-professional')}
+            onClick={() => shareToSocial("linkedin", "linkedin-professional")}
             className="flex-1 border-blue-600/50 text-blue-500 hover:bg-blue-600/10"
           >
             <Linkedin className="w-4 h-4 mr-1" />
@@ -203,7 +204,7 @@ const ChallengeShareCard = ({
           <Button
             variant="outline"
             size="sm"
-            onClick={() => shareToSocial('facebook', 'storytelling')}
+            onClick={() => shareToSocial("facebook", "storytelling")}
             className="flex-1 border-blue-700/50 text-blue-600 hover:bg-blue-700/10"
           >
             <Facebook className="w-4 h-4 mr-1" />
@@ -215,7 +216,7 @@ const ChallengeShareCard = ({
         <div className="bg-gray-900/50 p-3 rounded-lg border border-gray-600">
           <p className="text-xs text-gray-400 mb-2">Preview:</p>
           <p className="text-sm text-gray-300 line-clamp-3">
-            {getShareMessage('default').substring(0, 120)}...
+            {getShareMessage("default").substring(0, 120)}...
           </p>
         </div>
       </CardContent>

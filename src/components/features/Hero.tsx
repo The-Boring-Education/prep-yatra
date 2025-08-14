@@ -1,29 +1,30 @@
-import { Button } from "@/components/ui/button"
-import { useRouter } from "next/router"
+import {useRouter} from "next/router";
+
+import {Button} from "@/components/ui/button";
 
 const Hero = () => {
-    const router = useRouter()
+    const router = useRouter();
 
     const scrollToWaitlist = () => {
-        const waitlistSection = document.getElementById("waitlist")
-        waitlistSection?.scrollIntoView({ behavior: "smooth" })
-    }
+        const waitlistSection = document.getElementById("waitlist");
+        waitlistSection?.scrollIntoView({behavior: "smooth"});
+    };
 
     const handleGetStarted = () => {
-        router.push("/auth")
-    }
+        router.push("/auth");
+    };
 
     return (
         <section className='min-h-screen flex items-center justify-center px-4 pt-16 relative overflow-hidden'>
             {/* Background Animation Elements */}
             <div className='absolute inset-0 opacity-10'>
-                <div className='absolute top-20 left-10 w-32 h-32 bg-primary/20 rounded-full animate-float'></div>
+                <div className='absolute top-20 left-10 w-32 h-32 bg-primary/20 rounded-full animate-float' />
                 <div
                     className='absolute top-60 right-20 w-24 h-24 bg-primary/30 rounded-full animate-float'
-                    style={{ animationDelay: "1s" }}></div>
+                    style={{animationDelay: "1s"}} />
                 <div
                     className='absolute bottom-40 left-1/4 w-20 h-20 bg-primary/25 rounded-full animate-float'
-                    style={{ animationDelay: "2s" }}></div>
+                    style={{animationDelay: "2s"}} />
             </div>
 
             <div className='container mx-auto text-center relative z-10'>
@@ -86,7 +87,7 @@ const Hero = () => {
 
                     <div
                         className='glass rounded-2xl p-6 animate-scale-in hover:scale-105 transition-transform duration-300'
-                        style={{ animationDelay: "0.2s" }}>
+                        style={{animationDelay: "0.2s"}}>
                         <div className='w-16 h-16 bg-primary rounded-full mx-auto mb-4 flex items-center justify-center'>
                             <svg
                                 className='w-8 h-8 text-primary-foreground'
@@ -112,7 +113,7 @@ const Hero = () => {
 
                     <div
                         className='glass rounded-2xl p-6 animate-slide-in-right hover:scale-105 transition-transform duration-300'
-                        style={{ animationDelay: "0.4s" }}>
+                        style={{animationDelay: "0.4s"}}>
                         <div className='w-16 h-16 bg-primary rounded-full mx-auto mb-4 flex items-center justify-center'>
                             <svg
                                 className='w-8 h-8 text-primary-foreground'
@@ -138,7 +139,7 @@ const Hero = () => {
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default Hero
+export default Hero;

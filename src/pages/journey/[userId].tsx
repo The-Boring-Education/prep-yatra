@@ -1,17 +1,18 @@
-import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
-import { Calendar, Clock, User, Target, TrendingUp, Linkedin, Github, ExternalLink } from "lucide-react"
+import {Calendar, Clock, User, Target, TrendingUp, Linkedin, Github, ExternalLink} from "lucide-react";
+import {useRouter} from "next/router";
+import {useEffect, useState} from "react";
+
+import Footer from "@/components/layout/Footer";
+import Navigation from "@/components/layout/Navigation";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle
-} from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import Navigation from "@/components/layout/Navigation"
-import Footer from "@/components/layout/Footer"
+} from "@/components/ui/card";
 
 interface PrepLog {
     _id: string
@@ -45,99 +46,99 @@ interface UserProfile {
 }
 
 const PrepLogsShowcase = () => {
-    const router = useRouter()
-    const { userId } = router.query
-    const [prepLogs, setPrepLogs] = useState<PrepLog[]>([])
-    const [profile, setProfile] = useState<UserProfile | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState("")
+    const router = useRouter();
+    const {userId} = router.query;
+    const [prepLogs, setPrepLogs] = useState<PrepLog[]>([]);
+    const [profile, setProfile] = useState<UserProfile | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState("");
 
     const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
+        const date = new Date(dateString);
         return date.toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",
             day: "numeric"
-        })
-    }
+        });
+    };
 
     const formatTimeSpent = (hours: number) => {
-        if (hours < 1) return `${Math.round(hours * 60)} minutes`
-        return `${hours} hour${hours !== 1 ? "s" : ""}`
-    }
+        if (hours < 1) {return `${Math.round(hours * 60)} minutes`;}
+        return `${hours} hour${hours !== 1 ? "s" : ""}`;
+    };
 
     const getTimeOfDay = () => {
-        const hour = new Date().getHours()
-        if (hour < 12) return "Good morning"
-        if (hour < 17) return "Good afternoon"
-        return "Good evening"
-    }
+        const hour = new Date().getHours();
+        if (hour < 12) {return "Good morning";}
+        if (hour < 17) {return "Good afternoon";}
+        return "Good evening";
+    };
 
     // Utility function to add protocol to URLs
     function withProtocol(url: string | undefined) {
-        if (!url) return undefined
-        return url.startsWith("http") ? url : `https://${url}`
+        if (!url) {return undefined;}
+        return url.startsWith("http") ? url : `https://${url}`;
     }
 
     const handleGetStarted = () => {
-        router.push("/auth")
-    }
+        router.push("/auth");
+    };
 
     useEffect(() => {
         const fetchProfile = async () => {
-            if (!userId) return
+            if (!userId) {return;}
 
             try {
-                setLoading(true)
+                setLoading(true);
 
                 // Fetch user profile
                 const profileResponse = await fetch(
                     `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?userId=${userId}`
-                )
+                );
 
                 if (!profileResponse.ok) {
-                    throw new Error("User not found")
+                    throw new Error("User not found");
                 }
 
-                const profileData = await profileResponse.json()
+                const profileData = await profileResponse.json();
                 // Extract data from the API response structure
                 if (profileData.status && profileData.data) {
-                    setProfile(profileData.data)
+                    setProfile(profileData.data);
                 } else {
-                    setProfile(profileData)
+                    setProfile(profileData);
                 }
 
                 // Fetch prep logs
                 const logsResponse = await fetch(
                     `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/prep-log?userId=${userId}`
-                )
+                );
 
                 if (logsResponse.ok) {
-                    const logsData = await logsResponse.json()
+                    const logsData = await logsResponse.json();
                     // Extract data from the API response structure
                     if (logsData.status && logsData.data) {
-                        setPrepLogs(logsData.data || [])
+                        setPrepLogs(logsData.data || []);
                     } else {
-                        setPrepLogs(logsData || [])
+                        setPrepLogs(logsData || []);
                     }
                 }
             } catch (err) {
-                setError("Failed to load user profile")
-                console.error("Error fetching data:", err)
+                setError("Failed to load user profile");
+                console.error("Error fetching data:", err);
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
-        }
+        };
 
-        fetchProfile()
-    }, [userId])
+        fetchProfile();
+    }, [userId]);
 
     if (loading) {
         return (
             <div className='min-h-screen flex items-center justify-center'>
-                <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary'></div>
+                <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary' />
             </div>
-        )
+        );
     }
 
     if (error || !profile) {
@@ -158,14 +159,14 @@ const PrepLogsShowcase = () => {
                 </div>
                 <Footer />
             </div>
-        )
+        );
     }
 
     const totalTimeSpent = prepLogs.reduce(
         (total, log) => total + log.timeSpent,
         0
-    )
-    const totalLogs = prepLogs.length
+    );
+    const totalLogs = prepLogs.length;
 
     return (
         <div className='min-h-screen bg-background'>
@@ -357,7 +358,7 @@ const PrepLogsShowcase = () => {
                                         <span className='font-medium text-foreground'>Occupation:</span>
                                         <br />
                                         <span className='text-muted-foreground'>
-                                            {profile.occupation.replace('_', ' ')}
+                                            {profile.occupation.replace("_", " ")}
                                         </span>
                                     </div>
                                 )}
@@ -366,7 +367,7 @@ const PrepLogsShowcase = () => {
                                         <span className='font-medium text-foreground'>Purpose:</span>
                                         <br />
                                         <span className='text-muted-foreground'>
-                                            {profile.purpose.map(p => p.replace('_', ' ')).join(', ')}
+                                            {profile.purpose.map(p => p.replace("_", " ")).join(", ")}
                                         </span>
                                     </div>
                                 )}
@@ -454,7 +455,7 @@ const PrepLogsShowcase = () => {
 
             <Footer />
         </div>
-    )
-}
+    );
+};
 
-export default PrepLogsShowcase
+export default PrepLogsShowcase;

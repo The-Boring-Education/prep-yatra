@@ -1,12 +1,13 @@
-import { useRouter } from "next/router"
-import { Button } from "@/components/ui/button"
-import { useGoogleLogin } from "@react-oauth/google"
-import { useAuth } from "@/contexts/useAuth"
-import InstallButton from "@/components/features/InstallButton"
+import {useGoogleLogin} from "@react-oauth/google";
+import {useRouter} from "next/router";
+
+import InstallButton from "@/components/features/InstallButton";
+import {Button} from "@/components/ui/button";
+import {useAuth} from "@/contexts/useAuth";
 
 const Auth = () => {
-    const router = useRouter()
-    const { signIn, loading } = useAuth()
+    const router = useRouter();
+    const {signIn, loading} = useAuth();
 
     const login = useGoogleLogin({
         onSuccess: async (response) => {
@@ -19,30 +20,30 @@ const Auth = () => {
                             Authorization: `Bearer ${response.access_token}`
                         }
                     }
-                ).then((res) => res.json())
+                ).then((res) => res.json());
 
                 // Sign in with our auth context
-                await signIn(userInfo)
+                await signIn(userInfo);
             } catch (error) {
-                console.error("Error during Google login:", error)
+                console.error("Error during Google login:", error);
             }
         },
         onError: (error) => {
-            console.error("Google login error:", error)
+            console.error("Google login error:", error);
         }
-    })
+    });
 
     return (
         <div className='min-h-screen flex items-center justify-center px-4 relative overflow-hidden'>
             {/* Background Animation Elements */}
             <div className='absolute inset-0 opacity-10'>
-                <div className='absolute top-20 left-10 w-32 h-32 bg-primary/20 rounded-full animate-float'></div>
+                <div className='absolute top-20 left-10 w-32 h-32 bg-primary/20 rounded-full animate-float' />
                 <div
                     className='absolute top-60 right-20 w-24 h-24 bg-primary/30 rounded-full animate-float'
-                    style={{ animationDelay: "1s" }}></div>
+                    style={{animationDelay: "1s"}} />
                 <div
                     className='absolute bottom-40 left-1/4 w-20 h-20 bg-primary/25 rounded-full animate-float'
-                    style={{ animationDelay: "2s" }}></div>
+                    style={{animationDelay: "2s"}} />
             </div>
 
             <div className='glass-dark rounded-2xl p-8 w-full max-w-md animate-scale-in relative z-10'>
@@ -97,7 +98,7 @@ const Auth = () => {
             </div>
             <InstallButton />
         </div>
-    )
-}
+    );
+};
 
-export default Auth
+export default Auth;

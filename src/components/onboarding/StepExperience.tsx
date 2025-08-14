@@ -1,6 +1,7 @@
-import { EXPERIENCE_LEVELS } from "@/constants/onboarding"
-import { OnboardingData, ExperienceLevel } from "@/types/onboarding"
-import React from "react"
+import React from "react";
+
+import {EXPERIENCE_LEVELS} from "@/constants/onboarding";
+import {OnboardingData, ExperienceLevel} from "@/types/onboarding";
 
 type Props = {
     formData: OnboardingData
@@ -10,7 +11,7 @@ type Props = {
     ) => void
 }
 
-const StepExperience: React.FC<Props> = ({ formData, handleInputChange }) => (
+const StepExperience: React.FC<Props> = ({formData, handleInputChange}) => (
     <div className='space-y-6'>
         <div className='text-center mb-8'>
             <h1 className='text-2xl font-bold text-white mb-2'>
@@ -39,6 +40,6 @@ const StepExperience: React.FC<Props> = ({ formData, handleInputChange }) => (
             ))}
         </div>
     </div>
-)
+);
 
-export default StepExperience
+export default StepExperience;

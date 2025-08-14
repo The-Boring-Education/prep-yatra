@@ -1,51 +1,52 @@
-import { useState, useEffect } from "react"
-import { prepStatsService, PrepStats } from "@/services/prep-stats"
+import {useState, useEffect} from "react";
+
+import {prepStatsService, PrepStats} from "@/services/prep-stats";
 
 export function usePrepStats(userId: string) {
-    const [stats, setStats] = useState<PrepStats | null>(null)
-    const [loading, setLoading] = useState(true)
-    const [error, setError] = useState<string | null>(null)
+    const [stats, setStats] = useState<PrepStats | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchPrepStats = async () => {
             if (!userId) {
-                setError("User ID is required")
-                setLoading(false)
-                return
+                setError("User ID is required");
+                setLoading(false);
+                return;
             }
 
             try {
-                setLoading(true)
-                setError(null)
+                setLoading(true);
+                setError(null);
 
-                const data = await prepStatsService.getByUserId(userId)
-                setStats(data)
+                const data = await prepStatsService.getByUserId(userId);
+                setStats(data);
             } catch (err) {
                 setError(
                     err instanceof Error
                         ? err.message
                         : "Failed to fetch prep stats"
-                )
+                );
             } finally {
-                setLoading(false)
+                setLoading(false);
             }
-        }
+        };
 
-        fetchPrepStats()
-    }, [userId])
+        fetchPrepStats();
+    }, [userId]);
 
     // Calculate total time spent from weekly logs
     const totalTimeSpent =
         stats?.weeklyLogs?.reduce(
             (acc, log) => acc + (log.timeSpent || 0),
             0
-        ) || 0
+        ) || 0;
 
     // Calculate average time per session
     const averageTimePerSession =
         stats?.totalLogs > 0
             ? Math.round((totalTimeSpent / stats.totalLogs) * 10) / 10
-            : 0
+            : 0;
 
     return {
         stats,
@@ -61,8 +62,8 @@ export function usePrepStats(userId: string) {
         weeklyLogs: stats?.weeklyLogs || [],
         lastLoggedDate: stats?.lastLoggedDate,
         refetch: () => {
-            setLoading(true)
-            setError(null)
+            setLoading(true);
+            setError(null);
         }
-    }
+    };
 }

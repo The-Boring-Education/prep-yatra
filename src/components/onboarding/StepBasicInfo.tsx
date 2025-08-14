@@ -1,14 +1,15 @@
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { OnboardingData } from "@/types/onboarding"
-import React from "react"
+import React from "react";
+
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {OnboardingData} from "@/types/onboarding";
 
 type Props = {
     formData: OnboardingData
     handleInputChange: (field: keyof OnboardingData, value: string) => void
 }
 
-const StepBasicInfo: React.FC<Props> = ({ formData, handleInputChange }) => (
+const StepBasicInfo: React.FC<Props> = ({formData, handleInputChange}) => (
     <div className='space-y-6'>
         <div className='text-center mb-8'>
             <h1 className='text-2xl font-bold text-white mb-2'>
@@ -45,6 +46,6 @@ const StepBasicInfo: React.FC<Props> = ({ formData, handleInputChange }) => (
             </div>
         </div>
     </div>
-)
+);
 
-export default StepBasicInfo
+export default StepBasicInfo;

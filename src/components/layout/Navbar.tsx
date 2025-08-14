@@ -1,14 +1,15 @@
-import React from "react"
-import { Button } from "@/components/ui/button"
-import { GamificationDisplay } from "@/components/gamification"
-import NavbarDropdownLinks from "@/components/layout/NavbarDropdownLinks"
-import { NavbarProps } from "@/interfaces/components"
+import React from "react";
+
+import {GamificationDisplay} from "@/components/gamification";
+import NavbarDropdownLinks from "@/components/layout/NavbarDropdownLinks";
+import {Button} from "@/components/ui/button";
+import {NavbarProps} from "@/interfaces/components";
 
 const capitalize = (str: string) => {
-    return str.charAt(0).toUpperCase() + str.slice(1)
-}
+    return str.charAt(0).toUpperCase() + str.slice(1);
+};
 
-const Navbar: React.FC<NavbarProps> = ({ username, onSignOut, userId }) => {
+const Navbar: React.FC<NavbarProps> = ({username, onSignOut, userId}) => {
     return (
         <nav className='w-full bg-gray-900 border-b border-primary/20 px-4 py-3 flex items-center justify-between'>
             <div className='flex flex-col gap-1'>
@@ -33,7 +34,7 @@ const Navbar: React.FC<NavbarProps> = ({ username, onSignOut, userId }) => {
                 </Button>
             </div>
         </nav>
-    )
-}
+    );
+};
 
-export default Navbar
+export default Navbar;

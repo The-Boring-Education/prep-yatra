@@ -1,26 +1,27 @@
-import { useState, useEffect } from "react"
+import {ExternalLink, Linkedin, Github} from "lucide-react";
+import {useState, useEffect} from "react";
+
+import {Button} from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/dialog";
 import {
     GOALS,
     COMPANY_TYPES,
     INTERVIEW_CATEGORIES
-} from "@/constants/onboarding"
+} from "@/constants/onboarding";
+import {useAuth} from "@/contexts/useAuth";
+import {useToast} from "@/hooks/use-toast";
 import {
     OnboardingData,
     GoalType,
     CompanyType,
     InterviewCategory,
     ExperienceLevel
-} from "@/types/onboarding"
-import { useToast } from "@/hooks/use-toast"
-import { useAuth } from "@/contexts/useAuth"
-import { ExternalLink, Linkedin, Github } from "lucide-react"
+} from "@/types/onboarding";
 
 interface EditOnboardingModalProps {
     isOpen: boolean
@@ -37,8 +38,8 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
     currentData,
     userId
 }) => {
-    const { toast } = useToast()
-    const { user } = useAuth()
+    const {toast} = useToast();
+    const {user} = useAuth();
     const [formData, setFormData] = useState<OnboardingData>({
         linkedInUrl: "",
         workDomain: "",
@@ -48,8 +49,8 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
         goal: "6Months" as GoalType,
         targetCompanies: [] as CompanyType[],
         preferredCategories: [] as InterviewCategory[]
-    })
-    const [loading, setLoading] = useState(false)
+    });
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         if (currentData) {
@@ -64,8 +65,8 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 goal: (currentData.prepYatra?.goal || "6Months") as GoalType,
                 targetCompanies: (currentData.prepYatra?.targetCompanies || []) as CompanyType[],
                 preferredCategories: (currentData.prepYatra?.preferences?.interviewCategories || []) as InterviewCategory[]
-            }
-            setFormData(newFormData)
+            };
+            setFormData(newFormData);
         } else {
             // Set default values for new users
             const defaultFormData = {
@@ -79,14 +80,14 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 goal: "6Months" as GoalType,
                 targetCompanies: [] as CompanyType[],
                 preferredCategories: [] as InterviewCategory[]
-            }
-            setFormData(defaultFormData)
+            };
+            setFormData(defaultFormData);
         }
-    }, [currentData, user])
+    }, [currentData, user]);
 
     const handleInputChange = (field: keyof OnboardingData, value: any) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
-    }
+        setFormData((prev) => ({...prev, [field]: value}));
+    };
 
     const toggleArrayField = (
         field: "targetCompanies" | "preferredCategories",
@@ -97,8 +98,8 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
             [field]: (prev[field] as unknown[]).includes(value)
                 ? (prev[field] as unknown[]).filter((item) => item !== value)
                 : [...(prev[field] as unknown[]), value]
-        }))
-    }
+        }));
+    };
 
     const handleSubmit = async () => {
         if (
@@ -110,11 +111,11 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 description:
                     "Please select at least one target company and one interview category.",
                 variant: "destructive"
-            })
-            return
+            });
+            return;
         }
 
-        setLoading(true)
+        setLoading(true);
         try {
             const requestBody = {
                 userId,
@@ -126,7 +127,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 linkedInUrl: formData.linkedInUrl,
                 githubUrl: formData.githubUrl,
                 leetCodeUrl: formData.leetCodeUrl
-            }
+            };
 
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/onboarding`,
@@ -137,15 +138,15 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                     },
                     body: JSON.stringify(requestBody)
                 }
-            )
+            );
 
-            const result = await response.json()
+            const result = await response.json();
 
             if (result.status) {
                 toast({
                     title: "Success!",
                     description: "Onboarding details updated successfully."
-                })
+                });
                 // Use response data if available, otherwise use form data
                 if (result.data?.prepYatraUser) {
                     const updatedData = {
@@ -157,29 +158,29 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                                 ?.interviewCategories || [],
                         focusAreas:
                             result.data.prepYatraUser.targetCompanies || []
-                    }
-                    onUpdate(updatedData as any)
+                    };
+                    onUpdate(updatedData as any);
                 } else {
-                    onUpdate(formData)
+                    onUpdate(formData);
                 }
-                onClose()
+                onClose();
             } else {
                 throw new Error(
                     result.message || "Failed to update onboarding details"
-                )
+                );
             }
         } catch (error) {
-            console.error("Error updating onboarding details:", error)
+            console.error("Error updating onboarding details:", error);
             toast({
                 title: "Error",
                 description:
                     "Failed to update onboarding details. Please try again.",
                 variant: "destructive"
-            })
+            });
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -402,7 +403,7 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 </div>
             </DialogContent>
         </Dialog>
-    )
-}
+    );
+};
 
-export default EditOnboardingModal
+export default EditOnboardingModal;

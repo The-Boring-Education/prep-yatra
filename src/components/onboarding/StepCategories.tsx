@@ -1,6 +1,7 @@
-import { INTERVIEW_CATEGORIES } from "@/constants/onboarding"
-import { OnboardingData, InterviewCategory } from "@/types/onboarding"
-import React from "react"
+import React from "react";
+
+import {INTERVIEW_CATEGORIES} from "@/constants/onboarding";
+import {OnboardingData, InterviewCategory} from "@/types/onboarding";
 
 type Props = {
     formData: OnboardingData
@@ -10,7 +11,7 @@ type Props = {
     ) => void
 }
 
-const StepCategories: React.FC<Props> = ({ formData, toggleArrayField }) => (
+const StepCategories: React.FC<Props> = ({formData, toggleArrayField}) => (
     <div className='space-y-6'>
         <div className='text-center mb-8'>
             <h1 className='text-2xl font-bold text-white mb-2'>
@@ -45,6 +46,6 @@ const StepCategories: React.FC<Props> = ({ formData, toggleArrayField }) => (
             {formData.preferredCategories.length} selected
         </div>
     </div>
-)
+);
 
-export default StepCategories
+export default StepCategories;

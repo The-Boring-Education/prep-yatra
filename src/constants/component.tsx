@@ -1,4 +1,4 @@
-import { NavbarDropdownLink } from "@/interfaces/components"
+import {NavbarDropdownLink} from "@/interfaces/components";
 
 const socialLinks = [
     {
@@ -41,14 +41,14 @@ const socialLinks = [
             </svg>
         )
     }
-]
+];
 
 const productLinks = [
     {
         name: "The Boring Education",
         href: "https://www.theboringeducation.com/"
     }
-]
+];
 
 const CONFETTI_COLORS = [
     "#facc15", // yellow-400
@@ -58,7 +58,7 @@ const CONFETTI_COLORS = [
     "#fff", // white
     "#f59e42", // custom orange
     "#818cf8" // indigo-400
-]
+];
 
 const links: NavbarDropdownLink[] = [
     {
@@ -81,6 +81,6 @@ const links: NavbarDropdownLink[] = [
         href: "https://dsa-yatra.lovable.app",
         description: "Start DSA Journey"
     }
-]
+];
 
-export { socialLinks, productLinks, CONFETTI_COLORS, links }
+export {socialLinks, productLinks, CONFETTI_COLORS, links};

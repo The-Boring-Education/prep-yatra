@@ -1,7 +1,7 @@
-import { useAuth } from "@/contexts/useAuth"
+import {useAuth} from "@/contexts/useAuth";
 
 export function useUser() {
-    const { user, loading } = useAuth()
+    const {user, loading} = useAuth();
 
     return {
         user,
@@ -11,5 +11,5 @@ export function useUser() {
         userEmail: user?.email,
         userName: user?.name,
         userPicture: user?.picture
-    }
+    };
 }

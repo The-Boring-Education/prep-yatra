@@ -1,17 +1,17 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { Challenge } from '@/types/challenges';
 import { 
   Flame, 
   TrendingUp, 
   Trophy, 
   Target, 
   Sparkles,
-  Share2,
-  Copy
-} from 'lucide-react';
-import { toast } from 'sonner';
+  Share2
+} from "lucide-react";
+import {toast} from "sonner";
+
+import {Button} from "@/components/ui/button";
+import {Card, CardContent} from "@/components/ui/card";
+import {Challenge} from "@/types/challenges";
+
 
 interface MotivationalBoostProps {
   challenges: Challenge[];
@@ -21,55 +21,55 @@ interface MotivationalBoostProps {
 interface MotivationalQuote {
   text: string;
   author: string;
-  type: 'progress' | 'consistency' | 'milestone' | 'completion' | 'start';
+  type: "progress" | "consistency" | "milestone" | "completion" | "start";
 }
 
 const motivationalQuotes: MotivationalQuote[] = [
   {
     text: "The expert in anything was once a beginner.",
     author: "Helen Hayes",
-    type: 'start'
+    type: "start"
   },
   {
     text: "Success is the sum of small efforts repeated day in and day out.",
     author: "Robert Collier",
-    type: 'consistency'
+    type: "consistency"
   },
   {
     text: "Don't watch the clock; do what it does. Keep going.",
     author: "Sam Levenson",
-    type: 'progress'
+    type: "progress"
   },
   {
     text: "The way to get started is to quit talking and begin doing.",
     author: "Walt Disney",
-    type: 'start'
+    type: "start"
   },
   {
     text: "It always seems impossible until it's done.",
     author: "Nelson Mandela",
-    type: 'milestone'
+    type: "milestone"
   },
   {
     text: "Champions are made from something deep inside them - a desire, a dream, a vision.",
     author: "Muhammad Ali",
-    type: 'completion'
+    type: "completion"
   },
   {
     text: "The future belongs to those who believe in the beauty of their dreams.",
     author: "Eleanor Roosevelt",
-    type: 'progress'
+    type: "progress"
   },
   {
     text: "Success is not final, failure is not fatal: it is the courage to continue that counts.",
     author: "Winston Churchill",
-    type: 'consistency'
+    type: "consistency"
   }
 ];
 
-const MotivationalBoost = ({ challenges, className = '' }: MotivationalBoostProps) => {
-  const activeChallenges = challenges.filter(c => c.status === 'active');
-  const completedChallenges = challenges.filter(c => c.status === 'completed');
+const MotivationalBoost = ({challenges, className = ""}: MotivationalBoostProps) => {
+  const activeChallenges = challenges.filter(c => c.status === "active");
+  const completedChallenges = challenges.filter(c => c.status === "completed");
   
   // Calculate overall progress
   const totalProgress = challenges.reduce((sum, challenge) => {
@@ -79,12 +79,12 @@ const MotivationalBoost = ({ challenges, className = '' }: MotivationalBoostProp
   const averageProgress = challenges.length > 0 ? totalProgress / challenges.length : 0;
   
   // Determine motivational context
-  const getMotivationalContext = (): MotivationalQuote['type'] => {
-    if (challenges.length === 0) return 'start';
-    if (completedChallenges.length > 0) return 'completion';
-    if (averageProgress >= 75) return 'milestone';
-    if (averageProgress >= 25) return 'progress';
-    return 'consistency';
+  const getMotivationalContext = (): MotivationalQuote["type"] => {
+    if (challenges.length === 0) {return "start";}
+    if (completedChallenges.length > 0) {return "completion";}
+    if (averageProgress >= 75) {return "milestone";}
+    if (averageProgress >= 25) {return "progress";}
+    return "consistency";
   };
   
   const context = getMotivationalContext();
@@ -95,7 +95,7 @@ const MotivationalBoost = ({ challenges, className = '' }: MotivationalBoostProp
   const getCurrentStreak = () => {
     // This is a simplified calculation - in a real app, you'd track actual logging streaks
     const activeChallenge = activeChallenges[0];
-    if (!activeChallenge) return 0;
+    if (!activeChallenge) {return 0;}
     return activeChallenge.currentDay;
   };
   
@@ -104,21 +104,21 @@ const MotivationalBoost = ({ challenges, className = '' }: MotivationalBoostProp
   // Generate achievement badge
   const getAchievementBadge = () => {
     if (completedChallenges.length >= 3) {
-      return { text: 'Master Learner', icon: '🏆', color: 'bg-yellow-500' };
+      return {text: "Master Learner", icon: "🏆", color: "bg-yellow-500"};
     }
     if (completedChallenges.length >= 1) {
-      return { text: 'Challenge Completed', icon: '🎯', color: 'bg-green-500' };
+      return {text: "Challenge Completed", icon: "🎯", color: "bg-green-500"};
     }
     if (currentStreak >= 21) {
-      return { text: '21-Day Warrior', icon: '🔥', color: 'bg-red-500' };
+      return {text: "21-Day Warrior", icon: "🔥", color: "bg-red-500"};
     }
     if (currentStreak >= 7) {
-      return { text: 'Week Streak', icon: '⚡', color: 'bg-blue-500' };
+      return {text: "Week Streak", icon: "⚡", color: "bg-blue-500"};
     }
     if (currentStreak >= 3) {
-      return { text: 'Building Momentum', icon: '🚀', color: 'bg-purple-500' };
+      return {text: "Building Momentum", icon: "🚀", color: "bg-purple-500"};
     }
-    return { text: 'Getting Started', icon: '✨', color: 'bg-gray-500' };
+    return {text: "Getting Started", icon: "✨", color: "bg-gray-500"};
   };
   
   const achievement = getAchievementBadge();
@@ -135,15 +135,15 @@ const MotivationalBoost = ({ challenges, className = '' }: MotivationalBoostProp
 "${randomQuote.text}" - ${randomQuote.author}
 
 Join me on Prep Yatra and start your own challenge! 🚀
-${process.env.NEXT_PUBLIC_APP_URL || 'https://prepyatra.com'}
+${process.env.NEXT_PUBLIC_APP_URL || "https://prepyatra.com"}
 
 #PrepYatra #LearningJourney #ChallengeAccepted #ConsistencyIsKey`;
 
     try {
       await navigator.clipboard.writeText(achievementText);
-      toast.success('Achievement message copied to clipboard! 📋');
+      toast.success("Achievement message copied to clipboard! 📋");
     } catch (error) {
-      toast.error('Failed to copy to clipboard');
+      toast.error("Failed to copy to clipboard");
     }
   };
   

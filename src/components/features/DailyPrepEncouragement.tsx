@@ -1,7 +1,8 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { Calendar, Clock, Flame, TrendingUp, Plus } from "lucide-react"
-import { useDailyPrepEncouragement } from "@/hooks/useDailyPrepEncouragement"
+import {Calendar, Clock, Flame, TrendingUp, Plus} from "lucide-react";
+
+import {Button} from "@/components/ui/button";
+import {Card, CardContent} from "@/components/ui/card";
+import {useDailyPrepEncouragement} from "@/hooks/useDailyPrepEncouragement";
 
 interface DailyPrepEncouragementProps {
     userId: string
@@ -22,7 +23,7 @@ const DailyPrepEncouragement = ({
         encouragementEmoji,
         buttonText,
         motivationalTip
-    } = useDailyPrepEncouragement(userId)
+    } = useDailyPrepEncouragement(userId);
 
     return (
         <Card
@@ -100,7 +101,7 @@ const DailyPrepEncouragement = ({
                 </div>
             </CardContent>
         </Card>
-    )
-}
+    );
+};
 
-export default DailyPrepEncouragement
+export default DailyPrepEncouragement;

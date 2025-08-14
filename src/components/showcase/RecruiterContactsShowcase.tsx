@@ -1,4 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {
     Table,
     TableBody,
@@ -6,8 +7,7 @@ import {
     TableHead,
     TableHeader,
     TableRow
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
+} from "@/components/ui/table";
 
 const RecruiterContactsShowcase = () => {
     const recruiters = [
@@ -38,7 +38,7 @@ const RecruiterContactsShowcase = () => {
             lastContact: "3 days ago",
             status: "Interview Scheduled"
         }
-    ]
+    ];
 
     return (
         <section className='py-20 px-4'>
@@ -162,7 +162,7 @@ const RecruiterContactsShowcase = () => {
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default RecruiterContactsShowcase
+export default RecruiterContactsShowcase;

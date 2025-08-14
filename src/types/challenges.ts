@@ -1,4 +1,4 @@
-export type ChallengeStatus = 'active' | 'completed' | 'paused' | 'cancelled';
+export type ChallengeStatus = "active" | "completed" | "paused" | "cancelled";
 
 export interface Challenge {
   _id: string;

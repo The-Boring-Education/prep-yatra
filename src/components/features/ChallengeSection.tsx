@@ -1,38 +1,31 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
 import { 
   Plus, 
   Target, 
   TrendingUp, 
-  Sparkles, 
   Trophy,
-  CalendarDays,
   Flame,
   Star,
-  Rocket,
-  BookOpen,
-  Users,
-  Award,
   Calendar,
   Share2
-} from 'lucide-react';
-import { useChallenges } from '@/hooks/use-challenges';
-import { Challenge } from '@/types/challenges';
-import { PREDEFINED_CHALLENGES } from '@/constants/challenges';
-import ChallengeCard from '@/components/cards/ChallengeCard';
-import CreateChallengeModal from '@/components/modals/CreateChallengeModal';
-import ChallengeLogModal from '@/components/modals/ChallengeLogModal';
-import ChallengeLogsModal from '@/components/modals/ChallengeLogsModal';
+} from "lucide-react";
+import {useState} from "react";
+
+import ChallengeCard from "@/components/cards/ChallengeCard";
+import ChallengeLogModal from "@/components/modals/ChallengeLogModal";
+import ChallengeLogsModal from "@/components/modals/ChallengeLogsModal";
+import CreateChallengeModal from "@/components/modals/CreateChallengeModal";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Skeleton} from "@/components/ui/skeleton";
+import {useChallenges} from "@/hooks/use-challenges";
+import {Challenge} from "@/types/challenges";
 
 interface ChallengeSectionProps {
   userId: string;
   className?: string;
 }
 
-const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => {
+const ChallengeSection = ({userId, className = ""}: ChallengeSectionProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
   const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);

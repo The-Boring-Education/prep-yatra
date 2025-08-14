@@ -1,7 +1,8 @@
-import { useRef, useState, useEffect } from "react"
-import { useGamification } from "@/hooks/useGamification"
+import {useRef, useState, useEffect} from "react";
 
-const GamificationDisplay = ({ userId }: { userId: string }) => {
+import {useGamification} from "@/hooks/useGamification";
+
+const GamificationDisplay = ({userId}: { userId: string }) => {
     const {
         points,
         currentLevel,
@@ -10,10 +11,10 @@ const GamificationDisplay = ({ userId }: { userId: string }) => {
         pointsNeededForNextLevel,
         percentageProgress,
         loading
-    } = useGamification(userId)
+    } = useGamification(userId);
 
-    const [open, setOpen] = useState(false)
-    const popoverRef = useRef<HTMLDivElement>(null)
+    const [open, setOpen] = useState(false);
+    const popoverRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {
@@ -21,18 +22,18 @@ const GamificationDisplay = ({ userId }: { userId: string }) => {
                 popoverRef.current &&
                 !popoverRef.current.contains(event.target as Node)
             ) {
-                setOpen(false)
+                setOpen(false);
             }
         }
         if (open) {
-            document.addEventListener("mousedown", handleClickOutside)
+            document.addEventListener("mousedown", handleClickOutside);
         }
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside)
-        }
-    }, [open])
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [open]);
 
-    if (loading) return null
+    if (loading) {return null;}
 
     return (
         <div className='relative' ref={popoverRef}>
@@ -112,7 +113,7 @@ const GamificationDisplay = ({ userId }: { userId: string }) => {
                 </div>
             )}
         </div>
-    )
-}
+    );
+};
 
-export default GamificationDisplay
+export default GamificationDisplay;

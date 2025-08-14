@@ -1,25 +1,24 @@
-import { useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Progress } from '@/components/ui/progress';
 import { 
   Calendar, 
-  Target, 
   Play, 
   Pause, 
-  Trash2, 
-  Edit3,
+  Trash2,
   Clock,
   TrendingUp,
   CheckCircle2,
   History,
-  Eye,
   Trophy
-} from 'lucide-react';
-import { Challenge } from '@/types/challenges';
-import { challengesService } from '@/services/challenges';
-import { toast } from 'sonner';
+} from "lucide-react";
+import {useState} from "react";
+import {toast} from "sonner";
+
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Progress} from "@/components/ui/progress";
+import {challengesService} from "@/services/challenges";
+import {Challenge} from "@/types/challenges";
+
 
 interface ChallengeCardProps {
   challenge: Challenge;
@@ -28,13 +27,13 @@ interface ChallengeCardProps {
   onViewLogs?: (challenge: Challenge) => void;
 }
 
-const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress, onViewLogs }: ChallengeCardProps) => {
+const ChallengeCard = ({challenge, onChallengeUpdated, onLogProgress, onViewLogs}: ChallengeCardProps) => {
   const [loading, setLoading] = useState(false);
 
   const getStatusColor = (isActive: boolean) => {
     return isActive 
-      ? 'bg-green-500/20 text-green-300 border-green-500/30'
-      : 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+      ? "bg-green-500/20 text-green-300 border-green-500/30"
+      : "bg-blue-500/20 text-blue-300 border-blue-500/30";
   };
 
   const getStatusIcon = (isActive: boolean) => {
@@ -44,7 +43,7 @@ const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress, onViewLog
   };
 
   const getStatusText = (isActive: boolean) => {
-    return isActive ? 'Active' : 'Completed';
+    return isActive ? "Active" : "Completed";
   };
 
   const calculateProgress = () => {
@@ -64,39 +63,39 @@ const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress, onViewLog
         isActive: newStatus
       });
       
-      toast.success(`Challenge ${newStatus ? 'resumed' : 'paused'} successfully!`);
+      toast.success(`Challenge ${newStatus ? "resumed" : "paused"} successfully!`);
       onChallengeUpdated();
     } catch (error) {
-      console.error('Error updating challenge:', error);
-      toast.error('Failed to update challenge');
+      console.error("Error updating challenge:", error);
+      toast.error("Failed to update challenge");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this challenge? This action cannot be undone.')) {
+    if (!confirm("Are you sure you want to delete this challenge? This action cannot be undone.")) {
       return;
     }
 
     setLoading(true);
     try {
       await challengesService.delete(challenge._id);
-      toast.success('Challenge deleted successfully!');
+      toast.success("Challenge deleted successfully!");
       onChallengeUpdated();
     } catch (error) {
-      console.error('Error deleting challenge:', error);
-      toast.error('Failed to delete challenge');
+      console.error("Error deleting challenge:", error);
+      toast.error("Failed to delete challenge");
     } finally {
       setLoading(false);
     }
   };
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
     });
   };
 

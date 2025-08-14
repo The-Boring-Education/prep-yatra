@@ -1,5 +1,5 @@
-import { PrepLog, PrepLogsResponse } from "@/hooks/use-prep-logs"
-import { trackEvent } from "@/lib/analytics"
+import {PrepLog, PrepLogsResponse} from "@/hooks/use-prep-logs";
+import {trackEvent} from "@/lib/analytics";
 
 export const prepLogsService = {
     async getByUserId(userId: string): Promise<PrepLog[]> {
@@ -11,22 +11,22 @@ export const prepLogsService = {
                         "Content-Type": "application/json"
                     }
                 }
-            )
+            );
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result: PrepLogsResponse = await response.json()
+            const result: PrepLogsResponse = await response.json();
 
             if (!result.status) {
-                throw new Error("Failed to fetch prep logs")
+                throw new Error("Failed to fetch prep logs");
             }
 
-            return result.data || []
+            return result.data || [];
         } catch (error) {
-            console.error("Error fetching prep logs:", error)
-            throw error
+            console.error("Error fetching prep logs:", error);
+            throw error;
         }
     },
 
@@ -46,16 +46,16 @@ export const prepLogsService = {
                     },
                     body: JSON.stringify(data)
                 }
-            )
+            );
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json()
+            const result = await response.json();
 
             if (!result.status) {
-                throw new Error("Failed to create prep log")
+                throw new Error("Failed to create prep log");
             }
 
             // Analytics
@@ -64,13 +64,13 @@ export const prepLogsService = {
                     category: "prep_log",
                     value: data.timeSpent,
                     title: data.title
-                })
+                });
             } catch {}
 
-            return result.data
+            return result.data;
         } catch (error) {
-            console.error("Error creating prep log:", error)
-            throw error
+            console.error("Error creating prep log:", error);
+            throw error;
         }
     },
 
@@ -90,16 +90,16 @@ export const prepLogsService = {
                     },
                     body: JSON.stringify(data)
                 }
-            )
+            );
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json()
+            const result = await response.json();
 
             if (!result.status) {
-                throw new Error("Failed to update prep log")
+                throw new Error("Failed to update prep log");
             }
 
             try {
@@ -107,13 +107,13 @@ export const prepLogsService = {
                     category: "prep_log",
                     value: data.timeSpent,
                     prepLogId: data.prepLogId
-                })
+                });
             } catch {}
 
-            return result.data
+            return result.data;
         } catch (error) {
-            console.error("Error updating prep log:", error)
-            throw error
+            console.error("Error updating prep log:", error);
+            throw error;
         }
     },
 
@@ -127,27 +127,27 @@ export const prepLogsService = {
                         "Content-Type": "application/json"
                     }
                 }
-            )
+            );
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result = await response.json()
+            const result = await response.json();
 
             if (!result.status) {
-                throw new Error("Failed to delete prep log")
+                throw new Error("Failed to delete prep log");
             }
 
             try {
                 trackEvent("prep_log_delete", {
                     category: "prep_log",
                     prepLogId: id
-                })
+                });
             } catch {}
         } catch (error) {
-            console.error("Error deleting prep log:", error)
-            throw error
+            console.error("Error deleting prep log:", error);
+            throw error;
         }
     }
-}
+};

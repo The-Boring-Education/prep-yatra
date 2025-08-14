@@ -1,4 +1,16 @@
-import { useState } from 'react';
+import { 
+  Share2, 
+  Copy, 
+  TrendingUp,
+  CheckCircle2,
+  Trophy
+} from "lucide-react";
+import {useState} from "react";
+import {toast} from "sonner";
+
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {Checkbox} from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -6,31 +18,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Checkbox } from '@/components/ui/checkbox';
-import { 
-  Calendar, 
-  Clock, 
-  Share2, 
-  Copy, 
-  TrendingUp,
-  Target,
-  CheckCircle2,
-  Sparkles,
-  Rocket,
-  Star,
-  Trophy
-} from 'lucide-react';
-import { Challenge } from '@/types/challenges';
-import { challengesService } from '@/services/challenges';
-import { prepLogsService } from '@/services/prep-logs';
-import { toast } from 'sonner';
+} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {Textarea} from "@/components/ui/textarea";
+import {challengesService} from "@/services/challenges";
+import {prepLogsService} from "@/services/prep-logs";
+import {Challenge} from "@/types/challenges";
+
 
 interface ChallengeLogModalProps {
   isOpen: boolean;
@@ -40,11 +35,11 @@ interface ChallengeLogModalProps {
   userId: string;
 }
 
-const ChallengeLogModal = ({ isOpen, onClose, onProgressLogged, challenge, userId }: ChallengeLogModalProps) => {
+const ChallengeLogModal = ({isOpen, onClose, onProgressLogged, challenge, userId}: ChallengeLogModalProps) => {
   const [formData, setFormData] = useState({
-    progressText: '',
-    hoursSpent: '',
-    nextGoals: ['', '', '']
+    progressText: "",
+    hoursSpent: "",
+    nextGoals: ["", "", ""]
   });
   const [loading, setLoading] = useState(false);
   const [copyToPrepLogs, setCopyToPrepLogs] = useState(true);
@@ -73,7 +68,7 @@ const ChallengeLogModal = ({ isOpen, onClose, onProgressLogged, challenge, userI
 
   const generateSocialMessageFromTemplate = (templateIndex: number) => {
     const progressPercentage = Math.round((nextDay / challenge.totalDays) * 100);
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://prepyatra.com';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://prepyatra.com";
     
     const templates = [
       // Template 1: Casual and friendly
@@ -84,15 +79,15 @@ Today was pretty productive - ${formData.progressText}
 Spent ${formData.hoursSpent} hours grinding, and honestly feeling good about the progress! 
 
 For tomorrow, I'm planning to:
-${formData.nextGoals.filter(goal => goal.trim()).map((goal, index) => `${index + 1}. ${goal}`).join('\n')}
+${formData.nextGoals.filter(goal => goal.trim()).map((goal, index) => `${index + 1}. ${goal}`).join("\n")}
 
-${progressPercentage >= 90 ? 'Almost there! 🏁' : 
-  progressPercentage >= 75 ? 'Getting close! 🔥' :
-  progressPercentage >= 50 ? 'Halfway point! ⚡' :
-  progressPercentage >= 25 ? 'Building momentum! 🚀' :
-  'Just getting started! ✨'}
+${progressPercentage >= 90 ? "Almost there! 🏁" : 
+  progressPercentage >= 75 ? "Getting close! 🔥" :
+  progressPercentage >= 50 ? "Halfway point! ⚡" :
+  progressPercentage >= 25 ? "Building momentum! 🚀" :
+  "Just getting started! ✨"}
 
-${challenge.category ? `#${challenge.category} ` : ''}#LearningJourney #PrepYatra
+${challenge.category ? `#${challenge.category} ` : ""}#LearningJourney #PrepYatra
 
 Check out Prep Yatra if you want to start your own challenge! ${appUrl}`,
 
@@ -106,15 +101,15 @@ ${formData.progressText}
 📊 Progress: ${progressPercentage}% complete
 
 🎯 Next Session Goals:
-${formData.nextGoals.filter(goal => goal.trim()).map((goal, index) => `• ${goal}`).join('\n')}
+${formData.nextGoals.filter(goal => goal.trim()).map((goal, index) => `• ${goal}`).join("\n")}
 
-${progressPercentage >= 90 ? 'Final stretch - staying focused on the goal! 🎯' : 
-  progressPercentage >= 75 ? 'Strong progress - maintaining consistency! 💪' :
-  progressPercentage >= 50 ? 'Milestone reached - building solid foundation! 🏗️' :
-  progressPercentage >= 25 ? 'Establishing learning rhythm - every day counts! 📈' :
-  'Setting the foundation - committed to the process! 🌱'}
+${progressPercentage >= 90 ? "Final stretch - staying focused on the goal! 🎯" : 
+  progressPercentage >= 75 ? "Strong progress - maintaining consistency! 💪" :
+  progressPercentage >= 50 ? "Milestone reached - building solid foundation! 🏗️" :
+  progressPercentage >= 25 ? "Establishing learning rhythm - every day counts! 📈" :
+  "Setting the foundation - committed to the process! 🌱"}
 
-${challenge.category ? `#${challenge.category} ` : ''}#ProfessionalDevelopment #ContinuousLearning #PrepYatra`,
+${challenge.category ? `#${challenge.category} ` : ""}#ProfessionalDevelopment #ContinuousLearning #PrepYatra`,
 
       // Template 3: Motivational and inspiring
       `🚀 Day ${nextDay} of my ${challenge.name} journey!
@@ -124,17 +119,17 @@ Today I learned: ${formData.progressText}
 ${formData.hoursSpent} hours of focused learning later, and I'm feeling inspired! 
 
 My vision for tomorrow:
-${formData.nextGoals.filter(goal => goal.trim()).map((goal, index) => `✨ ${goal}`).join('\n')}
+${formData.nextGoals.filter(goal => goal.trim()).map((goal, index) => `✨ ${goal}`).join("\n")}
 
-${progressPercentage >= 90 ? 'The finish line is calling! 🏁' : 
-  progressPercentage >= 75 ? 'The momentum is real! 🔥' :
-  progressPercentage >= 50 ? 'Halfway there - proving it\'s possible! ⚡' :
-  progressPercentage >= 25 ? 'Every step forward is progress! 🚀' :
-  'The journey of a thousand miles begins with a single step! ✨'}
+${progressPercentage >= 90 ? "The finish line is calling! 🏁" : 
+  progressPercentage >= 75 ? "The momentum is real! 🔥" :
+  progressPercentage >= 50 ? "Halfway there - proving it's possible! ⚡" :
+  progressPercentage >= 25 ? "Every step forward is progress! 🚀" :
+  "The journey of a thousand miles begins with a single step! ✨"}
 
 Remember: Consistency beats perfection every time! 
 
-${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset #PrepYatra #LearningJourney`
+${challenge.category ? `#${challenge.category} ` : ""}#Motivation #GrowthMindset #PrepYatra #LearningJourney`
     ];
 
     return templates[templateIndex] || templates[0];
@@ -142,17 +137,17 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
 
   const handleSubmit = async () => {
     if (!formData.progressText.trim()) {
-      toast.error('Please describe what you accomplished today');
+      toast.error("Please describe what you accomplished today");
       return;
     }
 
     if (!formData.hoursSpent || parseFloat(formData.hoursSpent) <= 0) {
-      toast.error('Please enter valid hours spent');
+      toast.error("Please enter valid hours spent");
       return;
     }
 
     if (isChallengeCompleted) {
-      toast.error('This challenge is already completed!');
+      toast.error("This challenge is already completed!");
       return;
     }
 
@@ -174,18 +169,18 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
         try {
           await prepLogsService.create({
             title: `Day ${nextDay} - ${challenge.name}`,
-            description: `Challenge Progress: ${formData.progressText}\n\nNext Goals:\n${formData.nextGoals.filter(goal => goal.trim()).map((goal, index) => `${index + 1}. ${goal}`).join('\n')}`,
+            description: `Challenge Progress: ${formData.progressText}\n\nNext Goals:\n${formData.nextGoals.filter(goal => goal.trim()).map((goal, index) => `${index + 1}. ${goal}`).join("\n")}`,
             timeSpent: hours,
             userId: userId
           });
-          toast.success('Progress also added to Prep Logs! 📝');
+          toast.success("Progress also added to Prep Logs! 📝");
         } catch (prepLogError) {
-          console.error('Error adding to prep logs:', prepLogError);
+          console.error("Error adding to prep logs:", prepLogError);
           // Don't fail the whole operation if prep log creation fails
         }
       }
 
-      toast.success('Progress logged successfully! 🎉');
+      toast.success("Progress logged successfully! 🎉");
       
       // Don't call onProgressLogged yet - wait until user is completely done
       // onProgressLogged();
@@ -194,8 +189,8 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
       setShowSocialPreview(true);
 
     } catch (error) {
-      console.error('Error logging progress:', error);
-      toast.error('Failed to log progress');
+      console.error("Error logging progress:", error);
+      toast.error("Failed to log progress");
     } finally {
       setLoading(false);
     }
@@ -204,42 +199,42 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
   const copyToClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      toast.success('Copied to clipboard! 📋');
+      toast.success("Copied to clipboard! 📋");
     } catch (error) {
-      toast.error('Failed to copy to clipboard');
+      toast.error("Failed to copy to clipboard");
     }
   };
 
   const shareToSocial = (platform: string) => {
     const message = generateSocialMessageFromTemplate(selectedTemplate);
     const encodedText = encodeURIComponent(message);
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://prepyatra.com';
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://prepyatra.com";
     
-    let shareUrl = '';
+    let shareUrl = "";
     switch (platform) {
-      case 'twitter':
+      case "twitter":
         // Updated to use X (Twitter) sharing URL
         shareUrl = `https://x.com/intent/tweet?text=${encodedText}`;
         break;
-      case 'linkedin':
+      case "linkedin":
         shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(appUrl)}&summary=${encodedText}`;
         break;
-      case 'facebook':
+      case "facebook":
         shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(appUrl)}&quote=${encodedText}`;
         break;
     }
     
     if (shareUrl) {
-      window.open(shareUrl, '_blank', 'width=600,height=400');
-      toast.success(`Opening ${platform === 'twitter' ? 'X (Twitter)' : platform}... 🚀`);
+      window.open(shareUrl, "_blank", "width=600,height=400");
+      toast.success(`Opening ${platform === "twitter" ? "X (Twitter)" : platform}... 🚀`);
     }
   };
 
   const handleClose = () => {
     setFormData({
-      progressText: '',
-      hoursSpent: '',
-      nextGoals: ['', '', '']
+      progressText: "",
+      hoursSpent: "",
+      nextGoals: ["", "", ""]
     });
     setShowSocialPreview(false);
     setSelectedTemplate(0);
@@ -278,7 +273,7 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
               </p>
               <div className="text-sm text-gray-400">
                 <p>Challenge: {challenge.name}</p>
-                <p>Category: {challenge.category || 'General'}</p>
+                <p>Category: {challenge.category || "General"}</p>
                 <p>Total Days: {challenge.totalDays}</p>
               </div>
             </CardContent>
@@ -319,7 +314,7 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
                   id="progressText"
                   placeholder="Describe what you learned, practiced, or built today..."
                   value={formData.progressText}
-                  onChange={(e) => handleInputChange('progressText', e.target.value)}
+                  onChange={(e) => handleInputChange("progressText", e.target.value)}
                   className="bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400"
                   rows={3}
                 />
@@ -338,7 +333,7 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
                   step="0.5"
                   placeholder="2.5"
                   value={formData.hoursSpent}
-                  onChange={(e) => handleInputChange('hoursSpent', e.target.value)}
+                  onChange={(e) => handleInputChange("hoursSpent", e.target.value)}
                   className="bg-gray-800/50 border-gray-600 text-white"
                 />
               </div>
@@ -428,16 +423,16 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
                 <Label className="text-white font-medium">Choose your style:</Label>
                 <div className="grid grid-cols-1 gap-3">
                   {[
-                    { name: 'Casual & Friendly', icon: '😊', desc: 'Perfect for social media' },
-                    { name: 'Professional & Focused', icon: '💼', desc: 'Great for LinkedIn' },
-                    { name: 'Motivational & Inspiring', icon: '🚀', desc: 'Encourage others' }
+                    {name: "Casual & Friendly", icon: "😊", desc: "Perfect for social media"},
+                    {name: "Professional & Focused", icon: "💼", desc: "Great for LinkedIn"},
+                    {name: "Motivational & Inspiring", icon: "🚀", desc: "Encourage others"}
                   ].map((template, index) => (
                     <div
                       key={index}
                       className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
                         selectedTemplate === index
-                          ? 'border-primary bg-primary/10'
-                          : 'border-gray-600 bg-gray-800/30 hover:border-gray-500'
+                          ? "border-primary bg-primary/10"
+                          : "border-gray-600 bg-gray-800/30 hover:border-gray-500"
                       }`}
                       onClick={() => setSelectedTemplate(index)}
                     >
@@ -481,7 +476,7 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
                 <Button
                   onClick={() => {
                     copyToClipboard(generateSocialMessageFromTemplate(selectedTemplate));
-                    toast.success('Ready to share! 📱');
+                    toast.success("Ready to share! 📱");
                   }}
                   variant="outline"
                   size="sm"
@@ -497,7 +492,7 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
                 <Label className="text-white font-medium">Post directly to:</Label>
                 <div className="flex flex-wrap gap-2">
                   <Button
-                    onClick={() => shareToSocial('twitter')}
+                    onClick={() => shareToSocial("twitter")}
                     variant="outline"
                     size="sm"
                     className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
@@ -509,7 +504,7 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
                   </Button>
                   
                   <Button
-                    onClick={() => shareToSocial('linkedin')}
+                    onClick={() => shareToSocial("linkedin")}
                     variant="outline"
                     size="sm"
                     className="border-blue-600/50 text-blue-500 hover:bg-blue-600/10"
@@ -521,7 +516,7 @@ ${challenge.category ? `#${challenge.category} ` : ''}#Motivation #GrowthMindset
                   </Button>
                   
                   <Button
-                    onClick={() => shareToSocial('facebook')}
+                    onClick={() => shareToSocial("facebook")}
                     variant="outline"
                     size="sm"
                     className="border-blue-700/50 text-blue-600 hover:bg-blue-700/10"

@@ -1,17 +1,17 @@
-import React, { Suspense } from "react"
-import { Plus } from "lucide-react"
+import {Plus} from "lucide-react";
+import React, {Suspense} from "react";
 
-import { PrepLog } from "@/hooks/use-prep-logs"
-import { RecruiterContact } from "@/types/recruiters"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {PrepLog} from "@/hooks/use-prep-logs";
+import {RecruiterContact} from "@/types/recruiters";
 
 // Lazy load components
-const PrepLogsList = React.lazy(() => import("@/components/features/PrepLogsList"))
-const RecruiterContactsTable = React.lazy(() => import("@/components/features/RecruiterContactsTable"))
-const ChallengeSection = React.lazy(() => import("@/components/features/ChallengeSection"))
-const UserSkillsShowcase = React.lazy(() => import("@/components/showcase/UserSkillsShowcase"))
+const PrepLogsList = React.lazy(() => import("@/components/features/PrepLogsList"));
+const RecruiterContactsTable = React.lazy(() => import("@/components/features/RecruiterContactsTable"));
+const ChallengeSection = React.lazy(() => import("@/components/features/ChallengeSection"));
+const UserSkillsShowcase = React.lazy(() => import("@/components/showcase/UserSkillsShowcase"));
 
 interface DashboardTabsProps {
     prepLogs: PrepLog[]
@@ -38,9 +38,9 @@ interface DashboardTabsProps {
 
 const ComponentLoader = () => (
     <div className="flex items-center justify-center h-32">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
     </div>
-)
+);
 
 const DashboardTabs: React.FC<DashboardTabsProps> = ({
     prepLogs,
@@ -147,7 +147,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
                 </Card>
             </TabsContent>
         </Tabs>
-    )
-}
+    );
+};
 
-export default DashboardTabs
+export default DashboardTabs;

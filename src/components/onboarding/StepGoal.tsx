@@ -1,13 +1,14 @@
-import { GOALS } from "@/constants/onboarding"
-import { OnboardingData, GoalType } from "@/types/onboarding"
-import React from "react"
+import React from "react";
+
+import {GOALS} from "@/constants/onboarding";
+import {OnboardingData, GoalType} from "@/types/onboarding";
 
 type Props = {
     formData: OnboardingData
     handleInputChange: (field: keyof OnboardingData, value: GoalType) => void
 }
 
-const StepGoal: React.FC<Props> = ({ formData, handleInputChange }) => (
+const StepGoal: React.FC<Props> = ({formData, handleInputChange}) => (
     <div className='space-y-6'>
         <div className='text-center mb-8'>
             <h1 className='text-2xl font-bold text-white mb-2'>
@@ -48,6 +49,6 @@ const StepGoal: React.FC<Props> = ({ formData, handleInputChange }) => (
             ))}
         </div>
     </div>
-)
+);
 
-export default StepGoal
+export default StepGoal;

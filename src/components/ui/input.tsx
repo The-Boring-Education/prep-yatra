@@ -1,10 +1,10 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
-import { Label } from "@/components/ui/label"
+import {Label} from "@/components/ui/label";
+import {cn} from "@/lib/utils";
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-    ({ className, type, ...props }, ref) => {
+    ({className, type, ...props}, ref) => {
         return (
             <input
                 type={type}
@@ -15,10 +15,10 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
                 ref={ref}
                 {...props}
             />
-        )
+        );
     }
-)
-Input.displayName = "Input"
+);
+Input.displayName = "Input";
 
 const InputField = ({
     label,
@@ -52,6 +52,6 @@ const InputField = ({
             className='bg-gray-800 border-gray-600 text-white'
         />
     </div>
-)
+);
 
-export { Input, InputField }
+export {Input, InputField};

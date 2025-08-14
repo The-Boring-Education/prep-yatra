@@ -1,6 +1,7 @@
+import {Award, Sparkles} from "lucide-react";
 import React from "react";
-import { Badge } from "@/components/ui/badge";
-import { Award, Sparkles } from "lucide-react";
+
+import {Badge} from "@/components/ui/badge";
 
 interface UserSkillsShowcaseProps {
   userSkills: string[];
@@ -9,12 +10,12 @@ interface UserSkillsShowcaseProps {
 }
 
 const formatDate = (dateString?: string) => {
-  if (!dateString) return null;
+  if (!dateString) {return null;}
   const date = new Date(dateString);
-  return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  return date.toLocaleDateString("en-US", {year: "numeric", month: "short", day: "numeric"});
 };
 
-const UserSkillsShowcase: React.FC<UserSkillsShowcaseProps> = ({ userSkills, lastUpdated, title }) => {
+const UserSkillsShowcase: React.FC<UserSkillsShowcaseProps> = ({userSkills, lastUpdated, title}) => {
   return (
     <div className="bg-gray-900/80 border border-yellow-400/60 rounded-2xl p-6 mb-12 mt-6 shadow-md shadow-[0_0_24px_0_rgba(255,215,0,0.15)]">
       <h3 className="text-lg font-semibold text-primary/90 mb-6 flex items-center gap-2 justify-center">

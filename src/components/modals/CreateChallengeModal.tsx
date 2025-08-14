@@ -1,4 +1,10 @@
-import { useState, useEffect } from 'react';
+import {Plus, Sparkles, Calendar, Target, Star, Clock, Zap} from "lucide-react";
+import {useState, useEffect} from "react";
+import {toast} from "sonner";
+
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -6,20 +12,14 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
-import { challengesService } from '@/services/challenges';
-import { PREDEFINED_CHALLENGES, PredefinedChallengeTemplate } from '@/constants/challenges';
-import { useGamificationContext } from '@/contexts/GamificationContext';
-import { Code, Coffee, Briefcase, Plus, Sparkles, Calendar, Target, Star, Clock, Zap } from 'lucide-react';
+} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Textarea} from "@/components/ui/textarea";
+import {PREDEFINED_CHALLENGES, PredefinedChallengeTemplate} from "@/constants/challenges";
+import {useGamificationContext} from "@/contexts/GamificationContext";
+import {challengesService} from "@/services/challenges";
 
 interface CreateChallengeModalProps {
   isOpen: boolean;
@@ -34,34 +34,34 @@ const CreateChallengeModal = ({
   onChallengeCreated,
   userId
 }: CreateChallengeModalProps) => {
-  const { showCelebration } = useGamificationContext();
+  const {showCelebration} = useGamificationContext();
   const [loading, setLoading] = useState(false);
-  const [selectedTab, setSelectedTab] = useState('predefined');
+  const [selectedTab, setSelectedTab] = useState("predefined");
   const [selectedTemplate, setSelectedTemplate] = useState<PredefinedChallengeTemplate | null>(null);
   const [showCustomizeModal, setShowCustomizeModal] = useState(false);
 
   // Custom challenge form data
   const [customForm, setCustomForm] = useState({
-    name: '',
-    description: '',
-    totalDays: '',
-    category: ''
+    name: "",
+    description: "",
+    totalDays: "",
+    category: ""
   });
 
   // Customize predefined challenge form
   const [customizeForm, setCustomizeForm] = useState({
-    name: '',
-    description: '',
-    totalDays: '',
-    category: ''
+    name: "",
+    description: "",
+    totalDays: "",
+    category: ""
   });
 
   // Reset form when modal opens/closes
   useEffect(() => {
     if (isOpen) {
-      setCustomForm({ name: '', description: '', totalDays: '', category: '' });
-      setCustomizeForm({ name: '', description: '', totalDays: '', category: '' });
-      setSelectedTab('predefined');
+      setCustomForm({name: "", description: "", totalDays: "", category: ""});
+      setCustomizeForm({name: "", description: "", totalDays: "", category: ""});
+      setSelectedTab("predefined");
       setSelectedTemplate(null);
       setShowCustomizeModal(false);
     }
@@ -69,14 +69,14 @@ const CreateChallengeModal = ({
 
   const handleCustomInputChange = (field: string, value: string) => {
     setCustomForm(prev => {
-      const newState = { ...prev, [field]: value };
+      const newState = {...prev, [field]: value};
       return newState;
     });
   };
 
   const handleCustomizeInputChange = (field: string, value: string) => {
     setCustomizeForm(prev => {
-      const newState = { ...prev, [field]: value };
+      const newState = {...prev, [field]: value};
       return newState;
     });
   };
@@ -93,7 +93,7 @@ const CreateChallengeModal = ({
   };
 
   const handlePredefinedChallengeCreate = async () => {
-    if (!selectedTemplate) return;
+    if (!selectedTemplate) {return;}
 
     setLoading(true);
     try {
@@ -106,14 +106,14 @@ const CreateChallengeModal = ({
       });
 
       showCelebration(15);
-      toast.success('Challenge created successfully! 🎉');
+      toast.success("Challenge created successfully! 🎉");
       onChallengeCreated();
       onClose();
     } catch (error) {
       if (error instanceof Error) {
         toast.error(`Failed to create challenge: ${error.message}`);
       } else {
-        toast.error('Failed to create challenge. Please try again.');
+        toast.error("Failed to create challenge. Please try again.");
       }
     } finally {
       setLoading(false);
@@ -125,18 +125,18 @@ const CreateChallengeModal = ({
 
     // More specific validation
     const missingFields = [];
-    if (!customForm.name?.trim()) missingFields.push('Challenge Name');
-    if (!customForm.totalDays?.trim()) missingFields.push('Duration');
-    if (!customForm.category?.trim()) missingFields.push('Category');
+    if (!customForm.name?.trim()) {missingFields.push("Challenge Name");}
+    if (!customForm.totalDays?.trim()) {missingFields.push("Duration");}
+    if (!customForm.category?.trim()) {missingFields.push("Category");}
 
     if (missingFields.length > 0) {
-      toast.error(`Missing required fields: ${missingFields.join(', ')}`);
+      toast.error(`Missing required fields: ${missingFields.join(", ")}`);
       return;
     }
 
     const totalDays = parseInt(customForm.totalDays);
     if (isNaN(totalDays) || totalDays < 1 || totalDays > 365) {
-      toast.error('Duration must be a valid number between 1 and 365 days');
+      toast.error("Duration must be a valid number between 1 and 365 days");
       return;
     }
 
@@ -152,29 +152,29 @@ const CreateChallengeModal = ({
       });
 
       showCelebration(15);
-      toast.success('Custom challenge created successfully! 🎉');
+      toast.success("Custom challenge created successfully! 🎉");
       onChallengeCreated();
       onClose();
     } catch (error) {
-      console.error('Error creating custom challenge:', error);
+      console.error("Error creating custom challenge:", error);
       if (error instanceof Error) {
         toast.error(`Failed to create challenge: ${error.message}`);
       } else {
-        toast.error('Failed to create challenge. Please try again.');
+        toast.error("Failed to create challenge. Please try again.");
       }
     } finally {
       setLoading(false);
     }
   };
 
-  const categories = ['Programming', 'Web Development', 'Mobile Development', 'Data Science', 'DevOps', 'Career', 'Design', 'Other'];
+  const categories = ["Programming", "Web Development", "Mobile Development", "Data Science", "DevOps", "Career", "Design", "Other"];
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Beginner': return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'Intermediate': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-      case 'Advanced': return 'bg-red-500/20 text-red-300 border-red-500/30';
-      default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+      case "Beginner": return "bg-green-500/20 text-green-300 border-green-500/30";
+      case "Intermediate": return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30";
+      case "Advanced": return "bg-red-500/20 text-red-300 border-red-500/30";
+      default: return "bg-gray-500/20 text-gray-300 border-gray-500/30";
     }
   };
 
@@ -268,7 +268,7 @@ const CreateChallengeModal = ({
                   <Input
                     id="name"
                     value={customForm.name}
-                    onChange={(e) => handleCustomInputChange('name', e.target.value)}
+                    onChange={(e) => handleCustomInputChange("name", e.target.value)}
                     placeholder="e.g., 30 Days of React Development"
                     className="bg-gray-800 border-gray-600 text-white focus:border-primary"
                     maxLength={100}
@@ -282,7 +282,7 @@ const CreateChallengeModal = ({
                   <Textarea
                     id="description"
                     value={customForm.description}
-                    onChange={(e) => handleCustomInputChange('description', e.target.value)}
+                    onChange={(e) => handleCustomInputChange("description", e.target.value)}
                     placeholder="Describe what you want to achieve in this challenge..."
                     className="bg-gray-800 border-gray-600 text-white focus:border-primary resize-none"
                     rows={3}
@@ -299,7 +299,7 @@ const CreateChallengeModal = ({
                       id="totalDays"
                       type="number"
                       value={customForm.totalDays}
-                      onChange={(e) => handleCustomInputChange('totalDays', e.target.value)}
+                      onChange={(e) => handleCustomInputChange("totalDays", e.target.value)}
                       placeholder="e.g., 30"
                       className="bg-gray-800 border-gray-600 text-white focus:border-primary"
                       min="1"
@@ -315,7 +315,7 @@ const CreateChallengeModal = ({
                     <select 
                       value={customForm.category} 
                       onChange={(e) => {
-                        handleCustomInputChange('category', e.target.value);
+                        handleCustomInputChange("category", e.target.value);
                       }}
                       className="w-full bg-gray-800 border border-gray-600 text-white rounded px-3 py-2 text-sm"
                     >
@@ -329,13 +329,13 @@ const CreateChallengeModal = ({
                       
                     {customForm.category && (
                       <div className="flex items-center gap-2 text-sm text-green-400">
-                        <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                        <div className="w-2 h-2 bg-green-400 rounded-full" />
                         Category selected: {customForm.category}
                       </div>
                     )}
                     {!customForm.category && (
                       <div className="flex items-center gap-2 text-sm text-red-400">
-                        <div className="w-2 h-2 bg-red-400 rounded-full"></div>
+                        <div className="w-2 h-2 bg-red-400 rounded-full" />
                         Please select a category
                       </div>
                     )}
@@ -387,7 +387,7 @@ const CreateChallengeModal = ({
                 <Input
                   id="customize-name"
                   value={customizeForm.name}
-                  onChange={(e) => handleCustomizeInputChange('name', e.target.value)}
+                  onChange={(e) => handleCustomizeInputChange("name", e.target.value)}
                   className="bg-gray-800 border-gray-600 text-white focus:border-primary"
                 />
               </div>
@@ -399,7 +399,7 @@ const CreateChallengeModal = ({
                 <Textarea
                   id="customize-description"
                   value={customizeForm.description}
-                  onChange={(e) => handleCustomizeInputChange('description', e.target.value)}
+                  onChange={(e) => handleCustomizeInputChange("description", e.target.value)}
                   className="bg-gray-800 border-gray-600 text-white focus:border-primary resize-none"
                   rows={3}
                 />
@@ -414,7 +414,7 @@ const CreateChallengeModal = ({
                     id="customize-days"
                     type="number"
                     value={customizeForm.totalDays}
-                    onChange={(e) => handleCustomizeInputChange('totalDays', e.target.value)}
+                    onChange={(e) => handleCustomizeInputChange("totalDays", e.target.value)}
                     className="bg-gray-800 border-gray-600 text-white focus:border-primary"
                     min="1"
                     max="365"
@@ -428,7 +428,7 @@ const CreateChallengeModal = ({
                   <Input
                     id="customize-category"
                     value={customizeForm.category}
-                    onChange={(e) => handleCustomizeInputChange('category', e.target.value)}
+                    onChange={(e) => handleCustomizeInputChange("category", e.target.value)}
                     className="bg-gray-800 border-gray-600 text-white focus:border-primary"
                   />
                 </div>

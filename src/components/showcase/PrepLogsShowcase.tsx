@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 
 const PrepLogsShowcase = () => {
     const prepLogs = [
@@ -33,7 +33,7 @@ const PrepLogsShowcase = () => {
             notes: "Practiced STAR method responses. Feeling confident about leadership examples.",
             tags: ["Behavioral", "STAR Method", "Leadership"]
         }
-    ]
+    ];
 
     return (
         <section className='py-20 px-4 bg-gradient-to-r from-gray-900/50 to-gray-800/50'>
@@ -67,8 +67,8 @@ const PrepLogsShowcase = () => {
                         {prepLogs.map((log, index) => (
                             <Card
                                 key={log.id}
-                                className={`glass-dark border-primary/20 hover:border-primary/40 transition-all duration-300 hover:scale-105 animate-slide-in-right`}
-                                style={{ animationDelay: `${index * 0.1}s` }}>
+                                className={"glass-dark border-primary/20 hover:border-primary/40 transition-all duration-300 hover:scale-105 animate-slide-in-right"}
+                                style={{animationDelay: `${index * 0.1}s`}}>
                                 <CardHeader className='pb-3'>
                                     <div className='flex justify-between items-start'>
                                         <div>
@@ -96,7 +96,7 @@ const PrepLogsShowcase = () => {
                                                     className='h-full bg-primary transition-all duration-500'
                                                     style={{
                                                         width: `${log.progress}%`
-                                                    }}></div>
+                                                    }} />
                                             </div>
                                         </div>
                                     </div>
@@ -141,7 +141,7 @@ const PrepLogsShowcase = () => {
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default PrepLogsShowcase
+export default PrepLogsShowcase;

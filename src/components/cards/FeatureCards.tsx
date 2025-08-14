@@ -1,4 +1,4 @@
-import { Users, BookOpen, Share2, Target } from "lucide-react"
+import {Users, BookOpen, Share2, Target} from "lucide-react";
 
 const features = [
     {
@@ -29,7 +29,7 @@ const features = [
             "Connect with like-minded professionals, share experiences, and learn from each other's journeys.",
         animation: "animate-slide-in-right"
     }
-]
+];
 
 const FeatureCards = () => {
     return (
@@ -50,12 +50,12 @@ const FeatureCards = () => {
 
                 <div className='grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto'>
                     {features.map((feature, index) => {
-                        const Icon = feature.icon
+                        const Icon = feature.icon;
                         return (
                             <div
                                 key={index}
                                 className={`glass-dark rounded-2xl p-8 hover:scale-105 transition-transform duration-300 ${feature.animation}`}
-                                style={{ animationDelay: `${index * 0.2}s` }}>
+                                style={{animationDelay: `${index * 0.2}s`}}>
                                 <div className='w-16 h-16 bg-primary rounded-xl mb-6 flex items-center justify-center'>
                                     <Icon className='w-8 h-8 text-primary-foreground' />
                                 </div>
@@ -66,12 +66,12 @@ const FeatureCards = () => {
                                     {feature.description}
                                 </p>
                             </div>
-                        )
+                        );
                     })}
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default FeatureCards
+export default FeatureCards;

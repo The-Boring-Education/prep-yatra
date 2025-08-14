@@ -1,8 +1,9 @@
-import React, { useState } from "react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Code, Plus, AlertTriangle } from "lucide-react"
-import AddSkillsModal from "@/components/modals/AddSkillsModal"
+import {Code, Plus, AlertTriangle} from "lucide-react";
+import React, {useState} from "react";
+
+import AddSkillsModal from "@/components/modals/AddSkillsModal";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
 
 interface BuildYourStackProps {
     userId: string
@@ -12,11 +13,11 @@ interface BuildYourStackProps {
 }
 
 function isOlderThan60Days(dateString: string | undefined) {
-    if (!dateString) return true
-    const last = new Date(dateString)
-    const now = new Date()
-    const diff = now.getTime() - last.getTime()
-    return diff > 60 * 24 * 60 * 60 * 1000 // 60 days in ms
+    if (!dateString) {return true;}
+    const last = new Date(dateString);
+    const now = new Date();
+    const diff = now.getTime() - last.getTime();
+    return diff > 60 * 24 * 60 * 60 * 1000; // 60 days in ms
 }
 
 const BuildYourStack: React.FC<BuildYourStackProps> = ({
@@ -25,10 +26,10 @@ const BuildYourStack: React.FC<BuildYourStackProps> = ({
     onSkillsUpdated,
     lastUpdated
 }) => {
-    const [modalOpen, setModalOpen] = useState(false)
+    const [modalOpen, setModalOpen] = useState(false);
 
     // Show warning only if no skills
-    const showWarning = userSkills.length === 0
+    const showWarning = userSkills.length === 0;
 
     return (
         <div className='glass-dark rounded-2xl p-6 mb-8 shadow-lg'>
@@ -66,8 +67,8 @@ const BuildYourStack: React.FC<BuildYourStackProps> = ({
             <AddSkillsModal
                 isOpen={modalOpen}
                 onClose={() => {
-                    setModalOpen(false)
-                    if (onSkillsUpdated) onSkillsUpdated()
+                    setModalOpen(false);
+                    if (onSkillsUpdated) {onSkillsUpdated();}
                 }}
                 userId={userId}
                 userSkills={userSkills}
@@ -75,7 +76,7 @@ const BuildYourStack: React.FC<BuildYourStackProps> = ({
                 onSkillsUpdated={onSkillsUpdated}
             />
         </div>
-    )
-}
+    );
+};
 
-export default BuildYourStack
+export default BuildYourStack;

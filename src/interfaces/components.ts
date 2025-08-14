@@ -33,4 +33,4 @@ export type {
     NavbarDropdownContainerProps,
     NavbarDropdownLink,
     NavbarProps
-}
+};

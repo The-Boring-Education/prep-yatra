@@ -1,11 +1,12 @@
-import React, { useState, useRef } from "react"
-import { createPortal } from "react-dom"
-import { Dialog } from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { X, Plus, Code, AlertTriangle } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import { trackEvent } from "@/lib/analytics"
+import {X, Plus, Code, AlertTriangle} from "lucide-react";
+import React, {useState, useRef} from "react";
+import {createPortal} from "react-dom";
+
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Dialog} from "@/components/ui/dialog";
+import {useToast} from "@/hooks/use-toast";
+import {trackEvent} from "@/lib/analytics";
 
 interface AddSkillsModalProps {
     isOpen: boolean
@@ -17,14 +18,14 @@ interface AddSkillsModalProps {
 }
 
 function isOlderThan60Days(dateString: string | undefined) {
-    if (!dateString) return true
-    const last = new Date(dateString)
-    const now = new Date()
-    const diff = now.getTime() - last.getTime()
-    return diff > 60 * 24 * 60 * 60 * 1000 // 60 days in ms
+    if (!dateString) {return true;}
+    const last = new Date(dateString);
+    const now = new Date();
+    const diff = now.getTime() - last.getTime();
+    return diff > 60 * 24 * 60 * 60 * 1000; // 60 days in ms
 }
 
-const API_URL = process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
+const API_URL = process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL;
 
 const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
     isOpen,
@@ -34,78 +35,78 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
     lastUpdated,
     onSkillsUpdated
 }) => {
-    const [skills, setSkills] = useState<string[]>(userSkills)
-    const [inputValue, setInputValue] = useState("")
-    const [loading, setLoading] = useState(false)
-    const [removing, setRemoving] = useState<string | null>(null)
-    const { toast } = useToast()
-    const inputRef = useRef<HTMLInputElement>(null)
+    const [skills, setSkills] = useState<string[]>(userSkills);
+    const [inputValue, setInputValue] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [removing, setRemoving] = useState<string | null>(null);
+    const {toast} = useToast();
+    const inputRef = useRef<HTMLInputElement>(null);
 
     // Show warning only if no skills
-    const showWarning = skills.length === 0
+    const showWarning = skills.length === 0;
 
     const handleAddSkill = async (e: React.FormEvent) => {
-        e.preventDefault()
-        const skill = inputValue.trim()
-        if (!skill || skills.includes(skill)) return
-        setLoading(true)
+        e.preventDefault();
+        const skill = inputValue.trim();
+        if (!skill || skills.includes(skill)) {return;}
+        setLoading(true);
         try {
             const res = await fetch(`${API_URL}/prepyatra/userskills`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId, userSkills: [skill] })
-            })
-            const result = await res.json()
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({userId, userSkills: [skill]})
+            });
+            const result = await res.json();
             if (result.status) {
-                setSkills((prev) => [...prev, skill])
-                setInputValue("")
+                setSkills((prev) => [...prev, skill]);
+                setInputValue("");
                 toast({
                     title: "Skill added!",
                     description: `${skill} added to your stack.`
-                })
+                });
                 try {
-                    trackEvent("skill_add", { category: "skills", skill })
+                    trackEvent("skill_add", {category: "skills", skill});
                 } catch {}
-                if (onSkillsUpdated) onSkillsUpdated()
+                if (onSkillsUpdated) {onSkillsUpdated();}
             } else {
                 toast({
                     title: "Error",
                     description: result.message || "Failed to add skill.",
                     variant: "destructive"
-                })
+                });
             }
         } catch (err) {
             toast({
                 title: "Error",
                 description: "Failed to add skill.",
                 variant: "destructive"
-            })
+            });
         } finally {
-            setLoading(false)
-            inputRef.current?.focus()
+            setLoading(false);
+            inputRef.current?.focus();
         }
-    }
+    };
 
     const handleRemoveSkill = async (skill: string) => {
-        setRemoving(skill)
+        setRemoving(skill);
         try {
             // Remove skill from backend (implement API if needed)
             // For now, just remove locally
-            setSkills((prev) => prev.filter((s) => s !== skill))
+            setSkills((prev) => prev.filter((s) => s !== skill));
             toast({
                 title: "Skill removed",
                 description: `${skill} removed from your stack.`
-            })
+            });
             try {
-                trackEvent("skill_remove", { category: "skills", skill })
+                trackEvent("skill_remove", {category: "skills", skill});
             } catch {}
-            if (onSkillsUpdated) onSkillsUpdated()
+            if (onSkillsUpdated) {onSkillsUpdated();}
         } finally {
-            setRemoving(null)
+            setRemoving(null);
         }
-    }
+    };
 
-    if (!isOpen) return null
+    if (!isOpen) {return null;}
 
     return createPortal(
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -181,7 +182,7 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
             </div>
         </Dialog>,
         document.body
-    )
-}
+    );
+};
 
-export default AddSkillsModal
+export default AddSkillsModal;

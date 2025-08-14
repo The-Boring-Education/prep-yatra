@@ -1,8 +1,8 @@
-import { NavbarDropdownContainerProps } from "@/interfaces/components"
+import {NavbarDropdownContainerProps} from "@/interfaces/components";
 
-const NavbarDropdownContainer = ({ links }: NavbarDropdownContainerProps) => (
+const NavbarDropdownContainer = ({links}: NavbarDropdownContainerProps) => (
     <div className='p-2 bg-gray-900 rounded-xl shadow-lg border border-primary z-[1000] min-w-[220px]'>
-        {links.map(({ name, href, description, target, isDevelopment }) => (
+        {links.map(({name, href, description, target, isDevelopment}) => (
             <div
                 key={name}
                 className='relative rounded-lg p-3 hover:bg-primary/10 max-w-sm transition-colors mb-1 last:mb-0 cursor-pointer'>
@@ -23,6 +23,6 @@ const NavbarDropdownContainer = ({ links }: NavbarDropdownContainerProps) => (
             </div>
         ))}
     </div>
-)
+);
 
-export default NavbarDropdownContainer
+export default NavbarDropdownContainer;

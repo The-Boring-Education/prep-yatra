@@ -1,19 +1,20 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { useRouter } from "next/router"
+import {useRouter} from "next/router";
+import {useState} from "react";
+
+import {Button} from "@/components/ui/button";
 
 const Navigation = () => {
-    const [isMenuOpen, setIsMenuOpen] = useState(false)
-    const router = useRouter()
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const router = useRouter();
 
     const scrollToWaitlist = () => {
-        const waitlistSection = document.getElementById("waitlist")
-        waitlistSection?.scrollIntoView({ behavior: "smooth" })
-    }
+        const waitlistSection = document.getElementById("waitlist");
+        waitlistSection?.scrollIntoView({behavior: "smooth"});
+    };
 
     const handleGetStarted = () => {
-        router.push("/auth")
-    }
+        router.push("/auth");
+    };
 
     return (
         <nav className='fixed top-0 left-0 right-0 z-50 glass-dark'>
@@ -71,7 +72,7 @@ const Navigation = () => {
                 )}
             </div>
         </nav>
-    )
-}
+    );
+};
 
-export default Navigation
+export default Navigation;

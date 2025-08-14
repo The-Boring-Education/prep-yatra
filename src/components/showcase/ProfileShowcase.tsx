@@ -1,4 +1,4 @@
-import { Flame, Calendar, Target, Award } from "lucide-react"
+import {Flame, Calendar, Target, Award} from "lucide-react";
 
 const ProfileShowcase = () => {
     return (
@@ -100,7 +100,7 @@ const ProfileShowcase = () => {
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default ProfileShowcase
+export default ProfileShowcase;

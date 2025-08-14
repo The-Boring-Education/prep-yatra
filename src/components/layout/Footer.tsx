@@ -1,5 +1,6 @@
-import React from "react"
-import { socialLinks, productLinks } from "@/constants"
+import React from "react";
+
+import {socialLinks, productLinks} from "@/constants";
 
 const Footer = () => {
     return (
@@ -91,7 +92,7 @@ const Footer = () => {
                 </div>
             </div>
         </footer>
-    )
-}
+    );
+};
 
-export default Footer
+export default Footer;

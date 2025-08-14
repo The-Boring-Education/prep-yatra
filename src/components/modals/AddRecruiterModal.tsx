@@ -1,8 +1,6 @@
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input, InputField } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import {useState, useEffect} from "react";
+
+import {Button} from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -10,10 +8,13 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle
-} from "@/components/ui/dialog"
-import { RecruiterContact } from "@/types/recruiters"
-import { useToast } from "@/hooks/use-toast"
-import { useUser } from "@/hooks/use-user"
+} from "@/components/ui/dialog";
+import {InputField} from "@/components/ui/input";
+import {Label} from "@/components/ui/label";
+import {Textarea} from "@/components/ui/textarea";
+import {useToast} from "@/hooks/use-toast";
+import {useUser} from "@/hooks/use-user";
+import {RecruiterContact} from "@/types/recruiters";
 
 interface AddRecruiterModalProps {
     isOpen: boolean
@@ -32,9 +33,9 @@ const AddRecruiterModal = ({
     editContact,
     mongoUserId
 }: AddRecruiterModalProps) => {
-    const { toast } = useToast()
-    const { isAuthenticated } = useUser()
-    const [loading, setLoading] = useState(false)
+    const {toast} = useToast();
+    const {isAuthenticated} = useUser();
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         recruiterName: "",
         email: "",
@@ -46,7 +47,7 @@ const AddRecruiterModal = ({
         last_interview_date: "",
         link: "",
         comments: ""
-    })
+    });
 
     useEffect(() => {
         if (editContact) {
@@ -61,7 +62,7 @@ const AddRecruiterModal = ({
                 last_interview_date: editContact.last_interview_date || "",
                 link: editContact.link || "",
                 comments: editContact.comments || ""
-            })
+            });
         } else {
             setFormData({
                 recruiterName: "",
@@ -74,17 +75,17 @@ const AddRecruiterModal = ({
                 last_interview_date: "",
                 link: "",
                 comments: ""
-            })
+            });
         }
-    }, [editContact, isOpen])
+    }, [editContact, isOpen]);
 
     const handleInputChange = (field: string, value: string) => {
-        setFormData((prev) => ({ ...prev, [field]: value }))
-    }
+        setFormData((prev) => ({...prev, [field]: value}));
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setLoading(true)
+        e.preventDefault();
+        setLoading(true);
 
         try {
             if (!isAuthenticated) {
@@ -92,14 +93,14 @@ const AddRecruiterModal = ({
                     title: "Error",
                     description: "User not authenticated.",
                     variant: "destructive"
-                })
-                return
+                });
+                return;
             }
 
             const payload = {
                 ...formData,
                 userId: mongoUserId
-            }
+            };
 
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/recruiter`,
@@ -110,40 +111,40 @@ const AddRecruiterModal = ({
                     },
                     body: JSON.stringify(
                         editContact
-                            ? { recruiterId: editContact._id, ...formData }
+                            ? {recruiterId: editContact._id, ...formData}
                             : payload
                     )
                 }
-            )
+            );
 
-            const result = await response.json()
+            const result = await response.json();
 
-            if (!result.status) throw new Error(result.message)
+            if (!result.status) {throw new Error(result.message);}
 
             toast({
                 title: "Success",
                 description: `Recruiter ${
                     editContact ? "updated" : "added"
                 } successfully!`
-            })
+            });
 
             if (editContact && onContactUpdated) {
-                onContactUpdated()
+                onContactUpdated();
             } else if (!editContact && onContactAdded) {
-                onContactAdded()
+                onContactAdded();
             }
-            onClose()
+            onClose();
         } catch (err) {
-            console.error(err)
+            console.error(err);
             toast({
                 title: "Error",
                 description: err.message || "Something went wrong",
                 variant: "destructive"
-            })
+            });
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -289,7 +290,7 @@ const AddRecruiterModal = ({
                 </form>
             </DialogContent>
         </Dialog>
-    )
-}
+    );
+};
 
-export default AddRecruiterModal
+export default AddRecruiterModal;

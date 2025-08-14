@@ -1,13 +1,13 @@
-export type ExperienceLevel = 'fresher' | 'junior' | 'mid' | 'senior';
-export type GoalType = '3Months' | '6Months' | '1Year';
-export type CompanyType = 'Startup' | 'MidSize' | 'MNC' | 'FAANG';
+export type ExperienceLevel = "fresher" | "junior" | "mid" | "senior";
+export type GoalType = "3Months" | "6Months" | "1Year";
+export type CompanyType = "Startup" | "MidSize" | "MNC" | "FAANG";
 export type InterviewCategory =
-  | 'MNC'
-  | 'MERN'
-  | 'CollegePlacement'
-  | 'DSA'
-  | 'SystemDesign'
-  | 'GeneralTech';
+  | "MNC"
+  | "MERN"
+  | "CollegePlacement"
+  | "DSA"
+  | "SystemDesign"
+  | "GeneralTech";
 
 export interface OnboardingData {
   linkedInUrl: string;

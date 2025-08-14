@@ -1,12 +1,12 @@
-import React from "react"
-import { ExternalLink, Github, Linkedin, Edit, Eye, Copy } from "lucide-react"
-import { useRouter } from "next/router"
-import { toast } from "sonner"
+import {ExternalLink, Github, Linkedin, Edit, Copy} from "lucide-react";
+import {useRouter} from "next/router";
+import React from "react";
+import {toast} from "sonner";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 
 interface Profile {
     _id?: string
@@ -47,44 +47,44 @@ interface ProfileSectionProps {
 
 const withProtocol = (url: string) => {
     if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        return `https://${url}`
+        return `https://${url}`;
     }
-    return url
-}
+    return url;
+};
 
 const getInitials = (name: string) => {
     return name
         .split(" ")
         .map((part) => part[0])
         .join("")
-        .toUpperCase()
-}
+        .toUpperCase();
+};
 
-const ProfileSection: React.FC<ProfileSectionProps> = ({ user, profile, onEditClick }) => {
-    const router = useRouter()
+const ProfileSection: React.FC<ProfileSectionProps> = ({user, profile, onEditClick}) => {
+    const router = useRouter();
 
     const handleViewJourneyClick = () => {
-        router.push(`/journey/${profile?._id}`)
-    }
+        router.push(`/journey/${profile?._id}`);
+    };
 
     const handleShareJourneyClick = async () => {
         if (profile?._id) {
-            const journeyUrl = `${window.location.origin}/journey/${profile._id}`
+            const journeyUrl = `${window.location.origin}/journey/${profile._id}`;
             try {
-                await navigator.clipboard.writeText(journeyUrl)
-                toast.success("Journey URL copied to clipboard!")
+                await navigator.clipboard.writeText(journeyUrl);
+                toast.success("Journey URL copied to clipboard!");
             } catch (error) {
                 // Fallback for older browsers
-                const textArea = document.createElement("textarea")
-                textArea.value = journeyUrl
-                document.body.appendChild(textArea)
-                textArea.select()
-                document.execCommand("copy")
-                document.body.removeChild(textArea)
-                toast.success("Journey URL copied to clipboard!")
+                const textArea = document.createElement("textarea");
+                textArea.value = journeyUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textArea);
+                toast.success("Journey URL copied to clipboard!");
             }
         }
-    }
+    };
 
     return (
         <Card className="mb-6">
@@ -171,14 +171,14 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ user, profile, onEditCl
                     <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Occupation:</span>
                         <span>
-                            {profile?.occupation ? profile.occupation.replace('_', ' ') : "Not set"}
+                            {profile?.occupation ? profile.occupation.replace("_", " ") : "Not set"}
                         </span>
                     </div>
                     <div className="flex justify-between text-sm">
                         <span className="text-muted-foreground">Purpose:</span>
                         <span>
                             {profile?.purpose && profile.purpose.length > 0 
-                                ? profile.purpose.map(p => p.replace('_', ' ')).join(', ')
+                                ? profile.purpose.map(p => p.replace("_", " ")).join(", ")
                                 : "Not set"
                             }
                         </span>
@@ -218,7 +218,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({ user, profile, onEditCl
                 </div>
             </CardContent>
         </Card>
-    )
-}
+    );
+};
 
-export default ProfileSection
+export default ProfileSection;

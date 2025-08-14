@@ -1,7 +1,6 @@
-import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import AddPrepLogModal from "@/components/modals/AddPrepLogModal"
+import {useState} from "react";
+
+import AddPrepLogModal from "@/components/modals/AddPrepLogModal";
 import {
     AlertDialog,
     AlertDialogTrigger,
@@ -12,9 +11,11 @@ import {
     AlertDialogFooter,
     AlertDialogCancel,
     AlertDialogAction
-} from "@/components/ui/alert-dialog"
-import { toast } from "@/components/ui/use-toast"
-import { prepLogsService } from "@/services/prep-logs"
+} from "@/components/ui/alert-dialog";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {toast} from "@/components/ui/use-toast";
+import {prepLogsService} from "@/services/prep-logs";
 
 type PrepLog = {
     _id: string
@@ -32,49 +33,49 @@ interface Props {
     mongoUserId: string
 }
 
-const PrepLogCard = ({ logs, onLogUpdated, onLogDeleted, mongoUserId }: Props) => {
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-    const [selectedLog, setSelectedLog] = useState<PrepLog | null>(null)
-    const [deleteId, setDeleteId] = useState<string | null>(null)
-    const [isDeleting, setIsDeleting] = useState(false)
+const PrepLogCard = ({logs, onLogUpdated, onLogDeleted, mongoUserId}: Props) => {
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [selectedLog, setSelectedLog] = useState<PrepLog | null>(null);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const openEditModal = (log: PrepLog) => {
-        setSelectedLog(log)
-        setIsEditModalOpen(true)
-    }
+        setSelectedLog(log);
+        setIsEditModalOpen(true);
+    };
 
     const handleModalClose = () => {
-        setIsEditModalOpen(false)
-        setSelectedLog(null)
+        setIsEditModalOpen(false);
+        setSelectedLog(null);
         // Trigger parent refresh when modal closes
-        onLogUpdated()
-    }
+        onLogUpdated();
+    };
 
     const handleDelete = async () => {
-        if (!deleteId) return
+        if (!deleteId) {return;}
 
-        setIsDeleting(true)
+        setIsDeleting(true);
 
         try {
-            await prepLogsService.delete(deleteId)
+            await prepLogsService.delete(deleteId);
 
             toast({
                 title: "Log deleted",
                 description: "Your prep log was successfully deleted.",
                 variant: "default"
-            })
-            onLogDeleted(deleteId)
+            });
+            onLogDeleted(deleteId);
         } catch (error) {
             toast({
                 title: "Error",
                 description: error.message || "Failed to delete log",
                 variant: "destructive"
-            })
+            });
         } finally {
-            setIsDeleting(false)
-            setDeleteId(null)
+            setIsDeleting(false);
+            setDeleteId(null);
         }
-    }
+    };
 
     if (logs.length === 0) {
         return (
@@ -92,7 +93,7 @@ const PrepLogCard = ({ logs, onLogUpdated, onLogDeleted, mongoUserId }: Props) =
                     </p>
                 </div>
             </div>
-        )
+        );
     }
 
     return (
@@ -187,7 +188,7 @@ const PrepLogCard = ({ logs, onLogUpdated, onLogDeleted, mongoUserId }: Props) =
             </div>
 
             <AddPrepLogModal
-                key={`edit-prep-log-${selectedLog?._id || 'new'}`}
+                key={`edit-prep-log-${selectedLog?._id || "new"}`}
                 isOpen={isEditModalOpen}
                 onClose={handleModalClose}
                 onLogAdded={onLogUpdated}
@@ -195,7 +196,7 @@ const PrepLogCard = ({ logs, onLogUpdated, onLogDeleted, mongoUserId }: Props) =
                 editLog={selectedLog}
             />
         </>
-    )
-}
+    );
+};
 
-export default PrepLogCard
+export default PrepLogCard;

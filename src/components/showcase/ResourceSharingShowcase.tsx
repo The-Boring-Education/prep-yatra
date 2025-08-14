@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 
 const ResourceSharingShowcase = () => {
     const resources = [
@@ -55,7 +55,7 @@ const ResourceSharingShowcase = () => {
             timeAgo: "2 days ago",
             type: "Experience"
         }
-    ]
+    ];
 
     return (
         <section className='py-20 px-4'>
@@ -93,8 +93,8 @@ const ResourceSharingShowcase = () => {
                         {resources.map((resource, index) => (
                             <Card
                                 key={resource.id}
-                                className={`glass-dark border-primary/20 hover:border-primary/40 transition-all duration-300 hover:scale-[1.02] animate-slide-in-right`}
-                                style={{ animationDelay: `${index * 0.1}s` }}>
+                                className={"glass-dark border-primary/20 hover:border-primary/40 transition-all duration-300 hover:scale-[1.02] animate-slide-in-right"}
+                                style={{animationDelay: `${index * 0.1}s`}}>
                                 <CardHeader className='pb-3'>
                                     <div className='flex items-start gap-4'>
                                         <div className='text-2xl'>
@@ -210,7 +210,7 @@ const ResourceSharingShowcase = () => {
                 </div>
             </div>
         </section>
-    )
-}
+    );
+};
 
-export default ResourceSharingShowcase
+export default ResourceSharingShowcase;

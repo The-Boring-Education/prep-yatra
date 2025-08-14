@@ -32,22 +32,22 @@ export const prepStatsService = {
                         "Content-Type": "application/json"
                     }
                 }
-            )
+            );
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const result: PrepStatsResponse = await response.json()
+            const result: PrepStatsResponse = await response.json();
 
             if (!result.status) {
-                throw new Error("Failed to fetch prep stats")
+                throw new Error("Failed to fetch prep stats");
             }
 
-            return result.data
+            return result.data;
         } catch (error) {
-            console.error("Error fetching prep stats:", error)
-            throw error
+            console.error("Error fetching prep stats:", error);
+            throw error;
         }
     }
-}
+};

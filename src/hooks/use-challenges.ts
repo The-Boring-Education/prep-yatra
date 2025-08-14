@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
-import { challengesService } from '@/services/challenges';
-import { Challenge, ChallengeProgress } from '@/types/challenges';
+import {useState, useEffect} from "react";
+
+import {challengesService} from "@/services/challenges";
+import {Challenge, ChallengeProgress} from "@/types/challenges";
 
 export function useChallenges(userId: string) {
   const [challenges, setChallenges] = useState<Challenge[]>([]);
@@ -10,7 +11,7 @@ export function useChallenges(userId: string) {
 
   const fetchChallenges = async () => {
     if (!userId) {
-      setError('User ID is required');
+      setError("User ID is required");
       setLoading(false);
       return;
     }
@@ -22,11 +23,11 @@ export function useChallenges(userId: string) {
       const data = await challengesService.getByUserId(userId);
       setChallenges(data);
     } catch (err) {
-      console.error('Error fetching challenges:', err);
+      console.error("Error fetching challenges:", err);
       setError(
         err instanceof Error
           ? err.message
-          : 'Failed to fetch challenges'
+          : "Failed to fetch challenges"
       );
     } finally {
       setLoading(false);
@@ -106,11 +107,11 @@ export function useChallengeProgress(challengeId: string | null) {
         const data = await challengesService.getProgress(challengeId);
         setProgress(data);
       } catch (err) {
-        console.error('Error fetching challenge progress:', err);
+        console.error("Error fetching challenge progress:", err);
         setError(
           err instanceof Error
             ? err.message
-            : 'Failed to fetch challenge progress'
+            : "Failed to fetch challenge progress"
         );
       } finally {
         setLoading(false);

@@ -1,114 +1,116 @@
-import { useState, useEffect } from "react"
-import { X, Sparkles, Star, Zap, Users, Target, Gift, CheckCircle, ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import {X, Sparkles, Star, Zap, Users, Target, Gift, CheckCircle, ArrowRight} from "lucide-react";
+import {useState, useEffect} from "react";
+import {toast} from "sonner";
+
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
 import { 
     Popover, 
     PopoverContent, 
     PopoverTrigger 
-} from "@/components/ui/popover"
-import { Badge } from "@/components/ui/badge"
-import { useUser } from "@/hooks/use-user"
-import { toast } from "sonner"
+} from "@/components/ui/popover";
+import {useUser} from "@/hooks/use-user";
+
 
 interface SubscriptionInterestPopoverProps {
     className?: string
 }
 
-const SubscriptionInterestPopover = ({ className = "" }: SubscriptionInterestPopoverProps) => {
-    const { user, isAuthenticated } = useUser()
-    const [isLoading, setIsLoading] = useState(false)
-    const [isInterested, setIsInterested] = useState(false)
-    const [isVisible, setIsVisible] = useState(true)
-    const [isOpen, setIsOpen] = useState(false)
+const SubscriptionInterestPopover = ({className = ""}: SubscriptionInterestPopoverProps) => {
+    const {user, isAuthenticated} = useUser();
+    const [isLoading, setIsLoading] = useState(false);
+    const [isInterested, setIsInterested] = useState(false);
+    const [isVisible, setIsVisible] = useState(true);
+    const [isOpen, setIsOpen] = useState(false);
 
     // Auto-open after a delay when component mounts
     useEffect(() => {
         const timer = setTimeout(() => {
             if (isVisible && isAuthenticated) {
-                setIsOpen(true)
+                setIsOpen(true);
             }
-        }, 2000) // 2 seconds after page load
+        }, 2000); // 2 seconds after page load
 
-        return () => clearTimeout(timer)
-    }, [isVisible, isAuthenticated])
+        return () => clearTimeout(timer);
+    }, [isVisible, isAuthenticated]);
 
     // Hide popover permanently for session
     useEffect(() => {
-        const hidden = sessionStorage.getItem('py-subscription-popover-hidden')
+        const hidden = sessionStorage.getItem("py-subscription-popover-hidden");
         if (hidden) {
-            setIsVisible(false)
+            setIsVisible(false);
         }
-    }, [])
+    }, []);
 
     const subscriptionFeatures = [
-        { icon: Star, text: "Advanced Resume Builder & ATS Optimization", color: "text-yellow-500" },
-        { icon: Target, text: "AI-Powered Job Match & Application Tracker", color: "text-blue-500" },
-        { icon: Users, text: "Direct Recruiter Connect & Networking", color: "text-green-500" },
-        { icon: Zap, text: "Interview Prep with Mock Sessions", color: "text-purple-500" },
-        { icon: Gift, text: "Salary Negotiation Templates & Tips", color: "text-red-500" },
-    ]
+        {icon: Star, text: "Advanced Resume Builder & ATS Optimization", color: "text-yellow-500"},
+        {icon: Target, text: "AI-Powered Job Match & Application Tracker", color: "text-blue-500"},
+        {icon: Users, text: "Direct Recruiter Connect & Networking", color: "text-green-500"},
+        {icon: Zap, text: "Interview Prep with Mock Sessions", color: "text-purple-500"},
+        {icon: Gift, text: "Salary Negotiation Templates & Tips", color: "text-red-500"}
+    ];
 
     const handleInterestClick = async () => {
         if (!isAuthenticated || !user?.id) {
-            toast.error('Please login to show your interest')
-            return
+            toast.error("Please login to show your interest");
+            return;
         }
 
         if (isInterested) {
-            toast.success('You\'re already on our interest list!')
-            return
+            toast.success("You're already on our interest list!");
+            return;
         }
 
-        setIsLoading(true)
+        setIsLoading(true);
         try {
             // Call the webapp API from prep-yatra
-            const response = await fetch('/api/v1/user/interest', {
-                method: 'POST',
+            const response = await fetch("/api/v1/user/interest", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
                     userId: user.id,
-                    eventType: 'PREPYATRA_SUBSCRIPTION',
-                    eventDescription: 'User interested in PrepYatra subscription from dashboard popover',
+                    eventType: "PREPYATRA_SUBSCRIPTION",
+                    eventDescription: "User interested in PrepYatra subscription from dashboard popover",
                     metadata: {
-                        page: 'dashboard',
+                        page: "dashboard",
                         timestamp: new Date().toISOString(),
-                        userAgent: navigator.userAgent,
+                        userAgent: navigator.userAgent
                     },
-                    source: 'PREPYATRA',
-                }),
-            })
+                    source: "PREPYATRA"
+                })
+            });
 
-            const data = await response.json()
+            const data = await response.json();
 
             if (response.ok && data.status) {
-                setIsInterested(true)
-                toast.success('Thanks! We\'ll notify you when subscription launches 🚀')
+                setIsInterested(true);
+                toast.success("Thanks! We'll notify you when subscription launches 🚀");
                 // Auto-close after success
                 setTimeout(() => {
-                    setIsOpen(false)
-                    handleDismiss()
-                }, 2000)
+                    setIsOpen(false);
+                    handleDismiss();
+                }, 2000);
             } else {
-                toast.error('Something went wrong. Please try again.')
+                toast.error("Something went wrong. Please try again.");
             }
         } catch (error) {
-            console.error('Error showing interest:', error)
-            toast.error('Failed to register interest. Please try again.')
+            console.error("Error showing interest:", error);
+            toast.error("Failed to register interest. Please try again.");
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
-    }
+    };
 
     const handleDismiss = () => {
-        setIsVisible(false)
-        setIsOpen(false)
-        sessionStorage.setItem('py-subscription-popover-hidden', 'true')
-    }
+        setIsVisible(false);
+        setIsOpen(false);
+        sessionStorage.setItem("py-subscription-popover-hidden", "true");
+    };
 
     if (!isVisible || !isAuthenticated) {
-        return null
+        return null;
     }
 
     return (
@@ -131,7 +133,7 @@ const SubscriptionInterestPopover = ({ className = "" }: SubscriptionInterestPop
                         {/* Header */}
                         <div className="p-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
                             {/* Background Animation */}
-                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/50 to-purple-600/50 animate-pulse"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/50 to-purple-600/50 animate-pulse" />
                             
                             <button
                                 onClick={handleDismiss}
@@ -166,7 +168,7 @@ const SubscriptionInterestPopover = ({ className = "" }: SubscriptionInterestPop
                                     <div 
                                         key={index} 
                                         className="flex items-center gap-3 p-3 rounded-lg hover:bg-white/70 transition-all duration-200 hover:scale-[1.02] cursor-pointer group"
-                                        style={{ animationDelay: `${index * 100}ms` }}
+                                        style={{animationDelay: `${index * 100}ms`}}
                                     >
                                         <div className="p-2 rounded-full bg-white shadow-sm group-hover:shadow-md transition-shadow">
                                             <feature.icon className={`h-4 w-4 ${feature.color} group-hover:scale-110 transition-transform`} />
@@ -226,7 +228,7 @@ const SubscriptionInterestPopover = ({ className = "" }: SubscriptionInterestPop
                 </PopoverContent>
             </Popover>
         </div>
-    )
-}
+    );
+};
 
-export default SubscriptionInterestPopover
+export default SubscriptionInterestPopover;

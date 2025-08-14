@@ -1,26 +1,14 @@
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow
-} from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
 import {
     Mail,
     Phone,
     ExternalLink,
     Trash2,
-    Edit2,
-    Calendar
-} from "lucide-react"
-import { RecruiterContact } from "@/types/recruiters"
-import { useToast } from "@/hooks/use-toast"
-import DatePicker from "react-datepicker"
-import "react-datepicker/dist/react-datepicker.css"
+    Edit2
+} from "lucide-react";
+import {useState} from "react";
+import DatePicker from "react-datepicker";
+
+import AddRecruiterModal from "@/components/modals/AddRecruiterModal";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -31,15 +19,24 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
     AlertDialogTrigger
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select"
-import AddRecruiterModal from "@/components/modals/AddRecruiterModal"
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow
+} from "@/components/ui/table";
+import {useToast} from "@/hooks/use-toast";
+import {RecruiterContact} from "@/types/recruiters";
+
+
+import "react-datepicker/dist/react-datepicker.css";
+
+
 
 interface RecruiterContactsTableProps {
     contacts: RecruiterContact[]
@@ -56,11 +53,11 @@ const RecruiterContactsTable = ({
     onContactDeleted,
     mongoUserId
 }: RecruiterContactsTableProps) => {
-    const { toast } = useToast()
+    const {toast} = useToast();
     const [editingContact, setEditingContact] =
-        useState<RecruiterContact | null>(null)
-    const [isModalOpen, setIsModalOpen] = useState(false)
-    const [hideInactiveContacts, setHideInactiveContacts] = useState(false)
+        useState<RecruiterContact | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [hideInactiveContacts, setHideInactiveContacts] = useState(false);
 
     const visibleContacts = hideInactiveContacts
         ? contacts.filter(
@@ -68,24 +65,24 @@ const RecruiterContactsTable = ({
                   c.applicationStatus !== "Rejected" &&
                   c.applicationStatus !== "Not Interested"
           )
-        : contacts
+        : contacts;
 
     const getStatusColor = (status?: string) => {
         switch (status) {
             case "Screening in Process":
-                return "bg-blue-500/20 text-blue-400 border-blue-500/30"
+                return "bg-blue-500/20 text-blue-400 border-blue-500/30";
             case "Interviewing":
-                return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
+                return "bg-yellow-500/20 text-yellow-400 border-yellow-500/30";
             case "Final Round Offer":
-                return "bg-purple-500/20 text-purple-400 border-purple-500/30"
+                return "bg-purple-500/20 text-purple-400 border-purple-500/30";
             case "Offer Letter":
-                return "bg-green-500/20 text-green-400 border-green-500/30"
+                return "bg-green-500/20 text-green-400 border-green-500/30";
             case "Rejected":
-                return "bg-red-500/20 text-red-400 border-red-500/30"
+                return "bg-red-500/20 text-red-400 border-red-500/30";
             default:
-                return "bg-gray-500/20 text-gray-400 border-gray-500/30"
+                return "bg-gray-500/20 text-gray-400 border-gray-500/30";
         }
-    }
+    };
 
     const handleDelete = async (recruiterId: string) => {
         try {
@@ -94,27 +91,27 @@ const RecruiterContactsTable = ({
                 {
                     method: "DELETE"
                 }
-            )
+            );
 
-            const result = await res.json()
+            const result = await res.json();
 
-            if (!res.ok) throw new Error(result.message)
+            if (!res.ok) {throw new Error(result.message);}
 
             toast({
                 title: "Deleted",
                 description: "Recruiter deleted successfully"
-            })
+            });
 
-            if (onContactDeleted) onContactDeleted(recruiterId)
-            if (onContactUpdated) onContactUpdated()
+            if (onContactDeleted) {onContactDeleted(recruiterId);}
+            if (onContactUpdated) {onContactUpdated();}
         } catch (error) {
             toast({
                 title: "Error",
                 description: "Failed to delete recruiter",
                 variant: "destructive"
-            })
+            });
         }
-    }
+    };
 
     const handleStatusChange = async (
         recruiterId: string,
@@ -133,26 +130,26 @@ const RecruiterContactsTable = ({
                         applicationStatus: newStatus
                     })
                 }
-            )
+            );
 
-            const result = await res.json()
+            const result = await res.json();
 
-            if (!res.ok) throw new Error(result.message)
+            if (!res.ok) {throw new Error(result.message);}
 
             toast({
                 title: "Success",
                 description: "Status updated successfully"
-            })
+            });
 
-            if (onContactUpdated) onContactUpdated()
+            if (onContactUpdated) {onContactUpdated();}
         } catch (error) {
             toast({
                 title: "Error",
                 description: "Failed to update status",
                 variant: "destructive"
-            })
+            });
         }
-    }
+    };
 
     const handleDateChange = async (
         recruiterId: string,
@@ -172,58 +169,58 @@ const RecruiterContactsTable = ({
                         [field]: newDate?.toISOString() || null
                     })
                 }
-            )
+            );
 
-            const result = await res.json()
+            const result = await res.json();
 
-            if (!res.ok) throw new Error(result.message)
+            if (!res.ok) {throw new Error(result.message);}
 
             toast({
                 title: "Success",
                 description: "Date updated successfully"
-            })
+            });
 
-            if (onContactUpdated) onContactUpdated()
+            if (onContactUpdated) {onContactUpdated();}
         } catch (error) {
             toast({
                 title: "Error",
                 description: "Failed to update date",
                 variant: "destructive"
-            })
+            });
         }
-    }
+    };
 
     const handleEdit = (contact: RecruiterContact) => {
-        setEditingContact(contact)
-        setIsModalOpen(true)
-    }
+        setEditingContact(contact);
+        setIsModalOpen(true);
+    };
 
     const handleModalClose = () => {
-        setEditingContact(null)
-        setIsModalOpen(false)
+        setEditingContact(null);
+        setIsModalOpen(false);
         // Trigger parent refresh when modal closes
         if (onContactUpdated) {
-            onContactUpdated()
+            onContactUpdated();
         }
-    }
+    };
 
     const openEmail = (email?: string) => {
         if (email) {
-            window.open(`mailto:${email}`, "_blank")
+            window.open(`mailto:${email}`, "_blank");
         }
-    }
+    };
 
     const openPhone = (phone?: string) => {
         if (phone) {
-            window.open(`tel:${phone}`, "_blank")
+            window.open(`tel:${phone}`, "_blank");
         }
-    }
+    };
 
     const openLink = (link?: string) => {
         if (link) {
-            window.open(link, "_blank")
+            window.open(link, "_blank");
         }
-    }
+    };
 
     if (contacts.length === 0) {
         return (
@@ -237,7 +234,7 @@ const RecruiterContactsTable = ({
                     contact!
                 </p>
             </div>
-        )
+        );
     }
 
     return (
@@ -507,7 +504,7 @@ const RecruiterContactsTable = ({
             </div>
 
             <AddRecruiterModal
-                key={`edit-recruiter-${editingContact?._id || 'new'}`}
+                key={`edit-recruiter-${editingContact?._id || "new"}`}
                 isOpen={isModalOpen}
                 onClose={handleModalClose}
                 onContactAdded={onContactAdded}
@@ -516,7 +513,7 @@ const RecruiterContactsTable = ({
                 mongoUserId={mongoUserId}
             />
         </>
-    )
-}
+    );
+};
 
-export default RecruiterContactsTable
+export default RecruiterContactsTable;

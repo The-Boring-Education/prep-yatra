@@ -1,6 +1,7 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, {useState, useRef, useEffect} from "react";
+
 import NavbarDropdownContainer from "@/components/layout/NavbarDropdownContainer";
-import { links } from "@/constants";
+import {links} from "@/constants";
 
 
 
@@ -11,9 +12,9 @@ const NavbarDropdownLinks: React.FC = () => {
   // Close dropdown on outside click
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node)) {setOpen(false);}
     }
-    if (open) document.addEventListener("mousedown", handleClick);
+    if (open) {document.addEventListener("mousedown", handleClick);}
     return () => document.removeEventListener("mousedown", handleClick);
   }, [open]);
 
