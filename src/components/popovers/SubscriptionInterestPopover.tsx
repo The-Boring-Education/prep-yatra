@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/popover";
 import {useUser} from "@/hooks/use-user";
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL;
 
 interface SubscriptionInterestPopoverProps {
     className?: string
@@ -43,11 +44,11 @@ const SubscriptionInterestPopover = ({className = ""}: SubscriptionInterestPopov
     }, []);
 
     const subscriptionFeatures = [
-        {icon: Star, text: "Advanced Resume Builder & ATS Optimization", color: "text-yellow-500"},
-        {icon: Target, text: "AI-Powered Job Match & Application Tracker", color: "text-blue-500"},
-        {icon: Users, text: "Direct Recruiter Connect & Networking", color: "text-green-500"},
-        {icon: Zap, text: "Interview Prep with Mock Sessions", color: "text-purple-500"},
-        {icon: Gift, text: "Salary Negotiation Templates & Tips", color: "text-red-500"}
+        {icon: Star, text: "Build Your Skills & Track Progress", color: "text-yellow-500"},
+        {icon: Target, text: "Find What's Missing in Your Resume", color: "text-blue-500"},
+        {icon: Users, text: "On-Demand Interview Prep", color: "text-green-500"},
+        {icon: Gift, text: "Auto Cold Mailing to Recruiters", color: "text-red-500"},
+        {icon: Zap, text: "Lifetime Access to PrepYatra", color: "text-purple-500"},
     ];
 
     const handleInterestClick = async () => {
@@ -64,7 +65,7 @@ const SubscriptionInterestPopover = ({className = ""}: SubscriptionInterestPopov
         setIsLoading(true);
         try {
             // Call the webapp API from prep-yatra
-            const response = await fetch("/api/v1/user/interest", {
+            const response = await fetch(`${API_BASE_URL}/user/interest`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
@@ -114,7 +115,7 @@ const SubscriptionInterestPopover = ({className = ""}: SubscriptionInterestPopov
     }
 
     return (
-        <div className={`fixed top-20 right-4 z-50 ${className}`}>
+        <div className={`${className}`}>
             <Popover open={isOpen} onOpenChange={setIsOpen}>
                 <PopoverTrigger asChild>
                     <Button

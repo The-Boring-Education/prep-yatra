@@ -1,9 +1,10 @@
-import React from "react";
+import React, { Suspense } from "react";
 
 import {GamificationDisplay} from "@/components/gamification";
 import NavbarDropdownLinks from "@/components/layout/NavbarDropdownLinks";
 import {Button} from "@/components/ui/button";
 import {NavbarProps} from "@/interfaces/components";
+import { SubscriptionInterestPopover } from "../popovers";
 
 const capitalize = (str: string) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
@@ -21,6 +22,7 @@ const Navbar: React.FC<NavbarProps> = ({username, onSignOut, userId}) => {
                 </span>
             </div>
             <div className='flex items-center gap-4'>
+                <SubscriptionInterestPopover />
                 <NavbarDropdownLinks />
                 {userId && <GamificationDisplay userId={userId} />}
                 <span className='text-white font-medium hidden sm:inline'>
