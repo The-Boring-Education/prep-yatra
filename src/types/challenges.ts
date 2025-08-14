@@ -11,6 +11,7 @@ export interface Challenge {
   endDate: string;
   isActive: boolean;
   category?: string;
+  predefinedType?: string; // ID of the predefined challenge template
   createdAt: string;
   updatedAt: string;
   __v: number;
@@ -34,6 +35,7 @@ export interface CreateChallengeRequest {
   description?: string;
   totalDays: number;
   category?: string;
+  predefinedType?: string; // ID of the predefined challenge template
 }
 
 export interface UpdateChallengeRequest {
