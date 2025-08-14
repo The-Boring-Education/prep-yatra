@@ -31,27 +31,32 @@ export function usePrepLogs(userId: string) {
             return
         }
 
-            try {
-                setLoading(true)
-                setError(null)
+        try {
+            setLoading(true)
+            setError(null)
 
-                const data = await prepLogsService.getByUserId(userId)
-                setLogs(data)
-            } catch (err) {
-                console.error("Error fetching prep logs:", err)
-                setError(
-                    err instanceof Error
-                        ? err.message
-                        : "Failed to fetch prep logs"
-                )
-            } finally {
-                setLoading(false)
-            }
+            const data = await prepLogsService.getByUserId(userId)
+            setLogs(data)
+        } catch (err) {
+            console.error("Error fetching prep logs:", err)
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Failed to fetch prep logs"
+            )
+        } finally {
+            setLoading(false)
         }
+    }
 
     useEffect(() => {
         fetchPrepLogs()
     }, [userId, refreshTrigger])
+
+    // Debounced refetch function to prevent excessive API calls
+    const refetch = () => {
+        setRefreshTrigger(prev => prev + 1)
+    }
 
     // Calculate statistics
     const totalTimeSpent = logs.reduce(
@@ -108,14 +113,13 @@ export function usePrepLogs(userId: string) {
 
     return {
         logs,
+        setLogs,
         loading,
         error,
         totalTimeSpent,
         totalLogs,
         streak,
         recentActivity,
-        refetch: () => {
-            setRefreshTrigger(prev => prev + 1)
-        }
+        refetch
     }
 }

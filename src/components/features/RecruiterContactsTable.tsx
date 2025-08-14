@@ -45,7 +45,7 @@ interface RecruiterContactsTableProps {
     contacts: RecruiterContact[]
     onContactAdded?: () => void
     onContactUpdated?: () => void
-    onContactDeleted?: () => void
+    onContactDeleted?: (deletedContactId: string) => void
     mongoUserId?: string
 }
 
@@ -105,7 +105,7 @@ const RecruiterContactsTable = ({
                 description: "Recruiter deleted successfully"
             })
 
-            if (onContactDeleted) onContactDeleted()
+            if (onContactDeleted) onContactDeleted(recruiterId)
             if (onContactUpdated) onContactUpdated()
         } catch (error) {
             toast({

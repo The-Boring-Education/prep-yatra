@@ -32,17 +32,6 @@ export function usePrepStats(userId: string) {
         }
 
         fetchPrepStats()
-
-        // Listen for stats refresh events
-        const handleStatsRefetch = () => {
-            console.log("Stats refresh event triggered")
-            fetchPrepStats()
-        }
-        window.addEventListener("prep-stats-refetch", handleStatsRefetch)
-
-        return () => {
-            window.removeEventListener("prep-stats-refetch", handleStatsRefetch)
-        }
     }, [userId])
 
     // Calculate total time spent from weekly logs

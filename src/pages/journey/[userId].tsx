@@ -100,7 +100,12 @@ const PrepLogsShowcase = () => {
                 }
 
                 const profileData = await profileResponse.json()
-                setProfile(profileData.data)
+                // Extract data from the API response structure
+                if (profileData.status && profileData.data) {
+                    setProfile(profileData.data)
+                } else {
+                    setProfile(profileData)
+                }
 
                 // Fetch prep logs
                 const logsResponse = await fetch(
@@ -109,7 +114,12 @@ const PrepLogsShowcase = () => {
 
                 if (logsResponse.ok) {
                     const logsData = await logsResponse.json()
-                    setPrepLogs(logsData.data || [])
+                    // Extract data from the API response structure
+                    if (logsData.status && logsData.data) {
+                        setPrepLogs(logsData.data || [])
+                    } else {
+                        setPrepLogs(logsData || [])
+                    }
                 }
             } catch (err) {
                 setError("Failed to load user profile")

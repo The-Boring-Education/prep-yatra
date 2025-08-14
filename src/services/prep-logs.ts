@@ -5,9 +5,7 @@ export const prepLogsService = {
     async getByUserId(userId: string): Promise<PrepLog[]> {
         try {
             const response = await fetch(
-                `${
-                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
-                }/prepyatra/prep-log?userId=${userId}`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/prep-log?userId=${userId}`,
                 {
                     headers: {
                         "Content-Type": "application/json"
@@ -60,10 +58,6 @@ export const prepLogsService = {
                 throw new Error("Failed to create prep log")
             }
 
-            setTimeout(() => {
-                window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
-            }, 500)
-
             // Analytics
             try {
                 trackEvent("prep_log_create", {
@@ -108,10 +102,6 @@ export const prepLogsService = {
                 throw new Error("Failed to update prep log")
             }
 
-            setTimeout(() => {
-                window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
-            }, 500)
-
             try {
                 trackEvent("prep_log_update", {
                     category: "prep_log",
@@ -130,9 +120,7 @@ export const prepLogsService = {
     async delete(id: string): Promise<void> {
         try {
             const response = await fetch(
-                `${
-                    process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL
-                }/prepyatra/prep-log?prepLogId=${id}`,
+                `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/prep-log?prepLogId=${id}`,
                 {
                     method: "DELETE",
                     headers: {
@@ -150,10 +138,6 @@ export const prepLogsService = {
             if (!result.status) {
                 throw new Error("Failed to delete prep log")
             }
-
-            setTimeout(() => {
-                window.dispatchEvent(new CustomEvent("prep-stats-refetch"))
-            }, 500)
 
             try {
                 trackEvent("prep_log_delete", {

@@ -213,11 +213,6 @@ export const challengesService = {
         throw new Error('Failed to create challenge log');
       }
 
-      // Trigger prep-stats refetch for gamification
-      setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('prep-stats-refetch'));
-      }, 500);
-
       // Analytics
       try {
         trackEvent('challenge_log_create', {

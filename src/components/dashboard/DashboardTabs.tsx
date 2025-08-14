@@ -22,6 +22,8 @@ interface DashboardTabsProps {
         email?: string
     }
     profile?: {
+        userSkills?: string[]
+        userSkillsLastUpdated?: string
         prepYatra?: {
             skills?: string[]
         }
@@ -30,6 +32,8 @@ interface DashboardTabsProps {
     onRecruiterModalOpen: () => void
     onSkillsModalOpen: () => void
     onContactUpdated: () => void
+    onLogDeleted: (deletedLogId: string) => void
+    onContactDeleted: (deletedContactId: string) => void
 }
 
 const ComponentLoader = () => (
@@ -46,7 +50,9 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
     onPrepLogModalOpen,
     onRecruiterModalOpen,
     onSkillsModalOpen,
-    onContactUpdated
+    onContactUpdated,
+    onLogDeleted,
+    onContactDeleted
 }) => {
     return (
         <Tabs defaultValue="prep-logs" className="space-y-6">
@@ -76,6 +82,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
                             <PrepLogsList 
                                 logs={prepLogs}
                                 onLogUpdated={() => {}} 
+                                onLogDeleted={onLogDeleted}
                                 mongoUserId={user?.id || ""}
                             />
                         </Suspense>
@@ -108,6 +115,7 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
                             <RecruiterContactsTable
                                 contacts={recruiterContacts}
                                 onContactUpdated={onContactUpdated}
+                                onContactDeleted={onContactDeleted}
                             />
                         </Suspense>
                     </CardContent>
@@ -131,7 +139,8 @@ const DashboardTabs: React.FC<DashboardTabsProps> = ({
                     <CardContent>
                         <Suspense fallback={<ComponentLoader />}>
                             <UserSkillsShowcase 
-                                userSkills={profile?.prepYatra?.skills || []}
+                                userSkills={profile?.userSkills || []}
+                                lastUpdated={profile?.userSkillsLastUpdated}
                             />
                         </Suspense>
                     </CardContent>
