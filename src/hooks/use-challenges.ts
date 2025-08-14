@@ -38,8 +38,8 @@ export function useChallenges(userId: string) {
   }, [userId, refreshTrigger]);
 
   // Calculate statistics
-  const activeChallenges = challenges.filter(challenge => challenge.status === 'active');
-  const completedChallenges = challenges.filter(challenge => challenge.status === 'completed');
+  const activeChallenges = challenges.filter(challenge => challenge.isActive);
+  const completedChallenges = challenges.filter(challenge => !challenge.isActive);
   const totalChallenges = challenges.length;
 
   // Get current active challenge (most recent)

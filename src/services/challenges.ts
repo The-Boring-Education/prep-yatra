@@ -29,12 +29,14 @@ export const challengesService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result: ChallengesResponse = await response.json();
+      const result = await response.json();
 
-      if (!result.status) {
-        throw new Error('Failed to fetch challenges');
+      // Check for both 'success' and 'status' properties to handle different API response formats
+      if (!result.success && !result.status) {
+        throw new Error("Failed to fetch challenges");
       }
 
+      // Return empty array if data is empty, but don't treat it as an error
       return result.data || [];
     } catch (error) {
       console.error('Error fetching challenges:', error);
@@ -43,7 +45,7 @@ export const challengesService = {
   },
 
   // Create a new challenge
-  async create(data: CreateChallengeRequest & { userId: string }): Promise<Challenge> {
+  async create(data: CreateChallengeRequest & { user: string }): Promise<Challenge> {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/challenges`,
@@ -57,13 +59,15 @@ export const challengesService = {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        const errorText = await response.text();
+        console.error('API error response:', errorText);
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
       }
 
-      const result: SingleChallengeResponse = await response.json();
+      const result = await response.json();
 
-      if (!result.status) {
-        throw new Error('Failed to create challenge');
+      if (!result.success && !result.status) {
+        throw new Error('Failed to create challenge - API returned unsuccessful response');
       }
 
       // Analytics
@@ -72,8 +76,7 @@ export const challengesService = {
           category: 'challenge',
           value: data.totalDays,
           challengeName: data.name,
-          isPredefined: data.isPredefined,
-          predefinedType: data.predefinedType
+          challengeCategory: data.category
         });
       } catch {}
 
@@ -88,13 +91,18 @@ export const challengesService = {
   async update(data: UpdateChallengeRequest): Promise<Challenge> {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/challenges`,
+        `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/challenges/${data.challengeId}`,
         {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify(data)
+          body: JSON.stringify({
+            name: data.name,
+            totalDays: data.totalDays,
+            category: data.category,
+            isActive: data.isActive
+          })
         }
       );
 
@@ -102,9 +110,9 @@ export const challengesService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result: SingleChallengeResponse = await response.json();
+      const result = await response.json();
 
-      if (!result.status) {
+      if (!result.success && !result.status) {
         throw new Error('Failed to update challenge');
       }
 
@@ -128,7 +136,7 @@ export const challengesService = {
   async delete(challengeId: string): Promise<void> {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/challenges?challengeId=${challengeId}`,
+        `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/challenges/${challengeId}`,
         {
           method: 'DELETE',
           headers: {
@@ -143,7 +151,7 @@ export const challengesService = {
 
       const result = await response.json();
 
-      if (!result.status) {
+      if (!result.success && !result.status) {
         throw new Error('Failed to delete challenge');
       }
 
@@ -164,7 +172,7 @@ export const challengesService = {
   async getLogs(challengeId: string): Promise<ChallengeLog[]> {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/challenge-logs?challengeId=${challengeId}`,
+        `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/challenges/${challengeId}/logs`,
         {
           headers: {
             'Content-Type': 'application/json'
@@ -176,9 +184,9 @@ export const challengesService = {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result: ChallengeLogsResponse = await response.json();
+      const result = await response.json();
 
-      if (!result.status) {
+      if (!result.success && !result.status) {
         throw new Error('Failed to fetch challenge logs');
       }
 
@@ -190,10 +198,10 @@ export const challengesService = {
   },
 
   // Create a challenge log entry
-  async createLog(data: CreateChallengeLogRequest & { userId: string }): Promise<ChallengeLog> {
+  async createLog(data: CreateChallengeLogRequest): Promise<ChallengeLog> {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/challenge-logs`,
+        `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/challenges/${data.challengeId}/logs`,
         {
           method: 'POST',
           headers: {
@@ -209,17 +217,17 @@ export const challengesService = {
 
       const result = await response.json();
 
-      if (!result.status) {
+      if (!result.success && !result.status) {
         throw new Error('Failed to create challenge log');
       }
 
       // Analytics
       try {
         trackEvent('challenge_log_create', {
-          category: 'challenge_log',
-          value: data.hoursSpent,
+          category: 'challenge',
           challengeId: data.challengeId,
-          copyToPrepLogs: data.copyToPrepLogs
+          day: data.day,
+          hoursSpent: data.hoursSpent
         });
       } catch {}
 
@@ -248,7 +256,7 @@ export const challengesService = {
 
       const result = await response.json();
 
-      if (!result.status) {
+      if (!result.success && !result.status) {
         throw new Error('Failed to fetch challenge progress');
       }
 
@@ -267,7 +275,7 @@ export const challengesService = {
       challengeName: challenge.name,
       currentDay: currentLog.day,
       progressText: currentLog.progressText,
-      nextGoals: nextGoals.length > 0 ? nextGoals : ['Continue learning consistently', 'Apply new concepts in practice'],
+      nextGoals: nextGoals.length > 0 ? nextGoals : currentLog.nextGoals,
       appUrl
     };
   },
