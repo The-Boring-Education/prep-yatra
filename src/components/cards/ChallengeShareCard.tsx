@@ -40,7 +40,7 @@ const ChallengeShareCard = ({
     const progressPercentage = Math.round(
         (challenge.currentDay / challenge.totalDays) * 100
     )
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://prepyatra.com"
+    const appUrl = process.env.NEXT_PUBLIC_BASE_URL
 
     const getShareMessage = (templateId: string = "default") => {
         const templateData: SocialMediaTemplateData = {
@@ -50,7 +50,6 @@ const ChallengeShareCard = ({
             progressText: getContextualProgress(),
             hoursSpent: 0, // This would be tracked per log
             nextGoals: getContextualGoals(),
-            predefinedType: challenge.predefinedType,
             appUrl
         }
 
@@ -132,6 +131,7 @@ const ChallengeShareCard = ({
         platform: string,
         templateId: string = "default"
     ) => {
+        const appUrl = process.env.NEXT_PUBLIC_BASE_URL
         const message = generateSocialMessage(templateId, {
             challengeName: challenge.name,
             currentDay: challenge.currentDay,
@@ -139,12 +139,9 @@ const ChallengeShareCard = ({
             progressText: getContextualProgress(),
             hoursSpent: 0, // This would be tracked per log
             nextGoals: getContextualGoals(),
-            predefinedType: challenge.predefinedType,
             appUrl
         })
         const encodedText = encodeURIComponent(message)
-        const appUrl =
-            process.env.NEXT_PUBLIC_APP_URL || "https://prepyatra.com"
 
         let shareUrl = ""
         switch (platform) {
@@ -202,7 +199,7 @@ const ChallengeShareCard = ({
                     <Badge
                         variant='outline'
                         className='bg-primary/20 text-primary border-primary/30'>
-                        {challenge.status}
+                        {challenge.isActive ? "Active" : "Inactive"}
                     </Badge>
                 </div>
 

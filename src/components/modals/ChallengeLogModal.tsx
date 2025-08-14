@@ -69,8 +69,7 @@ const ChallengeLogModal = ({
         const progressPercentage = Math.round(
             (nextDay / challenge.totalDays) * 100
         )
-        const appUrl =
-            process.env.NEXT_PUBLIC_BASE_URL || "https://prepyatra.com"
+        const appUrl = process.env.NEXT_PUBLIC_BASE_URL
 
         const templates = [
             // Template 1: Casual and friendly
@@ -253,8 +252,7 @@ ${
     const shareToSocial = (platform: string) => {
         const message = generateSocialMessageFromTemplate(selectedTemplate)
         const encodedText = encodeURIComponent(message)
-        const appUrl =
-            process.env.NEXT_PUBLIC_BASE_URL || "https://prepyatra.com"
+        const appUrl = process.env.NEXT_PUBLIC_BASE_URL
 
         let shareUrl = ""
         switch (platform) {

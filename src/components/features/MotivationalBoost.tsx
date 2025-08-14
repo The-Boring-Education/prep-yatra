@@ -70,9 +70,9 @@ const MotivationalBoost = ({
     challenges,
     className = ""
 }: MotivationalBoostProps) => {
-    const activeChallenges = challenges.filter((c) => c.status === "active")
+    const activeChallenges = challenges.filter((c) => c.isActive)
     const completedChallenges = challenges.filter(
-        (c) => c.status === "completed"
+        (c) => !c.isActive && c.currentDay >= c.totalDays
     )
 
     // Calculate overall progress
@@ -165,7 +165,7 @@ const MotivationalBoost = ({
 "${randomQuote.text}" - ${randomQuote.author}
 
 Join me on Prep Yatra and start your own challenge! 🚀
-${process.env.NEXT_PUBLIC_BASE_URL || "https://prepyatra.com"}
+${process.env.NEXT_PUBLIC_BASE_URL}
 
 #PrepYatra #LearningJourney #ChallengeAccepted #ConsistencyIsKey`
 

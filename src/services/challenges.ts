@@ -278,8 +278,7 @@ export const challengesService = {
         currentLog: ChallengeLog,
         nextGoals: string[] = []
     ): SocialMediaTemplate {
-        const appUrl =
-            process.env.NEXT_PUBLIC_BASE_URL || "https://prepyatra.com"
+        const appUrl = process.env.NEXT_PUBLIC_BASE_URL
 
         return {
             challengeName: challenge.name,
