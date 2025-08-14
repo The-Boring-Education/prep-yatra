@@ -5,7 +5,6 @@ export interface SocialMediaTemplateData {
   progressText: string;
   hoursSpent: number;
   nextGoals: string[];
-  predefinedType?: string;
   appUrl: string;
 }
 
@@ -18,13 +17,8 @@ export interface SocialMediaTemplate {
 }
 
 // Utility functions
-const getChallengeEmoji = (predefinedType?: string) => {
-  switch (predefinedType) {
-    case '21DaysPython': return '🐍';
-    case '21DaysJava': return '☕';
-    case '50DaysInternship': return '💼';
-    default: return '🎯';
-  }
+const getChallengeEmoji = () => {
+  return '🎯';
 };
 
 const getProgressEmoji = (progressPercentage: number) => {
@@ -74,7 +68,7 @@ export const socialMediaTemplates: SocialMediaTemplate[] = [
       const goals = data.nextGoals.filter(g => g.trim()).map((g, i) => `${i + 1}. ${g}`).join('\n') 
         || '1. Continue learning consistently\n2. Apply new concepts in practice';
 
-      return `${getChallengeEmoji(data.predefinedType)} Day ${data.currentDay}/${data.totalDays} of ${data.challengeName} ${getProgressEmoji(progressPercentage)}
+      return `${getChallengeEmoji()} Day ${data.currentDay}/${data.totalDays} of ${data.challengeName} ${getProgressEmoji(progressPercentage)}
 
 📚 Today's Progress:
 ${data.progressText}
@@ -99,7 +93,7 @@ Join me on this learning journey! Start your own challenge at ${data.appUrl} �
       const progressPercentage = Math.round((data.currentDay / data.totalDays) * 100);
       const milestone = getMilestoneMessage(data.currentDay, data.totalDays);
       
-      return `${getChallengeEmoji(data.predefinedType)} Day ${data.currentDay}/${data.totalDays} of ${data.challengeName} ${getProgressEmoji(progressPercentage)}
+      return `${getChallengeEmoji()} Day ${data.currentDay}/${data.totalDays} of ${data.challengeName} ${getProgressEmoji(progressPercentage)}
 
 ${data.progressText}
 

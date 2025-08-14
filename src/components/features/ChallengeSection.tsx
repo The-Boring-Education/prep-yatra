@@ -11,14 +11,21 @@ import {
   Trophy,
   CalendarDays,
   Flame,
-  Star
+  Star,
+  Rocket,
+  BookOpen,
+  Users,
+  Award,
+  Calendar,
+  Share2
 } from 'lucide-react';
 import { useChallenges } from '@/hooks/use-challenges';
 import { Challenge } from '@/types/challenges';
+import { PREDEFINED_CHALLENGES } from '@/constants/challenges';
 import ChallengeCard from '@/components/cards/ChallengeCard';
 import CreateChallengeModal from '@/components/modals/CreateChallengeModal';
 import ChallengeLogModal from '@/components/modals/ChallengeLogModal';
-import MotivationalBoost from './MotivationalBoost';
+import ChallengeLogsModal from '@/components/modals/ChallengeLogsModal';
 
 interface ChallengeSectionProps {
   userId: string;
@@ -28,6 +35,7 @@ interface ChallengeSectionProps {
 const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isLogModalOpen, setIsLogModalOpen] = useState(false);
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
   const [selectedChallenge, setSelectedChallenge] = useState<Challenge | null>(null);
 
   const {
@@ -61,6 +69,14 @@ const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => 
     setSelectedChallenge(null);
   };
 
+  const handleViewLogs = (challenge: Challenge) => {
+    setSelectedChallenge(challenge);
+    setIsLogsModalOpen(true);
+  };
+
+  // Check if any challenges are completed
+  const hasCompletedChallenges = challenges.some(challenge => challenge.currentDay >= challenge.totalDays);
+
   if (loading) {
     return (
       <div className={`space-y-6 ${className}`}>
@@ -93,71 +109,64 @@ const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => 
   if (challenges.length === 0) {
     return (
       <div className={`space-y-6 ${className}`}>
-        {/* Motivational Boost for new users */}
-        <MotivationalBoost challenges={challenges} className="mb-6" />
-        
-        <Card className="relative overflow-hidden bg-gradient-to-br from-primary/20 via-purple-600/20 to-primary/20 border-primary/30">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent transform -skew-y-12 translate-y-full animate-shimmer"></div>
-          
+        {/* Simple Hero Card */}
+        <Card className="bg-gradient-to-br from-primary/20 to-purple-600/20 border-primary/30">
           <CardHeader className="text-center pb-4">
             <div className="flex justify-center mb-4">
-              <div className="relative">
-                <div className="w-16 h-16 bg-gradient-to-br from-primary to-purple-600 rounded-full flex items-center justify-center animate-pulse">
-                  <Target className="w-8 h-8 text-white" />
-                </div>
-                <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-3 h-3 text-yellow-800" />
-                </div>
+              <div className="w-16 h-16 bg-gradient-to-br from-primary to-purple-600 rounded-full flex items-center justify-center">
+                <Target className="w-8 h-8 text-white" />
               </div>
             </div>
             
-            <CardTitle className="text-2xl font-bold text-white mb-2">
-              Create Your First Challenge
+            <CardTitle className="text-2xl font-bold text-white mb-3">
+              Ready to Transform Your Skills?
             </CardTitle>
-            <CardDescription className="text-gray-300 text-base max-w-md mx-auto">
-              Start your learning journey with structured, goal-oriented challenges. 
-              Track progress, stay motivated, and share your achievements!
+            <CardDescription className="text-gray-300 text-base max-w-lg mx-auto">
+              Create structured learning challenges to stay consistent, track progress, and share your journey with the world.
             </CardDescription>
           </CardHeader>
 
           <CardContent className="text-center space-y-6">
+            {/* Key Benefits */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
               <div className="flex flex-col items-center space-y-2">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center">
-                  <CalendarDays className="w-6 h-6 text-blue-400" />
+                  <Calendar className="w-6 h-6 text-blue-400" />
                 </div>
-                <div className="text-white font-medium">Daily Tracking</div>
-                <div className="text-gray-400">Log your progress every day</div>
+                <div className="text-white font-medium">Daily Consistency</div>
+                <div className="text-gray-400 text-xs">Build lasting habits</div>
               </div>
               
               <div className="flex flex-col items-center space-y-2">
                 <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center">
                   <TrendingUp className="w-6 h-6 text-green-400" />
                 </div>
-                <div className="text-white font-medium">Visual Progress</div>
-                <div className="text-gray-400">See your improvement over time</div>
+                <div className="text-white font-medium">Track Progress</div>
+                <div className="text-gray-400 text-xs">See your growth</div>
               </div>
               
               <div className="flex flex-col items-center space-y-2">
                 <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center">
-                  <Trophy className="w-6 h-6 text-purple-400" />
+                  <Share2 className="w-6 h-6 text-purple-400" />
                 </div>
-                <div className="text-white font-medium">Share Success</div>
-                <div className="text-gray-400">Inspire others with your journey</div>
+                <div className="text-white font-medium">Share Journey</div>
+                <div className="text-gray-400 text-xs">Inspire others</div>
               </div>
             </div>
 
+            {/* CTA Button */}
             <Button
               onClick={() => setIsCreateModalOpen(true)}
               className="bg-gradient-to-r from-primary to-purple-600 hover:from-primary/90 hover:to-purple-600/90 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg"
               size="lg"
             >
               <Plus className="w-5 h-5 mr-2" />
-              Start Your First Challenge
+              Create Your First Challenge
             </Button>
           </CardContent>
         </Card>
 
+        {/* Create Challenge Modal for no-challenges view */}
         <CreateChallengeModal
           isOpen={isCreateModalOpen}
           onClose={() => setIsCreateModalOpen(false)}
@@ -168,12 +177,8 @@ const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => 
     );
   }
 
-  // Show challenges dashboard when user has challenges
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Motivational Boost */}
-      <MotivationalBoost challenges={challenges} className="mb-6" />
-
       {/* Header with Stats */}
       <div className="flex items-center justify-between">
         <div>
@@ -223,7 +228,7 @@ const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => 
         <Card className="bg-gray-800/50 border-gray-700">
           <CardContent className="p-4">
             <div className="flex items-center gap-2">
-              <CalendarDays className="w-5 h-5 text-blue-400" />
+              <Calendar className="w-5 h-5 text-blue-400" />
               <div>
                 <div className="text-xl font-bold text-white">{totalDaysCommitted}</div>
                 <div className="text-xs text-gray-400">Days Committed</div>
@@ -245,28 +250,6 @@ const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => 
         </Card>
       </div>
 
-      {/* Current Active Challenge Highlight */}
-      {currentChallenge && (
-        <Card className="bg-gradient-to-r from-primary/20 to-purple-600/20 border-primary/30">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <Badge className="bg-green-500/20 text-green-300 border-green-500/30">
-                <Flame className="w-3 h-3 mr-1" />
-                Currently Active
-              </Badge>
-            </div>
-            <CardTitle className="text-white">Focus Challenge</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <ChallengeCard
-              challenge={currentChallenge}
-              onChallengeUpdated={handleChallengeUpdated}
-              onLogProgress={handleLogProgress}
-            />
-          </CardContent>
-        </Card>
-      )}
-
       {/* All Challenges Grid */}
       <div className="space-y-4">
         <h3 className="text-lg font-semibold text-white">All Challenges</h3>
@@ -277,6 +260,7 @@ const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => 
               challenge={challenge}
               onChallengeUpdated={handleChallengeUpdated}
               onLogProgress={handleLogProgress}
+              onViewLogs={handleViewLogs}
             />
           ))}
         </div>
@@ -291,16 +275,24 @@ const ChallengeSection = ({ userId, className = '' }: ChallengeSectionProps) => 
       />
 
       {selectedChallenge && (
-        <ChallengeLogModal
-          isOpen={isLogModalOpen}
-          onClose={() => setIsLogModalOpen(false)}
-          onProgressLogged={handleProgressLogged}
-          challenge={selectedChallenge}
-          userId={userId}
-        />
+        <>
+          <ChallengeLogModal
+            isOpen={isLogModalOpen}
+            onClose={() => setIsLogModalOpen(false)}
+            onProgressLogged={handleProgressLogged}
+            challenge={selectedChallenge}
+            userId={userId}
+          />
+          
+          <ChallengeLogsModal
+            isOpen={isLogsModalOpen}
+            onClose={() => setIsLogsModalOpen(false)}
+            challenge={selectedChallenge}
+          />
+        </>
       )}
     </div>
   );
-};
-
-export default ChallengeSection;
+  };
+  
+  export default ChallengeSection;

@@ -109,13 +109,15 @@ const ChallengeShareCard = ({
   };
 
   const shareToSocial = (platform: string, templateId: string = 'default') => {
-    const message = getShareMessage(templateId);
+    const message = generateSocialMessage(templateId);
     const encodedText = encodeURIComponent(message);
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://prepyatra.com';
     
     let shareUrl = '';
     switch (platform) {
       case 'twitter':
-        shareUrl = `https://twitter.com/intent/tweet?text=${encodedText}`;
+        // Updated to use X (Twitter) sharing URL
+        shareUrl = `https://x.com/intent/tweet?text=${encodedText}`;
         break;
       case 'linkedin':
         shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(appUrl)}&summary=${encodedText}`;
@@ -127,6 +129,7 @@ const ChallengeShareCard = ({
     
     if (shareUrl) {
       window.open(shareUrl, '_blank', 'width=600,height=400');
+      toast.success(`Opening ${platform === 'twitter' ? 'X (Twitter)' : platform}... 🚀`);
     }
   };
 

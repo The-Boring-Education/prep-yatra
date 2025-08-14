@@ -12,7 +12,10 @@ import {
   Edit3,
   Clock,
   TrendingUp,
-  CheckCircle2
+  CheckCircle2,
+  History,
+  Eye,
+  Trophy
 } from 'lucide-react';
 import { Challenge } from '@/types/challenges';
 import { challengesService } from '@/services/challenges';
@@ -22,29 +25,26 @@ interface ChallengeCardProps {
   challenge: Challenge;
   onChallengeUpdated: () => void;
   onLogProgress: (challenge: Challenge) => void;
+  onViewLogs?: (challenge: Challenge) => void;
 }
 
-const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress }: ChallengeCardProps) => {
+const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress, onViewLogs }: ChallengeCardProps) => {
   const [loading, setLoading] = useState(false);
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'active': return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'completed': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      case 'paused': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-      case 'cancelled': return 'bg-red-500/20 text-red-300 border-red-500/30';
-      default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-    }
+  const getStatusColor = (isActive: boolean) => {
+    return isActive 
+      ? 'bg-green-500/20 text-green-300 border-green-500/30'
+      : 'bg-blue-500/20 text-blue-300 border-blue-500/30';
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'active': return <Play className="w-3 h-3" />;
-      case 'completed': return <CheckCircle2 className="w-3 h-3" />;
-      case 'paused': return <Pause className="w-3 h-3" />;
-      case 'cancelled': return <Trash2 className="w-3 h-3" />;
-      default: return <Target className="w-3 h-3" />;
-    }
+  const getStatusIcon = (isActive: boolean) => {
+    return isActive 
+      ? <Play className="w-3 h-3" />
+      : <CheckCircle2 className="w-3 h-3" />;
+  };
+
+  const getStatusText = (isActive: boolean) => {
+    return isActive ? 'Active' : 'Completed';
   };
 
   const calculateProgress = () => {
@@ -58,13 +58,13 @@ const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress }: Challen
   const handlePauseResume = async () => {
     setLoading(true);
     try {
-      const newStatus = challenge.status === 'active' ? 'paused' : 'active';
+      const newStatus = !challenge.isActive;
       await challengesService.update({
         challengeId: challenge._id,
-        status: newStatus
+        isActive: newStatus
       });
       
-      toast.success(`Challenge ${newStatus === 'active' ? 'resumed' : 'paused'} successfully!`);
+      toast.success(`Challenge ${newStatus ? 'resumed' : 'paused'} successfully!`);
       onChallengeUpdated();
     } catch (error) {
       console.error('Error updating challenge:', error);
@@ -102,6 +102,9 @@ const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress }: Challen
 
   const progress = calculateProgress();
   const daysRemaining = calculateDaysRemaining();
+  
+  // Check if challenge is completed
+  const isCompleted = challenge.currentDay >= challenge.totalDays;
 
   return (
     <Card className="bg-gray-800/50 border-gray-700 hover:bg-gray-800/70 transition-all duration-300">
@@ -112,17 +115,23 @@ const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress }: Challen
               <CardTitle className="text-lg text-white line-clamp-1">
                 {challenge.name}
               </CardTitle>
-              {challenge.isPredefined && (
+              {challenge.category && (
                 <Badge variant="secondary" className="bg-primary/20 text-primary border-primary/30">
-                  Popular
+                  {challenge.category}
                 </Badge>
               )}
             </div>
             <div className="flex items-center gap-2">
-              <Badge className={getStatusColor(challenge.status)}>
-                {getStatusIcon(challenge.status)}
-                <span className="ml-1 capitalize">{challenge.status}</span>
+              <Badge className={getStatusColor(challenge.isActive)}>
+                {getStatusIcon(challenge.isActive)}
+                <span className="ml-1 capitalize">{getStatusText(challenge.isActive)}</span>
               </Badge>
+              {isCompleted && (
+                <Badge className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30">
+                  <Trophy className="w-3 h-3 mr-1" />
+                  Completed
+                </Badge>
+              )}
             </div>
           </div>
         </div>
@@ -174,8 +183,8 @@ const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress }: Challen
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2 pt-2">
-          {challenge.status === 'active' && (
+        <div className="flex flex-wrap gap-2 pt-2">
+          {challenge.isActive && !isCompleted && (
             <Button
               onClick={() => onLogProgress(challenge)}
               className="flex-1 bg-primary hover:bg-primary/90"
@@ -186,7 +195,7 @@ const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress }: Challen
             </Button>
           )}
           
-          {(challenge.status === 'active' || challenge.status === 'paused') && (
+          {!isCompleted && (
             <Button
               onClick={handlePauseResume}
               variant="outline"
@@ -194,11 +203,29 @@ const ChallengeCard = ({ challenge, onChallengeUpdated, onLogProgress }: Challen
               disabled={loading}
               className="border-gray-600 text-white hover:bg-gray-700"
             >
-              {challenge.status === 'active' ? (
-                <Pause className="w-4 h-4" />
+              {challenge.isActive ? (
+                <>
+                  <Pause className="w-4 h-4 mr-2" />
+                  Pause
+                </>
               ) : (
-                <Play className="w-4 h-4" />
+                <>
+                  <Play className="w-4 h-4 mr-2" />
+                  Resume
+                </>
               )}
+            </Button>
+          )}
+
+          {onViewLogs && (
+            <Button
+              onClick={() => onViewLogs(challenge)}
+              variant="outline"
+              size="sm"
+              className="border-blue-500/50 text-blue-400 hover:bg-blue-500/10"
+            >
+              <History className="w-4 h-4 mr-2" />
+              View Logs
             </Button>
           )}
 
