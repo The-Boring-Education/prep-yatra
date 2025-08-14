@@ -102,6 +102,7 @@ const CreateChallengeModal = ({
         description: customizeForm.description,
         totalDays: parseInt(customizeForm.totalDays),
         category: customizeForm.category,
+        predefinedType: selectedTemplate.id,
         user: userId
       });
 

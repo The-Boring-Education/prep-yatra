@@ -5,6 +5,7 @@ export interface SocialMediaTemplateData {
   progressText: string;
   hoursSpent: number;
   nextGoals: string[];
+  predefinedType?: string; // ID of the predefined challenge template
   appUrl: string;
 }
 
