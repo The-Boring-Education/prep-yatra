@@ -1,14 +1,17 @@
-import React, { useEffect } from "react"
-import type { AppProps } from "next/app"
-import Head from "next/head"
-import { Toaster } from "@/components/ui/toaster"
-import { Toaster as Sonner } from "@/components/ui/sonner"
-import { TooltipProvider } from "@/components/ui/tooltip"
+import {GoogleOAuthProvider} from "@react-oauth/google";
+import type {AppProps} from "next/app";
+import Head from "next/head";
+import {useRouter} from "next/router";
+import React, {useEffect} from "react";
 
-import { GoogleOAuthProvider } from "@react-oauth/google"
-import { GamificationProvider } from "@/contexts/GamificationContext"
-import AuthProvider from "@/contexts/AuthContext"
-import "@/styles/globals.css"
+import {Toaster as Sonner} from "@/components/ui/sonner";
+import {Toaster} from "@/components/ui/toaster";
+import {TooltipProvider} from "@/components/ui/tooltip";
+import AuthProvider from "@/contexts/AuthContext";
+import {GamificationProvider} from "@/contexts/GamificationContext";
+import "@/styles/globals.css";
+import {initGA, installGlobalListeners, trackPageview} from "@/lib/analytics";
+
 
 // Simple error boundary component
 class ErrorBoundary extends React.Component<
@@ -16,16 +19,16 @@ class ErrorBoundary extends React.Component<
     { hasError: boolean }
 > {
     constructor(props: { children: React.ReactNode }) {
-        super(props)
-        this.state = { hasError: false }
+        super(props);
+        this.state = {hasError: false};
     }
 
     static getDerivedStateFromError(error: Error) {
-        return { hasError: true }
+        return {hasError: true};
     }
 
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-        console.error("Error caught by boundary:", error, errorInfo)
+        console.error("Error caught by boundary:", error, errorInfo);
     }
 
     render() {
@@ -46,10 +49,10 @@ class ErrorBoundary extends React.Component<
                         </button>
                     </div>
                 </div>
-            )
+            );
         }
 
-        return this.props.children
+        return this.props.children;
     }
 }
 
@@ -58,47 +61,47 @@ const EnvironmentValidator = () => {
     useEffect(() => {
         // Log environment variables for debugging (only in development)
         if (process.env.NODE_ENV === "development") {
-            console.log("Environment variables check:")
+            console.log("Environment variables check:");
             console.log(
                 "NEXT_PUBLIC_GOOGLE_CLIENT_ID:",
                 process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ? "Set" : "Missing"
-            )
+            );
             console.log(
                 "NEXT_PUBLIC_TBE_WEBAPP_API_URL:",
                 process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL ? "Set" : "Missing"
-            )
+            );
             console.log(
                 "NEXT_PUBLIC_ONBOARDING_APP_URL:",
                 process.env.NEXT_PUBLIC_ONBOARDING_APP_URL ? "Set" : "Missing"
-            )
+            );
         }
 
         // Check for critical missing environment variables
-        const missingVars = []
+        const missingVars = [];
         if (!process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
-            missingVars.push("NEXT_PUBLIC_GOOGLE_CLIENT_ID")
+            missingVars.push("NEXT_PUBLIC_GOOGLE_CLIENT_ID");
         }
         if (!process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL) {
-            missingVars.push("NEXT_PUBLIC_TBE_WEBAPP_API_URL")
+            missingVars.push("NEXT_PUBLIC_TBE_WEBAPP_API_URL");
         }
 
         if (missingVars.length > 0) {
             console.error(
                 "Missing critical environment variables:",
                 missingVars
-            )
+            );
         }
-    }, [])
+    }, []);
 
-    return null
-}
+    return null;
+};
 
 // Cache clearing component
 const CacheManager = () => {
     useEffect(() => {
         // Check if we need to clear cache (e.g., after deployment)
-        const lastDeployTime = localStorage.getItem("lastDeployTime")
-        const currentTime = Date.now()
+        const lastDeployTime = localStorage.getItem("lastDeployTime");
+        const currentTime = Date.now();
 
         // If no last deploy time or it's been more than 1 hour, clear cache
         if (
@@ -108,18 +111,31 @@ const CacheManager = () => {
             if ("caches" in window) {
                 caches.keys().then((names) => {
                     names.forEach((name) => {
-                        caches.delete(name)
-                    })
-                })
+                        caches.delete(name);
+                    });
+                });
             }
-            localStorage.setItem("lastDeployTime", currentTime.toString())
+            localStorage.setItem("lastDeployTime", currentTime.toString());
         }
-    }, [])
+    }, []);
 
-    return null
-}
+    return null;
+};
 
-export default function App({ Component, pageProps }: AppProps) {
+export default function App({Component, pageProps}: AppProps) {
+    const router = useRouter();
+
+    useEffect(() => {
+        initGA();
+        installGlobalListeners();
+        trackPageview(router.asPath);
+        const handleRouteChange = (url: string) => trackPageview(url);
+        router.events.on("routeChangeComplete", handleRouteChange);
+        return () => {
+            router.events.off("routeChangeComplete", handleRouteChange);
+        };
+    }, [router]);
+
     return (
         <ErrorBoundary>
             <Head>
@@ -163,5 +179,5 @@ export default function App({ Component, pageProps }: AppProps) {
                 </TooltipProvider>
             </GoogleOAuthProvider>
         </ErrorBoundary>
-    )
+    );
 }

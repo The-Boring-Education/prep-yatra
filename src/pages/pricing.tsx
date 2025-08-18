@@ -1,13 +1,14 @@
-import React, { useEffect, useState } from "react"
-import { useRouter } from "next/router"
-import { useAuth } from "@/contexts/useAuth"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Check, Star, Zap, Crown } from "lucide-react"
-import useCashfreePayment from "@/hooks/useCashfreePayment"
-import Navbar from "@/components/Navbar"
-import Footer from "@/components/Footer"
+import {Check, Star, Zap, Crown} from "lucide-react";
+import {useRouter} from "next/router";
+import React, {useEffect, useState} from "react";
+
+import Footer from "@/components/layout/Footer";
+import Navbar from "@/components/layout/Navbar";
+import {Badge} from "@/components/ui/badge";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {useAuth} from "@/contexts/useAuth";
+import useCashfreePayment from "@/hooks/useCashfreePayment";
 
 interface PricingPlan {
     id: string
@@ -23,10 +24,10 @@ interface PricingPlan {
 }
 
 const PricingPage: React.FC = () => {
-    const router = useRouter()
-    const { user, signOut } = useAuth()
-    const { launchPayment, isCashfreeLoaded } = useCashfreePayment()
-    const [loading, setLoading] = useState(false)
+    const router = useRouter();
+    const {user, signOut} = useAuth();
+    const {launchPayment, isCashfreeLoaded} = useCashfreePayment();
+    const [loading, setLoading] = useState(false);
 
     const plans: PricingPlan[] = [
         {
@@ -89,25 +90,25 @@ const PricingPage: React.FC = () => {
                 "Interview performance predictions"
             ]
         }
-    ]
+    ];
 
     useEffect(() => {
         if (!user) {
-            router.push("/auth")
+            router.push("/auth");
         }
-    }, [user, router])
+    }, [user, router]);
 
     const handleSelectPlan = async (planId: string) => {
         if (planId === "free") {
-            return // Already on free plan
+            return; // Already on free plan
         }
 
         if (!user?.id) {
-            router.push("/auth")
-            return
+            router.push("/auth");
+            return;
         }
 
-        setLoading(true)
+        setLoading(true);
 
         try {
             // Create payment session
@@ -125,46 +126,46 @@ const PricingPage: React.FC = () => {
                         userName: user.name
                     })
                 }
-            )
+            );
 
             if (!response.ok) {
-                throw new Error("Failed to create payment session")
+                throw new Error("Failed to create payment session");
             }
 
-            const { paymentSessionId } = await response.json()
+            const {paymentSessionId} = await response.json();
 
             // Launch Cashfree payment
             if (isCashfreeLoaded) {
                 launchPayment(
                     paymentSessionId,
                     (data) => {
-                        console.log("Payment successful:", data)
-                        router.push("/dashboard?payment=success")
+                        console.log("Payment successful:", data);
+                        router.push("/dashboard?payment=success");
                     },
                     (data) => {
-                        console.error("Payment failed:", data)
-                        router.push("/pricing?payment=failed")
+                        console.error("Payment failed:", data);
+                        router.push("/pricing?payment=failed");
                     },
                     () => {
-                        console.log("Payment dialog closed")
+                        console.log("Payment dialog closed");
                     }
-                )
+                );
             }
         } catch (error) {
-            console.error("Error creating payment session:", error)
+            console.error("Error creating payment session:", error);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }
+    };
 
     const handleSignOut = async () => {
         try {
-            await signOut()
-            router.push("/")
+            await signOut();
+            router.push("/");
         } catch (error) {
-            console.error("Error signing out:", error)
+            console.error("Error signing out:", error);
         }
-    }
+    };
 
     return (
         <div className="min-h-screen bg-background">
@@ -281,7 +282,7 @@ const PricingPage: React.FC = () => {
 
             <Footer />
         </div>
-    )
-}
+    );
+};
 
-export default PricingPage
+export default PricingPage;

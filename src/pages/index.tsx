@@ -1,12 +1,12 @@
-import Navigation from "@/components/Navigation"
-import Hero from "@/components/Hero"
-import FeatureCards from "@/components/FeatureCards"
-import RecruiterContactsShowcase from "@/components/RecruiterContactsShowcase"
-import PrepLogsShowcase from "@/components/PrepLogsShowcase"
-import ResourceSharingShowcase from "@/components/ResourceSharingShowcase"
-import ProfileShowcase from "@/components/ProfileShowcase"
-import Footer from "@/components/Footer"
-import InstallButton from "@/components/InstallButton"
+import FeatureCards from "@/components/cards/FeatureCards";
+import Hero from "@/components/features/Hero";
+import InstallButton from "@/components/features/InstallButton";
+import Footer from "@/components/layout/Footer";
+import Navigation from "@/components/layout/Navigation";
+import PrepLogsShowcase from "@/components/showcase/PrepLogsShowcase";
+import ProfileShowcase from "@/components/showcase/ProfileShowcase";
+import RecruiterContactsShowcase from "@/components/showcase/RecruiterContactsShowcase";
+import ResourceSharingShowcase from "@/components/showcase/ResourceSharingShowcase";
 
 const Index = () => {
     return (
@@ -21,7 +21,7 @@ const Index = () => {
             <ProfileShowcase />
             <Footer />
         </div>
-    )
-}
+    );
+};
 
-export default Index
+export default Index;

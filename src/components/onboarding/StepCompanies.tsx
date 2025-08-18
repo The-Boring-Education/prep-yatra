@@ -1,13 +1,14 @@
-import { COMPANY_TYPES } from "@/constants/onboarding"
-import { OnboardingData, CompanyType } from "@/types/onboarding"
-import React from "react"
+import React from "react";
+
+import {COMPANY_TYPES} from "@/constants/onboarding";
+import {OnboardingData, CompanyType} from "@/types/onboarding";
 
 type Props = {
     formData: OnboardingData
     toggleArrayField: (field: "targetCompanies", value: CompanyType) => void
 }
 
-const StepCompanies: React.FC<Props> = ({ formData, toggleArrayField }) => (
+const StepCompanies: React.FC<Props> = ({formData, toggleArrayField}) => (
     <div className='space-y-6'>
         <div className='text-center mb-8'>
             <h1 className='text-2xl font-bold text-white mb-2'>
@@ -44,6 +45,6 @@ const StepCompanies: React.FC<Props> = ({ formData, toggleArrayField }) => (
             {formData.targetCompanies.length} selected
         </div>
     </div>
-)
+);
 
-export default StepCompanies
+export default StepCompanies;

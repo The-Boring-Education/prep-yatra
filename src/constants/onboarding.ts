@@ -3,18 +3,18 @@ import {
     GoalType,
     CompanyType,
     InterviewCategory
-} from "../types/onboarding"
+} from "../types/onboarding";
 
 export const EXPERIENCE_LEVELS: {
     value: ExperienceLevel
     label: string
     icon: string
 }[] = [
-    { value: "fresher", label: "0-1 years (Fresher)", icon: "🌱" },
-    { value: "junior", label: "1-3 years (Junior)", icon: "💼" },
-    { value: "mid", label: "3-5 years (Mid-level)", icon: "🚀" },
-    { value: "senior", label: "5+ years (Senior)", icon: "👔" }
-]
+    {value: "fresher", label: "0-1 years (Fresher)", icon: "🌱"},
+    {value: "junior", label: "1-3 years (Junior)", icon: "💼"},
+    {value: "mid", label: "3-5 years (Mid-level)", icon: "🚀"},
+    {value: "senior", label: "5+ years (Senior)", icon: "👔"}
+];
 
 export const GOALS: {
     value: GoalType
@@ -42,7 +42,7 @@ export const GOALS: {
         description: "Long-term career planning",
         icon: "🌟"
     }
-]
+];
 
 export const COMPANY_TYPES: {
     value: CompanyType
@@ -74,7 +74,7 @@ export const COMPANY_TYPES: {
         icon: "⭐",
         description: "Top tech giants (Meta, Apple, Amazon, Netflix, Google)"
     }
-]
+];
 
 export const INTERVIEW_CATEGORIES: {
     value: InterviewCategory
@@ -118,4 +118,4 @@ export const INTERVIEW_CATEGORIES: {
         icon: "💻",
         description: "General technical questions"
     }
-]
+];

@@ -1,29 +1,29 @@
-import { useState } from "react"
-import { useRouter } from "next/router"
-import { Button } from "@/components/ui/button"
+import {ChevronLeft, ChevronRight} from "lucide-react";
+import {useRouter} from "next/router";
+
+import StepBasicInfo from "@/components/onboarding/StepBasicInfo";
+import StepCategories from "@/components/onboarding/StepCategories";
+import StepCompanies from "@/components/onboarding/StepCompanies";
+import StepExperience from "@/components/onboarding/StepExperience";
+import StepGoal from "@/components/onboarding/StepGoal";
+import StepProfile from "@/components/onboarding/StepProfile";
+import {Button} from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle
-} from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { useOnboarding } from "@/hooks/useOnboarding"
+} from "@/components/ui/card";
+import {Progress} from "@/components/ui/progress";
+import {useOnboarding} from "@/hooks/useOnboarding";
 
 // Lazy load step components
-import StepBasicInfo from "@/components/onboarding/StepBasicInfo"
-import StepProfile from "@/components/onboarding/StepProfile"
-import StepExperience from "@/components/onboarding/StepExperience"
-import StepGoal from "@/components/onboarding/StepGoal"
-import StepCompanies from "@/components/onboarding/StepCompanies"
-import StepCategories from "@/components/onboarding/StepCategories"
 
-const TOTAL_STEPS = 6
+const TOTAL_STEPS = 6;
 
 const Onboarding = () => {
-    const router = useRouter()
+    const router = useRouter();
     const {
         currentStep,
         formData,
@@ -34,7 +34,7 @@ const Onboarding = () => {
         handlePrevious,
         handleSubmit,
         loading
-    } = useOnboarding()
+    } = useOnboarding();
 
     const showStep = () => {
         switch (currentStep) {
@@ -44,98 +44,98 @@ const Onboarding = () => {
                         formData={formData}
                         handleInputChange={handleInputChange}
                     />
-                )
+                );
             case 2:
                 return (
                     <StepProfile
                         formData={formData}
                         handleInputChange={handleInputChange}
                     />
-                )
+                );
             case 3:
                 return (
                     <StepExperience
                         formData={formData}
                         handleInputChange={handleInputChange}
                     />
-                )
+                );
             case 4:
                 return (
                     <StepGoal
                         formData={formData}
                         handleInputChange={handleInputChange}
                     />
-                )
+                );
             case 5:
                 return (
                     <StepCompanies
                         formData={formData}
                         toggleArrayField={toggleArrayField}
                     />
-                )
+                );
             case 6:
                 return (
                     <StepCategories
                         formData={formData}
                         toggleArrayField={toggleArrayField}
                     />
-                )
+                );
             default:
                 return (
                     <StepBasicInfo
                         formData={formData}
                         handleInputChange={handleInputChange}
                     />
-                )
+                );
         }
-    }
+    };
 
     const getStepTitle = () => {
         switch (currentStep) {
             case 1:
-                return "Basic Information"
+                return "Basic Information";
             case 2:
-                return "Profile Links"
+                return "Profile Links";
             case 3:
-                return "Experience Level"
+                return "Experience Level";
             case 4:
-                return "Your Goal"
+                return "Your Goal";
             case 5:
-                return "Target Companies"
+                return "Target Companies";
             case 6:
-                return "Interview Categories"
+                return "Interview Categories";
             default:
-                return "Getting Started"
+                return "Getting Started";
         }
-    }
+    };
 
     const getStepDescription = () => {
         switch (currentStep) {
             case 1:
-                return "Let's start with your basic details"
+                return "Let's start with your basic details";
             case 2:
-                return "Add your professional profiles"
+                return "Add your professional profiles";
             case 3:
-                return "Tell us about your experience"
+                return "Tell us about your experience";
             case 4:
-                return "What's your preparation timeline?"
+                return "What's your preparation timeline?";
             case 5:
-                return "Which companies are you targeting?"
+                return "Which companies are you targeting?";
             case 6:
-                return "What type of interviews are you preparing for?"
+                return "What type of interviews are you preparing for?";
             default:
-                return "Let's get you set up"
+                return "Let's get you set up";
         }
-    }
+    };
 
     const onSubmitHandler = async () => {
         try {
-            await handleSubmit()
-            router.push("/dashboard")
+            await handleSubmit();
+            router.push("/dashboard");
         } catch (error) {
-            console.error("Onboarding submission failed:", error)
+            console.error("Onboarding submission failed:", error);
         }
-    }
+    };
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4'>
@@ -216,7 +216,7 @@ const Onboarding = () => {
                 </Card>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default Onboarding
+export default Onboarding;

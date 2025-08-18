@@ -1,23 +1,24 @@
-import { useRouter } from "next/router"
-import { Button } from "@/components/ui/button"
+import {Home, ArrowLeft} from "lucide-react";
+import {useRouter} from "next/router";
+
+import {Button} from "@/components/ui/button";
 import {
     Card,
     CardContent,
     CardDescription,
     CardHeader,
     CardTitle
-} from "@/components/ui/card"
-import { Home, ArrowLeft, Search } from "lucide-react"
+} from "@/components/ui/card";
 
 const NotFound = () => {
-    const router = useRouter()
+    const router = useRouter();
 
     return (
         <div className='min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4'>
             {/* Background Elements */}
             <div className='absolute inset-0 overflow-hidden opacity-10'>
-                <div className='absolute -top-40 -right-40 w-80 h-80 bg-primary rounded-full blur-3xl'></div>
-                <div className='absolute -bottom-40 -left-40 w-80 h-80 bg-primary rounded-full blur-3xl'></div>
+                <div className='absolute -top-40 -right-40 w-80 h-80 bg-primary rounded-full blur-3xl' />
+                <div className='absolute -bottom-40 -left-40 w-80 h-80 bg-primary rounded-full blur-3xl' />
             </div>
 
             <Card className='glass-dark border-gray-700 w-full max-w-md relative z-10'>
@@ -73,7 +74,7 @@ const NotFound = () => {
                 </CardContent>
             </Card>
         </div>
-    )
-}
+    );
+};
 
-export default NotFound
+export default NotFound;
