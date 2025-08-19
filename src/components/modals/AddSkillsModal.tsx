@@ -1,10 +1,17 @@
 import {X, Plus, Code, AlertTriangle} from "lucide-react";
 import React, {useState, useRef} from "react";
-import {createPortal} from "react-dom";
 
 import {Badge} from "@/components/ui/badge";
 import {Button} from "@/components/ui/button";
-import {Dialog} from "@/components/ui/dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog";
+import {InputField} from "@/components/ui/input";
 import {useToast} from "@/hooks/use-toast";
 import {trackEvent} from "@/lib/analytics";
 
@@ -106,52 +113,38 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
         }
     };
 
-    if (!isOpen) {return null;}
-
-    return createPortal(
+    return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <div className='fixed inset-0 flex items-center justify-center z-[99999] bg-black/60'>
-                <div className='bg-gray-900 rounded-2xl p-10 w-full max-w-2xl shadow-xl relative z-[100000]'>
-                    <button
-                        className='absolute top-4 right-4 text-gray-400 hover:text-red-400'
-                        onClick={onClose}
-                        aria-label='Close'>
-                        <X className='w-6 h-6' />
-                    </button>
-                    <h2 className='text-2xl font-bold text-white mb-4 flex items-center gap-2'>
-                        <Plus className='w-5 h-5 text-primary' /> Add Skills
-                    </h2>
-                    {showWarning && (
-                        <div className='flex items-center gap-2 bg-yellow-900/80 border border-yellow-600 text-yellow-300 rounded-lg px-4 sm:px-6 mb-4'>
-                            <AlertTriangle className='w-5 h-5 text-yellow-400' />
-                            <span>
-                                You haven't added any skills yet. Please add your skills to build your stack!
-                            </span>
-                        </div>
-                    )}
-                    <form onSubmit={handleAddSkill} className='flex gap-2 mb-4'>
-                        <input
-                            ref={inputRef}
-                            type='text'
-                            className='flex-1 rounded-lg px-4 py-2 bg-gray-800 text-white border border-gray-700 focus:outline-none focus:ring-2 focus:ring-primary'
-                            placeholder='Type a skill and press Enter...'
-                            value={inputValue}
-                            onChange={(e) => setInputValue(e.target.value)}
-                            disabled={loading}
-                            maxLength={32}
-                        />
-                        {/* <Button
-                            type='submit'
-                            disabled={loading || !inputValue.trim()}
-                            className='bg-primary text-primary-foreground hover:bg-primary/90'>
-                            {loading ? (
-                                <span className='animate-spin'>⏳</span>
-                            ) : (
-                                <Plus className='w-4 h-4' />
-                            )}
-                        </Button> */}
-                    </form>
-                    <div className='flex flex-wrap gap-2 mb-4'>
+            <DialogContent className='sm:max-w-[600px] max-h-[90vh] overflow-y-auto glass-dark border-primary/20'>
+                <DialogHeader>
+                    <DialogTitle className='text-white'>
+                        ✨ Add Skills
+                    </DialogTitle>
+                    <DialogDescription className='text-gray'>
+                        Build your skills stack to showcase your expertise
+                    </DialogDescription>
+                </DialogHeader>
+
+                {showWarning && (
+                    <div className='flex items-center gap-2 bg-yellow-900/80 border border-yellow-600 text-yellow-300 rounded-lg px-4 py-3 mb-4'>
+                        <AlertTriangle className='w-5 h-5 text-yellow-400' />
+                        <span>
+                            You haven't added any skills yet. Please add your skills to build your stack!
+                        </span>
+                    </div>
+                )}
+
+                <form onSubmit={handleAddSkill} className='space-y-4'>
+                    <InputField
+                        label='Skill Name'
+                        field='skill'
+                        value={inputValue}
+                        onChange={(field, value) => setInputValue(value)}
+                        placeholder='Type a skill and press Enter...'
+                        required
+                    />
+
+                    <div className='flex flex-wrap gap-2'>
                         {skills.length === 0 && (
                             <span className='text-gray-400 text-sm'>
                                 No skills added yet. Start building your stack!
@@ -173,15 +166,25 @@ const AddSkillsModal: React.FC<AddSkillsModalProps> = ({
                             </Badge>
                         ))}
                     </div>
-                    <Button
-                        onClick={handleAddSkill}
-                        className='w-full mt-2 bg-primary text-primary-foreground hover:bg-primary/90'>
-                        Add Skill
-                    </Button>
-                </div>
-            </div>
-        </Dialog>,
-        document.body
+
+                    <DialogFooter className='flex flex-col-reverse md:flex-row gap-2'>
+                        <Button
+                            type='button'
+                            variant='outline'
+                            onClick={onClose}
+                            className='border-gray-300 text-white hover:bg-gray-100 hover:text-gray-900'>
+                            Cancel
+                        </Button>
+                        <Button
+                            type='submit'
+                            disabled={loading || !inputValue.trim()}
+                            className='bg-primary text-primary-foreground'>
+                            {loading ? "Adding..." : "Add Skill"}
+                        </Button>
+                    </DialogFooter>
+                </form>
+            </DialogContent>
+        </Dialog>
     );
 };
 
