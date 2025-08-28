@@ -12,6 +12,17 @@ import {
 import { useState } from "react"
 import { toast } from "sonner"
 
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger
+} from "@/components/ui/alert-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -88,14 +99,6 @@ const ChallengeCard = ({
     }
 
     const handleDelete = async () => {
-        if (
-            !confirm(
-                "Are you sure you want to delete this challenge? This action cannot be undone."
-            )
-        ) {
-            return
-        }
-
         setLoading(true)
         try {
             await challengesService.delete(challenge._id)
@@ -256,14 +259,38 @@ const ChallengeCard = ({
                         </Button>
                     )}
 
-                    <Button
-                        onClick={handleDelete}
-                        variant='outline'
-                        size='sm'
-                        disabled={loading}
-                        className='border-red-500/50 text-red-400 hover:bg-red-500/10 hover:border-red-500'>
-                        <Trash2 className='w-4 h-4' />
-                    </Button>
+                    <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                            <Button
+                                variant='outline'
+                                size='sm'
+                                disabled={loading}
+                                className='border-red-500/50 text-red-400 hover:bg-red-500/10 hover:border-red-500'>
+                                <Trash2 className='w-4 h-4' />
+                            </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className='bg-gray-800 border-primary/20'>
+                            <AlertDialogHeader>
+                                <AlertDialogTitle className='text-white'>
+                                    Delete Challenge
+                                </AlertDialogTitle>
+                                <AlertDialogDescription className='text-gray'>
+                                    Are you sure you want to delete this challenge? This action cannot be undone.
+                                </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                                <AlertDialogCancel className='bg-gray-800 text-white border-gray-600'>
+                                    Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction
+                                    onClick={handleDelete}
+                                    disabled={loading}
+                                    className='bg-red-500 text-white hover:bg-red-600'>
+                                    {loading ? "Deleting..." : "Delete"}
+                                </AlertDialogAction>
+                            </AlertDialogFooter>
+                        </AlertDialogContent>
+                    </AlertDialog>
                 </div>
             </CardContent>
         </Card>
