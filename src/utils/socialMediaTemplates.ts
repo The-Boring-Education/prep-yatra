@@ -69,7 +69,7 @@ export const socialMediaTemplates: SocialMediaTemplate[] = [
       const goals = data.nextGoals.filter(g => g.trim()).map((g, i) => `${i + 1}. ${g}`).join("\n") 
         || "1. Continue learning consistently\n2. Apply new concepts in practice";
 
-      return `${getChallengeEmoji()} Day ${data.currentDay}/${data.totalDays} of ${data.challengeName} ${getProgressEmoji(progressPercentage)}
+      return `${getChallengeEmoji()} Day ${data.currentDay + 1}/${data.totalDays} of ${data.challengeName} ${getProgressEmoji(progressPercentage)}
 
 📚 Today's Progress:
 ${data.progressText}
@@ -94,7 +94,7 @@ Join me on this learning journey! Start your own challenge at ${data.appUrl} �
       const progressPercentage = Math.round((data.currentDay / data.totalDays) * 100);
       const milestone = getMilestoneMessage(data.currentDay, data.totalDays);
       
-      return `${getChallengeEmoji()} Day ${data.currentDay}/${data.totalDays} of ${data.challengeName} ${getProgressEmoji(progressPercentage)}
+      return `${getChallengeEmoji()} Day ${data.currentDay + 1}/${data.totalDays} of ${data.challengeName} ${getProgressEmoji(progressPercentage)}
 
 ${data.progressText}
 
@@ -115,7 +115,7 @@ ${data.appUrl}`;
       const goals = data.nextGoals.filter(g => g.trim()).map((g, i) => `• ${g}`).join("\n") 
         || "• Continue learning consistently\n• Apply new concepts in practice";
 
-      return `🚀 Learning Journey Update: Day ${data.currentDay} of ${data.totalDays}
+      return `🚀 Learning Journey Update: Day ${data.currentDay + 1} of ${data.totalDays}
 
 I'm currently ${progressPercentage}% through my ${data.challengeName} challenge, and today's session was incredibly productive!
 
@@ -150,7 +150,7 @@ Learn more and start your own challenge: ${data.appUrl}`;
 
       return `💥 ANOTHER DAY, ANOTHER VICTORY! 💥
 
-Day ${data.currentDay}/${data.totalDays} of my ${data.challengeName} challenge is DONE! ${getProgressEmoji(progressPercentage)}
+Day ${data.currentDay + 1}/${data.totalDays} of my ${data.challengeName} challenge is DONE! ${getProgressEmoji(progressPercentage)}
 
 🏆 What I conquered today:
 ${data.progressText}
@@ -179,7 +179,7 @@ Start your transformation: ${data.appUrl}`;
       const goals = data.nextGoals.filter(g => g.trim()).map((g, i) => `${i + 1}. ${g}`).join("\n") 
         || "1. Continue learning consistently\n2. Apply new concepts in practice";
 
-      return `Day ${data.currentDay} of ${data.totalDays}: ${data.challengeName}
+      return `Day ${data.currentDay + 1} of ${data.totalDays}: ${data.challengeName}
 
 Today's focus:
 ${data.progressText}
@@ -207,7 +207,7 @@ ${data.appUrl}`;
                             data.currentDay <= 14 ? "finding my rhythm" :
                             progressPercentage >= 75 ? "approaching the finish line" : "making steady progress";
 
-      return `📖 Learning Story: Day ${data.currentDay}
+      return `📖 Learning Story: Day ${data.currentDay + 1}
 
 I'm ${dayDescription} on my ${data.challengeName} journey, and today brought new insights and challenges.
 

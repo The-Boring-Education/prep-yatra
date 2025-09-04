@@ -239,9 +239,9 @@ ${
         if (logs.length === 0) {
             return 0
         }
-        const totalDays = logs.reduce((sum, log) => sum + log.day, 0)
+        const totalDays = logs.length
         return Math.round(
-            (totalDays / (challenge.totalDays * logs.length)) * 100
+            (totalDays / challenge.totalDays) * 100
         )
     }
 
@@ -278,7 +278,7 @@ ${
                                         <div className='flex items-center gap-4 mt-2 text-sm text-gray-400'>
                                             <div className='flex items-center gap-1'>
                                                 <Calendar className='w-3 h-3' />
-                                                {challenge.currentDay} of{" "}
+                                                {challenge.currentDay + 1} of{" "}
                                                 {challenge.totalDays} days
                                             </div>
                                             <div className='flex items-center gap-1'>
@@ -518,10 +518,26 @@ ${
                                     </div>
                                 </div>
 
-                                <div className='bg-gray-900/50 p-4 rounded-lg border border-gray-600 mb-4'>
-                                    <pre className='text-sm text-gray-200 whitespace-pre-wrap font-sans'>
-                                        {socialMessage}
-                                    </pre>
+                                <div className='space-y-3 mb-4'>
+                                    <label className='text-white font-medium block'>
+                                        Your message:
+                                    </label>
+                                    <textarea
+                                        value={socialMessage}
+                                        onChange={(e) => {
+                                            console.log('Textarea changed:', e.target.value);
+                                            setSocialMessage(e.target.value);
+                                        }}
+                                        onFocus={() => console.log('Textarea focused')}
+                                        onBlur={() => console.log('Textarea blurred')}
+                                        className='w-full h-32 bg-white text-black text-sm font-sans resize-none border-2 border-blue-500 rounded-lg p-3 focus:border-blue-600 focus:outline-none'
+                                        placeholder='Click here to edit your social media message...'
+                                        style={{ 
+                                            cursor: 'text',
+                                            userSelect: 'text',
+                                            pointerEvents: 'auto'
+                                        }}
+                                    />
                                 </div>
 
                                 <div className='space-y-3'>

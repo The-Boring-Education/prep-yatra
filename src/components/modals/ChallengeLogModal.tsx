@@ -47,7 +47,8 @@ const ChallengeLogModal = ({
 
     // Check if challenge is completed
     const isChallengeCompleted = challenge.currentDay >= challenge.totalDays
-    const nextDay = challenge.currentDay + 1
+    const nextDay = challenge.currentDay
+
 
     const handleInputChange = (field: string, value: string | string[]) => {
         setFormData((prev) => ({
@@ -73,7 +74,7 @@ const ChallengeLogModal = ({
 
         const templates = [
             // Template 1: Casual and friendly
-            `Just wrapped up Day ${nextDay} of my ${challenge.name}! 🎉
+            `Just wrapped up Day ${nextDay + 1} of my ${challenge.name}! 🎉
 
 Today was pretty productive - ${formData.progressText}
 
@@ -106,7 +107,7 @@ ${
 Check out Prep Yatra if you want to start your own challenge! ${appUrl}`,
 
             // Template 2: Professional and focused
-            `📚 Learning Update: Day ${nextDay}/${challenge.totalDays} - ${
+            `📚 Learning Update: Day ${nextDay + 1}/${challenge.totalDays} - ${
                 challenge.name
             }
 
@@ -139,7 +140,7 @@ ${
 }#ProfessionalDevelopment #ContinuousLearning #PrepYatra`,
 
             // Template 3: Motivational and inspiring
-            `🚀 Day ${nextDay} of my ${challenge.name} journey!
+            `🚀 Day ${nextDay + 1} of my ${challenge.name} journey!
 
 Today I learned: ${formData.progressText}
 
@@ -195,20 +196,22 @@ ${
         try {
             const hours = parseFloat(formData.hoursSpent)
 
-            // Create challenge log
-            await challengesService.createLog({
+            const logData = {
                 challengeId: challenge._id,
-                day: nextDay,
+                day: nextDay + 1, // API expects 1-indexed days
                 progressText: formData.progressText,
                 hoursSpent: hours,
                 nextGoals: formData.nextGoals.filter((goal) => goal.trim())
-            })
+            }
+
+            // Create challenge log
+            await challengesService.createLog(logData)
 
             // If user wants to copy to prep logs, create a prep log entry
             if (copyToPrepLogs) {
                 try {
                     await prepLogsService.create({
-                        title: `Day ${nextDay} - ${challenge.name}`,
+                        title: `Day ${nextDay + 1} - ${challenge.name}`,
                         description: `Challenge Progress: ${
                             formData.progressText
                         }\n\nNext Goals:\n${formData.nextGoals
@@ -357,7 +360,7 @@ ${
                         <DialogHeader>
                             <DialogTitle className='text-xl font-bold text-white flex items-center gap-2'>
                                 <TrendingUp className='w-5 h-5 text-primary' />
-                                Log Day {nextDay} Progress
+                                Log Day {nextDay + 1} Progress
                             </DialogTitle>
                             <DialogDescription className='text-gray-300'>
                                 Track your progress for "{challenge.name}"
@@ -466,7 +469,7 @@ ${
                                             Current Day:
                                         </span>
                                         <span className='text-white'>
-                                            {challenge.currentDay}
+                                            {challenge.currentDay + 1}
                                         </span>
                                     </div>
                                     <div className='flex justify-between'>
@@ -474,7 +477,7 @@ ${
                                             Next Day:
                                         </span>
                                         <span className='text-white'>
-                                            {nextDay}
+                                            {nextDay + 1}
                                         </span>
                                     </div>
                                     <div className='flex justify-between'>
@@ -529,7 +532,7 @@ ${
                                 Share Your Progress
                             </DialogTitle>
                             <DialogDescription className='text-gray-300'>
-                                Choose a template to share your Day {nextDay}{" "}
+                                Choose a template to share your Day {nextDay + 1}{" "}
                                 progress
                             </DialogDescription>
                         </DialogHeader>

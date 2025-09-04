@@ -182,7 +182,7 @@ const ChallengeCard = ({
                     <div className='grid grid-cols-3 gap-4 text-sm'>
                         <div className='text-center'>
                             <div className='text-primary font-semibold'>
-                                {challenge.currentDay}
+                                {challenge.currentDay + 1}
                             </div>
                             <div className='text-gray-400'>Current Day</div>
                         </div>
