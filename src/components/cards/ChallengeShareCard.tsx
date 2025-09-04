@@ -69,7 +69,7 @@ const ChallengeShareCard = ({
                     return `⚡ Making steady progress on my ${challenge.name} challenge! Every day brings new insights and skills.`
                 }
             default:
-                return `📈 Day ${challenge.currentDay} of ${challenge.totalDays} in my ${challenge.name} challenge. Staying consistent and pushing forward!`
+                return `📈 Day ${challenge.currentDay + 1} of ${challenge.totalDays} in my ${challenge.name} challenge. Staying consistent and pushing forward!`
         }
     }
 
@@ -192,7 +192,7 @@ const ChallengeShareCard = ({
                             {challenge.name}
                         </h3>
                         <p className='text-sm text-gray-400'>
-                            Day {challenge.currentDay} of {challenge.totalDays}{" "}
+                            Day {challenge.currentDay + 1} of {challenge.totalDays}{" "}
                             • {progressPercentage}% complete
                         </p>
                     </div>
