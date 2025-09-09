@@ -1,5 +1,5 @@
 import { Share2, Copy, TrendingUp, CheckCircle2, Trophy } from "lucide-react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -44,6 +44,7 @@ const ChallengeLogModal = ({
     const [copyToPrepLogs, setCopyToPrepLogs] = useState(true)
     const [showSocialPreview, setShowSocialPreview] = useState(false)
     const [selectedTemplate, setSelectedTemplate] = useState<number>(0)
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
 
     // Check if challenge is completed
     const isChallengeCompleted = challenge.currentDay >= challenge.totalDays
@@ -253,7 +254,7 @@ ${
     }
 
     const shareToSocial = (platform: string) => {
-        const message = generateSocialMessageFromTemplate(selectedTemplate)
+        const message = textareaRef.current?.value || generateSocialMessageFromTemplate(selectedTemplate)
         const encodedText = encodeURIComponent(message)
         const appUrl = process.env.NEXT_PUBLIC_BASE_URL
 
@@ -568,9 +569,15 @@ ${
                                                     ? "border-primary bg-primary/10"
                                                     : "border-gray-600 bg-gray-800/30 hover:border-gray-500"
                                             }`}
-                                            onClick={() =>
-                                                setSelectedTemplate(index)
-                                            }>
+                                            onClick={() => {
+                                                setSelectedTemplate(index);
+                                                // Update the textarea with new template
+                                                setTimeout(() => {
+                                                    if (textareaRef.current) {
+                                                        textareaRef.current.value = generateSocialMessageFromTemplate(index);
+                                                    }
+                                                }, 100);
+                                            }}>
                                             <div className='flex items-center gap-3'>
                                                 <span className='text-2xl'>
                                                     {template.icon}
@@ -597,25 +604,27 @@ ${
                                 <Label className='text-white font-medium'>
                                     Your message:
                                 </Label>
-                                <div className='bg-gray-900/50 p-4 rounded-lg border border-gray-600 max-h-64 overflow-y-auto'>
-                                    <pre className='text-sm text-gray-200 whitespace-pre-wrap font-sans'>
-                                        {generateSocialMessageFromTemplate(
-                                            selectedTemplate
-                                        )}
-                                    </pre>
-                                </div>
+                                <textarea
+                                    ref={textareaRef}
+                                    className='w-full h-40 bg-gray-900/50 text-gray-200 p-4 border border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400'
+                                    placeholder='Click here to edit your social media message...'
+                                    defaultValue={generateSocialMessageFromTemplate(selectedTemplate)}
+                                    style={{
+                                        fontFamily: 'inherit',
+                                        fontSize: '14px',
+                                        lineHeight: '1.5',
+                                        whiteSpace: 'pre-wrap'
+                                    }}
+                                />
                             </div>
 
                             {/* Action Buttons */}
                             <div className='flex flex-wrap gap-2'>
                                 <Button
-                                    onClick={() =>
-                                        copyToClipboard(
-                                            generateSocialMessageFromTemplate(
-                                                selectedTemplate
-                                            )
-                                        )
-                                    }
+                                    onClick={() => {
+                                        const message = textareaRef.current?.value || generateSocialMessageFromTemplate(selectedTemplate);
+                                        copyToClipboard(message);
+                                    }}
                                     variant='outline'
                                     size='sm'
                                     className='border-gray-600 text-white hover:bg-gray-700'>
@@ -625,11 +634,8 @@ ${
 
                                 <Button
                                     onClick={() => {
-                                        copyToClipboard(
-                                            generateSocialMessageFromTemplate(
-                                                selectedTemplate
-                                            )
-                                        )
+                                        const message = textareaRef.current?.value || generateSocialMessageFromTemplate(selectedTemplate);
+                                        copyToClipboard(message);
                                         toast.success("Ready to share! 📱")
                                     }}
                                     variant='outline'

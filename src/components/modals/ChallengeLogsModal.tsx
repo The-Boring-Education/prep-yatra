@@ -14,6 +14,7 @@ import { toast } from "sonner"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
     Dialog,
@@ -171,6 +172,7 @@ ${
         const message = generateSocialMessage(log, selectedTemplate)
         setSocialMessage(message)
         setShowSocialPreview(true)
+        
     }
 
     const handleTemplateChange = (templateIndex: number) => {
@@ -180,6 +182,7 @@ ${
             setSocialMessage(message)
         }
     }
+
 
     const copyToClipboard = async (text: string) => {
         try {
@@ -522,22 +525,11 @@ ${
                                     <label className='text-white font-medium block'>
                                         Your message:
                                     </label>
-                                    <textarea
-                                        value={socialMessage}
-                                        onChange={(e) => {
-                                            console.log('Textarea changed:', e.target.value);
-                                            setSocialMessage(e.target.value);
-                                        }}
-                                        onFocus={() => console.log('Textarea focused')}
-                                        onBlur={() => console.log('Textarea blurred')}
-                                        className='w-full h-32 bg-white text-black text-sm font-sans resize-none border-2 border-blue-500 rounded-lg p-3 focus:border-blue-600 focus:outline-none'
-                                        placeholder='Click here to edit your social media message...'
-                                        style={{ 
-                                            cursor: 'text',
-                                            userSelect: 'text',
-                                            pointerEvents: 'auto'
-                                        }}
-                                    />
+                                    <div className='bg-gray-900/50 p-4 rounded-lg border border-gray-600 max-h-64 overflow-y-auto'>
+                                        <pre className='text-sm text-gray-200 whitespace-pre-wrap font-sans'>
+                                            {socialMessage}
+                                        </pre>
+                                    </div>
                                 </div>
 
                                 <div className='space-y-3'>
