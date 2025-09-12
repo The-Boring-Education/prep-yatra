@@ -47,7 +47,7 @@ interface UserProfile {
 
 const PrepLogsShowcase = () => {
     const router = useRouter();
-    const {userId} = router.query;
+    const {username} = router.query;
     const [prepLogs, setPrepLogs] = useState<PrepLog[]>([]);
     const [profile, setProfile] = useState<UserProfile | null>(null);
     const [loading, setLoading] = useState(true);
@@ -77,6 +77,7 @@ const PrepLogsShowcase = () => {
     // Utility function to add protocol to URLs
     function withProtocol(url: string | undefined) {
         if (!url) {return undefined;}
+
         return url.startsWith("http") ? url : `https://${url}`;
     }
 
@@ -86,14 +87,16 @@ const PrepLogsShowcase = () => {
 
     useEffect(() => {
         const fetchProfile = async () => {
-            if (!userId) {return;}
+            if (!username) {return;}
 
             try {
+                
+                
                 setLoading(true);
 
-                // Fetch user profile
+                // Fetch user profile by username
                 const profileResponse = await fetch(
-                    `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?userId=${userId}`
+                    `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/user?username=${username}`
                 );
 
                 if (!profileResponse.ok) {
@@ -108,18 +111,21 @@ const PrepLogsShowcase = () => {
                     setProfile(profileData);
                 }
 
-                // Fetch prep logs
-                const logsResponse = await fetch(
-                    `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/prep-log?userId=${userId}`
-                );
+                // Fetch prep logs using the userId from the profile data
+                if (profileData.data?._id || profileData._id) {
+                    const userId = profileData.data?._id || profileData._id;
+                    const logsResponse = await fetch(
+                        `${process.env.NEXT_PUBLIC_TBE_WEBAPP_API_URL}/prepyatra/prep-log?userId=${userId}`
+                    );
 
-                if (logsResponse.ok) {
-                    const logsData = await logsResponse.json();
-                    // Extract data from the API response structure
-                    if (logsData.status && logsData.data) {
-                        setPrepLogs(logsData.data || []);
-                    } else {
-                        setPrepLogs(logsData || []);
+                    if (logsResponse.ok) {
+                        const logsData = await logsResponse.json();
+                        // Extract data from the API response structure
+                        if (logsData.status && logsData.data) {
+                            setPrepLogs(logsData.data || []);
+                        } else {
+                            setPrepLogs(logsData || []);
+                        }
                     }
                 }
             } catch (err) {
@@ -131,7 +137,7 @@ const PrepLogsShowcase = () => {
         };
 
         fetchProfile();
-    }, [userId]);
+    }, [username]);
 
     if (loading) {
         return (
