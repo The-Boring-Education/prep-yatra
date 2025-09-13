@@ -1,5 +1,5 @@
 import { Share2, Copy, TrendingUp, CheckCircle2, Trophy } from "lucide-react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { toast } from "sonner"
 
 import { Button } from "@/components/ui/button"
@@ -44,10 +44,12 @@ const ChallengeLogModal = ({
     const [copyToPrepLogs, setCopyToPrepLogs] = useState(true)
     const [showSocialPreview, setShowSocialPreview] = useState(false)
     const [selectedTemplate, setSelectedTemplate] = useState<number>(0)
+    const textareaRef = useRef<HTMLTextAreaElement>(null)
 
     // Check if challenge is completed
     const isChallengeCompleted = challenge.currentDay >= challenge.totalDays
-    const nextDay = challenge.currentDay + 1
+    const nextDay = challenge.currentDay
+
 
     const handleInputChange = (field: string, value: string | string[]) => {
         setFormData((prev) => ({
@@ -73,7 +75,7 @@ const ChallengeLogModal = ({
 
         const templates = [
             // Template 1: Casual and friendly
-            `Just wrapped up Day ${nextDay} of my ${challenge.name}! 🎉
+            `Just wrapped up Day ${nextDay + 1} of my ${challenge.name}! 🎉
 
 Today was pretty productive - ${formData.progressText}
 
@@ -106,7 +108,7 @@ ${
 Check out Prep Yatra if you want to start your own challenge! ${appUrl}`,
 
             // Template 2: Professional and focused
-            `📚 Learning Update: Day ${nextDay}/${challenge.totalDays} - ${
+            `📚 Learning Update: Day ${nextDay + 1}/${challenge.totalDays} - ${
                 challenge.name
             }
 
@@ -139,7 +141,7 @@ ${
 }#ProfessionalDevelopment #ContinuousLearning #PrepYatra`,
 
             // Template 3: Motivational and inspiring
-            `🚀 Day ${nextDay} of my ${challenge.name} journey!
+            `🚀 Day ${nextDay + 1} of my ${challenge.name} journey!
 
 Today I learned: ${formData.progressText}
 
@@ -195,20 +197,22 @@ ${
         try {
             const hours = parseFloat(formData.hoursSpent)
 
-            // Create challenge log
-            await challengesService.createLog({
+            const logData = {
                 challengeId: challenge._id,
-                day: nextDay,
+                day: nextDay + 1, // API expects 1-indexed days
                 progressText: formData.progressText,
                 hoursSpent: hours,
                 nextGoals: formData.nextGoals.filter((goal) => goal.trim())
-            })
+            }
+
+            // Create challenge log
+            await challengesService.createLog(logData)
 
             // If user wants to copy to prep logs, create a prep log entry
             if (copyToPrepLogs) {
                 try {
                     await prepLogsService.create({
-                        title: `Day ${nextDay} - ${challenge.name}`,
+                        title: `Day ${nextDay + 1} - ${challenge.name}`,
                         description: `Challenge Progress: ${
                             formData.progressText
                         }\n\nNext Goals:\n${formData.nextGoals
@@ -250,7 +254,7 @@ ${
     }
 
     const shareToSocial = (platform: string) => {
-        const message = generateSocialMessageFromTemplate(selectedTemplate)
+        const message = textareaRef.current?.value || generateSocialMessageFromTemplate(selectedTemplate)
         const encodedText = encodeURIComponent(message)
         const appUrl = process.env.NEXT_PUBLIC_BASE_URL
 
@@ -357,7 +361,7 @@ ${
                         <DialogHeader>
                             <DialogTitle className='text-xl font-bold text-white flex items-center gap-2'>
                                 <TrendingUp className='w-5 h-5 text-primary' />
-                                Log Day {nextDay} Progress
+                                Log Day {nextDay + 1} Progress
                             </DialogTitle>
                             <DialogDescription className='text-gray-300'>
                                 Track your progress for "{challenge.name}"
@@ -466,7 +470,7 @@ ${
                                             Current Day:
                                         </span>
                                         <span className='text-white'>
-                                            {challenge.currentDay}
+                                            {challenge.currentDay + 1}
                                         </span>
                                     </div>
                                     <div className='flex justify-between'>
@@ -474,7 +478,7 @@ ${
                                             Next Day:
                                         </span>
                                         <span className='text-white'>
-                                            {nextDay}
+                                            {nextDay + 1}
                                         </span>
                                     </div>
                                     <div className='flex justify-between'>
@@ -529,7 +533,7 @@ ${
                                 Share Your Progress
                             </DialogTitle>
                             <DialogDescription className='text-gray-300'>
-                                Choose a template to share your Day {nextDay}{" "}
+                                Choose a template to share your Day {nextDay + 1}{" "}
                                 progress
                             </DialogDescription>
                         </DialogHeader>
@@ -565,9 +569,15 @@ ${
                                                     ? "border-primary bg-primary/10"
                                                     : "border-gray-600 bg-gray-800/30 hover:border-gray-500"
                                             }`}
-                                            onClick={() =>
-                                                setSelectedTemplate(index)
-                                            }>
+                                            onClick={() => {
+                                                setSelectedTemplate(index);
+                                                // Update the textarea with new template
+                                                setTimeout(() => {
+                                                    if (textareaRef.current) {
+                                                        textareaRef.current.value = generateSocialMessageFromTemplate(index);
+                                                    }
+                                                }, 100);
+                                            }}>
                                             <div className='flex items-center gap-3'>
                                                 <span className='text-2xl'>
                                                     {template.icon}
@@ -594,25 +604,27 @@ ${
                                 <Label className='text-white font-medium'>
                                     Your message:
                                 </Label>
-                                <div className='bg-gray-900/50 p-4 rounded-lg border border-gray-600 max-h-64 overflow-y-auto'>
-                                    <pre className='text-sm text-gray-200 whitespace-pre-wrap font-sans'>
-                                        {generateSocialMessageFromTemplate(
-                                            selectedTemplate
-                                        )}
-                                    </pre>
-                                </div>
+                                <textarea
+                                    ref={textareaRef}
+                                    className='w-full h-40 bg-gray-900/50 text-gray-200 p-4 border border-gray-600 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder:text-gray-400'
+                                    placeholder='Click here to edit your social media message...'
+                                    defaultValue={generateSocialMessageFromTemplate(selectedTemplate)}
+                                    style={{
+                                        fontFamily: 'inherit',
+                                        fontSize: '14px',
+                                        lineHeight: '1.5',
+                                        whiteSpace: 'pre-wrap'
+                                    }}
+                                />
                             </div>
 
                             {/* Action Buttons */}
                             <div className='flex flex-wrap gap-2'>
                                 <Button
-                                    onClick={() =>
-                                        copyToClipboard(
-                                            generateSocialMessageFromTemplate(
-                                                selectedTemplate
-                                            )
-                                        )
-                                    }
+                                    onClick={() => {
+                                        const message = textareaRef.current?.value || generateSocialMessageFromTemplate(selectedTemplate);
+                                        copyToClipboard(message);
+                                    }}
                                     variant='outline'
                                     size='sm'
                                     className='border-gray-600 text-white hover:bg-gray-700'>
@@ -622,11 +634,8 @@ ${
 
                                 <Button
                                     onClick={() => {
-                                        copyToClipboard(
-                                            generateSocialMessageFromTemplate(
-                                                selectedTemplate
-                                            )
-                                        )
+                                        const message = textareaRef.current?.value || generateSocialMessageFromTemplate(selectedTemplate);
+                                        copyToClipboard(message);
                                         toast.success("Ready to share! 📱")
                                     }}
                                     variant='outline'

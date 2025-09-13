@@ -14,6 +14,7 @@ import { toast } from "sonner"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
     Dialog,
@@ -171,6 +172,7 @@ ${
         const message = generateSocialMessage(log, selectedTemplate)
         setSocialMessage(message)
         setShowSocialPreview(true)
+        
     }
 
     const handleTemplateChange = (templateIndex: number) => {
@@ -180,6 +182,7 @@ ${
             setSocialMessage(message)
         }
     }
+
 
     const copyToClipboard = async (text: string) => {
         try {
@@ -239,9 +242,9 @@ ${
         if (logs.length === 0) {
             return 0
         }
-        const totalDays = logs.reduce((sum, log) => sum + log.day, 0)
+        const totalDays = logs.length
         return Math.round(
-            (totalDays / (challenge.totalDays * logs.length)) * 100
+            (totalDays / challenge.totalDays) * 100
         )
     }
 
@@ -278,7 +281,7 @@ ${
                                         <div className='flex items-center gap-4 mt-2 text-sm text-gray-400'>
                                             <div className='flex items-center gap-1'>
                                                 <Calendar className='w-3 h-3' />
-                                                {challenge.currentDay} of{" "}
+                                                {challenge.currentDay + 1} of{" "}
                                                 {challenge.totalDays} days
                                             </div>
                                             <div className='flex items-center gap-1'>
@@ -518,10 +521,15 @@ ${
                                     </div>
                                 </div>
 
-                                <div className='bg-gray-900/50 p-4 rounded-lg border border-gray-600 mb-4'>
-                                    <pre className='text-sm text-gray-200 whitespace-pre-wrap font-sans'>
-                                        {socialMessage}
-                                    </pre>
+                                <div className='space-y-3 mb-4'>
+                                    <label className='text-white font-medium block'>
+                                        Your message:
+                                    </label>
+                                    <div className='bg-gray-900/50 p-4 rounded-lg border border-gray-600 max-h-64 overflow-y-auto'>
+                                        <pre className='text-sm text-gray-200 whitespace-pre-wrap font-sans'>
+                                            {socialMessage}
+                                        </pre>
+                                    </div>
                                 </div>
 
                                 <div className='space-y-3'>

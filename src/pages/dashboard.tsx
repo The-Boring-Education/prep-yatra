@@ -1,6 +1,7 @@
 import {useRouter} from "next/router";
 import React, {useState, useEffect, Suspense, lazy} from "react";
 import {toast} from "sonner";
+import {Menu, X} from "lucide-react";
 
 import {ProfileSection, DashboardTabs, LoadingSpinner} from "@/components/dashboard";
 import {useGamificationContext} from "@/contexts/GamificationContext";
@@ -8,6 +9,7 @@ import {useAuth} from "@/contexts/useAuth";
 import {usePrepLogs} from "@/hooks/use-prep-logs";
 import {recruitersService} from "@/services/recruiters";
 import {RecruiterContact} from "@/types/recruiters";
+import {Button} from "@/components/ui/button";
 
 
 // Dashboard Components
@@ -67,6 +69,7 @@ const Dashboard = () => {
     const [profile, setProfile] = useState<Profile | null>(null);
     const [recruiterContacts, setRecruiterContacts] = useState<RecruiterContact[]>([]);
     const [loading, setLoading] = useState(true);
+    const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
     // Modal states
     const [isPrepLogModalOpen, setIsPrepLogModalOpen] = useState(false);
@@ -236,9 +239,37 @@ const Dashboard = () => {
             </Suspense>
 
             <main className="container mx-auto px-4 py-8">
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Profile Section */}
-                    <div className="lg:col-span-1">
+                {/* Mobile backdrop */}
+                {!isSidebarCollapsed && (
+                    <div 
+                        className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                        onClick={() => setIsSidebarCollapsed(true)}
+                    />
+                )}
+
+                {/* Sidebar Toggle Button - Mobile */}
+                <Button
+                    variant="default"
+                    size="sm"
+                    className="fixed top-20 left-4 z-50 lg:hidden bg-primary text-primary-foreground shadow-lg border-2 border-primary-foreground/20"
+                    onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                >
+                    {isSidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                </Button>
+
+                {/* Sidebar Toggle Button - Desktop */}
+                <Button
+                    variant="default"
+                    size="sm"
+                    className="hidden lg:flex fixed top-20 left-4 z-50 bg-primary text-primary-foreground shadow-lg border-2 border-primary-foreground/20"
+                    onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+                >
+                    {isSidebarCollapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
+                </Button>
+
+                <div className="flex gap-6">
+                    {/* Profile Section - Collapsible Sidebar */}
+                    <div className={`${isSidebarCollapsed ? 'hidden' : 'block'} w-full lg:w-1/3 transition-all duration-300`}>
                         <ProfileSection 
                             user={user} 
                             profile={profile} 
@@ -256,7 +287,7 @@ const Dashboard = () => {
                     </div>
 
                     {/* Main Content */}
-                    <div className="lg:col-span-2">
+                    <div className={`${isSidebarCollapsed ? 'w-full' : 'w-full lg:w-2/3'} transition-all duration-300`}>
                         {/* Daily Prep Check-in above tabs */}
                         <Suspense fallback={<ComponentLoader />}>
                             <div className="mb-6">

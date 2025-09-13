@@ -64,12 +64,12 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({user, profile, onEditCli
     const router = useRouter();
 
     const handleViewJourneyClick = () => {
-        router.push(`/journey/${profile?._id}`);
+        router.push(`/journey/${profile?.userName}`);
     };
 
     const handleShareJourneyClick = async () => {
-        if (profile?._id) {
-            const journeyUrl = `${window.location.origin}/journey/${profile._id}`;
+        if (profile?.userName) {
+            const journeyUrl = `${window.location.origin}/journey/${profile.userName}`;
             try {
                 await navigator.clipboard.writeText(journeyUrl);
                 toast.success("Journey URL copied to clipboard!");
@@ -205,7 +205,7 @@ const ProfileSection: React.FC<ProfileSectionProps> = ({user, profile, onEditCli
                             Edit Onboarding Details
                         </Button>
                     )}
-                    {profile?._id && (
+                    {profile?.userName && (
                         <Button
                             variant="outline"
                             onClick={handleShareJourneyClick}
