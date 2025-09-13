@@ -3,7 +3,7 @@ import React, { Suspense } from "react";
 import {GamificationDisplay} from "@/components/gamification";
 import NavbarDropdownLinks from "@/components/layout/NavbarDropdownLinks";
 import {Button} from "@/components/ui/button";
-import {NavbarProps} from "@/interfaces/components";
+import {NavbarProps} from "@repo/types";
 import { SubscriptionInterestPopover } from "../popovers";
 
 const capitalize = (str: string) => {
