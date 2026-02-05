@@ -22,6 +22,7 @@ import {
     InterviewCategory,
     ExperienceLevel
 } from "@/types/onboarding";
+import {withProtocol} from "@/utils/url";
 
 interface EditOnboardingModalProps {
     isOpen: boolean
@@ -124,9 +125,9 @@ const EditOnboardingModal: React.FC<EditOnboardingModalProps> = ({
                 goal: formData.goal,
                 targetCompanies: formData.targetCompanies,
                 preferredCategories: formData.preferredCategories,
-                linkedInUrl: formData.linkedInUrl,
-                githubUrl: formData.githubUrl,
-                leetCodeUrl: formData.leetCodeUrl
+                linkedInUrl: withProtocol(formData.linkedInUrl),
+                githubUrl: withProtocol(formData.githubUrl),
+                leetCodeUrl: withProtocol(formData.leetCodeUrl)
             };
 
             const response = await fetch(
