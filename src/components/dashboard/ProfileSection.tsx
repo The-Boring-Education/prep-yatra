@@ -45,12 +45,8 @@ interface ProfileSectionProps {
     onEditClick?: () => void
 }
 
-const withProtocol = (url: string) => {
-    if (!url.startsWith("http://") && !url.startsWith("https://")) {
-        return `https://${url}`;
-    }
-    return url;
-};
+import {withProtocol} from "@/utils/url";
+
 
 const getInitials = (name: string) => {
     return name

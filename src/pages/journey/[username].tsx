@@ -13,6 +13,7 @@ import {
     CardHeader,
     CardTitle
 } from "@/components/ui/card";
+import {withProtocol} from "@/utils/url";
 
 interface PrepLog {
     _id: string
@@ -74,12 +75,8 @@ const PrepLogsShowcase = () => {
         return "Good evening";
     };
 
-    // Utility function to add protocol to URLs
-    function withProtocol(url: string | undefined) {
-        if (!url) {return undefined;}
+    // URL utility imported from @/utils/url
 
-        return url.startsWith("http") ? url : `https://${url}`;
-    }
 
     const handleGetStarted = () => {
         router.push("/auth");
